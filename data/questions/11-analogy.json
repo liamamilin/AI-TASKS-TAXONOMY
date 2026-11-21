@@ -1,0 +1,160 @@
+[
+  {
+    "id": "wj-081",
+    "title": "餐桌上的四样",
+    "type": "analogy",
+    "difficulty": 1,
+    "minutes": 1,
+    "hook": "有一件只会装，不会把食物送进嘴里",
+    "prompt": "勺子、杯子、叉子、筷子。哪一个不是用来把食物送进嘴里的？只写名字。",
+    "answerMode": "objective",
+    "answer": "杯子",
+    "explanation": "勺子、叉子和筷子都把食物送到嘴里。杯子是容器，用来装，不负责这一步。",
+    "spec": {
+      "kind": "odd",
+      "items": [
+        { "name": "勺子", "f": "送食" },
+        { "name": "杯子", "f": "容器" },
+        { "name": "叉子", "f": "送食" },
+        { "name": "筷子", "f": "送食" }
+      ]
+    }
+  },
+  {
+    "id": "wj-082",
+    "title": "路口的四盏",
+    "type": "analogy",
+    "difficulty": 1,
+    "minutes": 1,
+    "hook": "有一盏是为了照路，不是为了指挥",
+    "prompt": "红灯、路灯、黄灯、绿灯。哪一个不是交通信号灯？只写名字。",
+    "answerMode": "objective",
+    "answer": "路灯",
+    "explanation": "红灯、黄灯、绿灯组成信号。路灯只负责照明，不告诉车辆停或走。",
+    "spec": {
+      "kind": "odd",
+      "items": [
+        { "name": "红灯", "f": "信号" },
+        { "name": "路灯", "f": "照明" },
+        { "name": "黄灯", "f": "信号" },
+        { "name": "绿灯", "f": "信号" }
+      ]
+    }
+  },
+  {
+    "id": "wj-083",
+    "title": "笔袋里的四样",
+    "type": "analogy",
+    "difficulty": 1,
+    "minutes": 1,
+    "hook": "有一件是用来收回字迹的",
+    "prompt": "铅笔、毛笔、橡皮、粉笔。哪一个不是用来写字的？只写名字。",
+    "answerMode": "objective",
+    "answer": "橡皮",
+    "explanation": "铅笔、毛笔和粉笔都会留下字。橡皮是把字去掉，方向相反。",
+    "spec": {
+      "kind": "odd",
+      "items": [
+        { "name": "铅笔", "f": "书写" },
+        { "name": "毛笔", "f": "书写" },
+        { "name": "橡皮", "f": "擦除" },
+        { "name": "粉笔", "f": "书写" }
+      ]
+    }
+  },
+  {
+    "id": "wj-084",
+    "title": "四个数里的一个",
+    "type": "analogy",
+    "difficulty": 2,
+    "minutes": 1,
+    "hook": "有一个既能被拆开，又恰好是个平方",
+    "prompt": "3、5、9、7。哪一个和另外三个不属同一类？只写数字。",
+    "answerMode": "objective",
+    "answer": "9",
+    "explanation": "3、5、7 都是质数。9 既能被 3 整除，又是 3 的平方。不管看合数还是看平方，挑出来的都是 9。",
+    "spec": {
+      "kind": "odd",
+      "items": [
+        { "name": "3", "f": "质" },
+        { "name": "5", "f": "质" },
+        { "name": "9", "f": "合" },
+        { "name": "7", "f": "质" }
+      ]
+    }
+  },
+  {
+    "id": "wj-085",
+    "title": "帽子之于",
+    "type": "analogy",
+    "difficulty": 1,
+    "minutes": 1,
+    "hook": "戴在身上的位置，一对一对地对应",
+    "prompt": "照前两对的关系，写出问号处的一个词。",
+    "answerMode": "objective",
+    "answer": "头",
+    "accept": ["头上", "脑袋"],
+    "explanation": "手套对应手，袜子对应脚，都是穿戴的位置。帽子对应头。",
+    "spec": {
+      "kind": "map",
+      "pairs": [["手套", "手"], ["袜子", "脚"], ["帽子", "头"]],
+      "show": ["手套", "袜子"],
+      "ask": "帽子"
+    }
+  },
+  {
+    "id": "wj-086",
+    "title": "车厢之于",
+    "type": "analogy",
+    "difficulty": 1,
+    "minutes": 1,
+    "hook": "先是一部分，后头是它属于的整件",
+    "prompt": "照上一对的关系，写出问号处的一个词。",
+    "answerMode": "objective",
+    "answer": "火车",
+    "explanation": "页是书的一部分，车厢是火车的一部分。问的是整体，不是另一节车厢。",
+    "spec": {
+      "kind": "map",
+      "pairs": [["页", "书"], ["车厢", "火车"]],
+      "show": ["页"],
+      "ask": "车厢"
+    }
+  },
+  {
+    "id": "wj-087",
+    "title": "鱼之于",
+    "type": "analogy",
+    "difficulty": 1,
+    "minutes": 1,
+    "hook": "前一个词是谁，后一个词是它怎么动",
+    "prompt": "上一对说的是它怎么动。照那个关系，写出问号处的一个词。",
+    "answerMode": "objective",
+    "answer": "游",
+    "accept": ["游泳"],
+    "explanation": "鸟对应飞，说的是它典型的移动方式。鱼对应游。",
+    "spec": {
+      "kind": "map",
+      "pairs": [["鸟", "飞"], ["鱼", "游"]],
+      "show": ["鸟"],
+      "ask": "鱼"
+    }
+  },
+  {
+    "id": "wj-088",
+    "title": "老师之于",
+    "type": "analogy",
+    "difficulty": 1,
+    "minutes": 1,
+    "hook": "人通常在哪里做这件事",
+    "prompt": "上一对说的是人通常在哪里做事。照那个关系，写出问号处的一个词。",
+    "answerMode": "objective",
+    "answer": "学校",
+    "explanation": "医生通常在医院工作，老师通常在学校工作。问的是场所，不是科目。",
+    "spec": {
+      "kind": "map",
+      "pairs": [["医生", "医院"], ["老师", "学校"]],
+      "show": ["医生"],
+      "ask": "老师"
+    }
+  }
+]

@@ -1,0 +1,19 @@
+<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="utf-8">
+    <title>问笺馆</title>
+    <script>
+      var marker = "/AI-TASKS-TAXONOMY/"
+      var path = location.pathname
+      var at = path.indexOf(marker)
+      var base = at >= 0 ? path.slice(0, at + marker.length) : path.replace(/[^/]*$/, "")
+      var rest = path.slice(base.length).replace(/^\/+|\/+$/g, "")
+      if (!rest || rest === "index.html" || rest === "404.html") location.replace(base)
+      else location.replace(base + "#/" + rest)
+    </script>
+  </head>
+  <body>
+    <p><a href="./">返回问笺馆</a></p>
+  </body>
+</html>

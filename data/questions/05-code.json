@@ -1,0 +1,132 @@
+[
+  {
+    "id": "wj-033",
+    "title": "加到四",
+    "type": "code",
+    "difficulty": 1,
+    "minutes": 1,
+    "hook": "循环不是只加了最后一次",
+    "prompt": "下面这段 JavaScript 会把 1 到 4 累加进 s。跑完以后 result 的值是什么？只写值本身。",
+    "answerMode": "objective",
+    "answer": "10",
+    "explanation": "i 依次是 1、2、3、4，s 从 0 加到 1+2+3+4，结果是 10。",
+    "spec": {
+      "kind": "code",
+      "source": "let s = 0\nfor (let i = 1; i <= 4; i++) s += i\nresult = s"
+    }
+  },
+  {
+    "id": "wj-034",
+    "title": "另一个名字",
+    "type": "code",
+    "difficulty": 2,
+    "minutes": 1,
+    "hook": "b 并不是一份新的名单",
+    "prompt": "下面这段 JavaScript 给同一个数组起了两个名字。跑完以后 result 的值是什么？只写值本身。",
+    "answerMode": "objective",
+    "answer": "4",
+    "explanation": "b = a 只是给同一个数组再起一个名字。b.push(4) 推进去的就是 a 里的那一格，所以 a 的长度从 3 变成 4。",
+    "spec": {
+      "kind": "code",
+      "source": "const a = [1, 2, 3]\nconst b = a\nb.push(4)\nresult = a.length"
+    }
+  },
+  {
+    "id": "wj-035",
+    "title": "留下的个数",
+    "type": "code",
+    "difficulty": 2,
+    "minutes": 1,
+    "hook": "先加倍，再把不大的丢掉",
+    "prompt": "下面这段 JavaScript 先把每个数加倍，再丢掉不大于 3 的，最后数剩下几个。result 是什么？只写值本身。",
+    "answerMode": "objective",
+    "answer": "2",
+    "explanation": "1、2、3 加倍后是 2、4、6。大于 3 的只剩 4 和 6，所以长度是 2。",
+    "spec": {
+      "kind": "code",
+      "source": "result = [1, 2, 3].map(n => n * 2).filter(n => n > 3).length"
+    }
+  },
+  {
+    "id": "wj-036",
+    "title": "五后面跟了一",
+    "type": "code",
+    "difficulty": 1,
+    "minutes": 1,
+    "hook": "加号看见字符串，就不做加法了",
+    "prompt": "下面这段 JavaScript 跑完以后，result 的值是什么？只写值本身，不要引号。",
+    "answerMode": "objective",
+    "answer": "51",
+    "accept": ["\"51\"", "'51'"],
+    "explanation": "字符串 \"5\" 遇到加号，会把后面的 1 粘到后面，得到字符串 51，不是数字 6。",
+    "spec": {
+      "kind": "code",
+      "source": "result = \"5\" + 1"
+    }
+  },
+  {
+    "id": "wj-037",
+    "title": "加了两次",
+    "type": "code",
+    "difficulty": 1,
+    "minutes": 1,
+    "hook": "函数改的是外面的那一个 x",
+    "prompt": "下面这段 JavaScript 把函数叫了两次，函数改的是外面的 x。跑完以后 result 是什么？只写值本身。",
+    "answerMode": "objective",
+    "answer": "5",
+    "explanation": "x 从 1 开始。add 每叫一次就加 2，叫了两次，1+2+2 等于 5。",
+    "spec": {
+      "kind": "code",
+      "source": "let x = 1\nfunction add() { x += 2 }\nadd()\nadd()\nresult = x"
+    }
+  },
+  {
+    "id": "wj-038",
+    "title": "倒过来的问候",
+    "type": "code",
+    "difficulty": 1,
+    "minutes": 1,
+    "hook": "两个字拆开，再按相反的顺序贴上",
+    "prompt": "下面这段 JavaScript 跑完以后，result 的值是什么？只写那两个字，不要引号。",
+    "answerMode": "objective",
+    "answer": "好你",
+    "explanation": "「你好」拆成「你」和「好」，倒序再拼起来就是「好你」。",
+    "spec": {
+      "kind": "code",
+      "source": "result = \"你好\".split(\"\").reverse().join(\"\")"
+    }
+  },
+  {
+    "id": "wj-039",
+    "title": "四的阶乘",
+    "type": "code",
+    "difficulty": 2,
+    "minutes": 1,
+    "hook": "函数回头去叫一个更小的自己",
+    "prompt": "下面这段 JavaScript 让函数回头去算一个更小的自己。跑完以后 result 是什么？只写值本身。",
+    "answerMode": "objective",
+    "answer": "24",
+    "explanation": "f(4) = 4×f(3)，一直乘到 f(1)=1，所以是 4×3×2×1 = 24。",
+    "spec": {
+      "kind": "code",
+      "source": "function f(n) { return n <= 1 ? 1 : n * f(n - 1) }\nresult = f(4)"
+    }
+  },
+  {
+    "id": "wj-040",
+    "title": "纸上的箭头",
+    "type": "code",
+    "difficulty": 2,
+    "minutes": 2,
+    "hook": "重复不是装饰，它真的会走三遍",
+    "prompt": "箭头指令从原点出发，东是 x 增大，北是 y 增大。「重复」会把中间的指令做若干次，直到「结束」。最后停在哪里？格式像「西1，南2」，只写用到的方向，数字紧挨方向，两项之间用中文逗号。示例只说明格式。",
+    "answerMode": "objective",
+    "answer": "东2，北3",
+    "accept": ["东2,北3", "东2北3"],
+    "explanation": "重复三次「东 1、北 1」，到达东 3、北 3。最后再「西 1」，x 减 1，停在东 2、北 3。",
+    "spec": {
+      "kind": "arrow",
+      "lines": ["重复 3", "东 1", "北 1", "结束", "西 1"]
+    }
+  }
+]

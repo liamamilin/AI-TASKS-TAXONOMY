@@ -1,0 +1,24 @@
+<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>问笺馆</title>
+    <meta name="description" content="问笺馆陈列短而好玩的原创考题。提示词可以复制，参考答案默认收着。这里还没有模型实测。">
+    <meta name="theme-color" content="#f3ecdf">
+    <link rel="icon" href="./favicon.svg" type="image/svg+xml">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Newsreader:opsz,wght@6..72,500;6..72,650&family=Noto+Serif+SC:wght@500;600;700&display=swap" rel="stylesheet">
+    <script>
+      try {
+        if (localStorage.getItem("wenjian-theme") === "night") document.documentElement.dataset.theme = "night"
+      } catch (error) {}
+    </script>
+  </head>
+  <body>
+    <div id="app"></div>
+    <noscript>问笺馆需要浏览器脚本才能翻页和检索。题库文件在仓库的 data/questions 目录。</noscript>
+    <script type="module" src="/src/main.js"></script>
+  </body>
+</html>

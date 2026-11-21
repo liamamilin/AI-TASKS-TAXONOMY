@@ -1,0 +1,146 @@
+[
+  {
+    "id": "wj-017",
+    "title": "咬死了猎人的狗",
+    "type": "ambiguity",
+    "difficulty": 2,
+    "minutes": 1,
+    "hook": "受害的到底是狗还是猎人",
+    "prompt": "「咬死了猎人的狗」可以怎么理解？请用「 / 」连接两种意思，每种都写清谁被咬死。",
+    "answerMode": "objective",
+    "answer": "狗被咬死了 / 猎人被咬死了",
+    "explanation": "「猎人的狗」可以是被咬的对象，也可以把「咬死了猎人」看成狗发出的动作。两种里，倒霉的分别是狗和猎人。",
+    "spec": {
+      "kind": "readings",
+      "quote": "咬死了猎人的狗",
+      "readings": ["狗被咬死了", "猎人被咬死了"],
+      "groups": [["狗被咬死"], ["猎人被咬死"]]
+    }
+  },
+  {
+    "id": "wj-018",
+    "title": "我想起来了",
+    "type": "ambiguity",
+    "difficulty": 1,
+    "minutes": 1,
+    "hook": "有人要起床，有人只是记起一件事",
+    "prompt": "「我想起来了」至少有两种理解。请用「 / 」连接，每种一句短话。",
+    "answerMode": "objective",
+    "answer": "回忆起一件事 / 打算起身",
+    "explanation": "「起来」可以是「想起来」的回忆，也可以是从床上或椅子上起身。两种都是日常说法。",
+    "spec": {
+      "kind": "readings",
+      "quote": "我想起来了",
+      "readings": ["回忆起一件事", "打算起身"],
+      "groups": [["回忆"], ["起身"]]
+    }
+  },
+  {
+    "id": "wj-019",
+    "title": "两个学校的老师",
+    "type": "ambiguity",
+    "difficulty": 2,
+    "minutes": 1,
+    "hook": "两个，可能数的是学校，也可能数的是人",
+    "prompt": "「两个学校的老师」有两种数法。请用「 / 」写出：老师来自几所学校，或者一共有几位老师。",
+    "answerMode": "objective",
+    "answer": "这些老师来自两所学校 / 只有两位老师",
+    "explanation": "「两个」可以修饰学校，意思是这些老师分属两所学校；也可以修饰老师，意思是一共两位。",
+    "spec": {
+      "kind": "readings",
+      "quote": "两个学校的老师",
+      "readings": ["这些老师来自两所学校", "只有两位老师"],
+      "groups": [["两所学校"], ["两位老师"]]
+    }
+  },
+  {
+    "id": "wj-020",
+    "title": "小王的照片",
+    "type": "ambiguity",
+    "difficulty": 1,
+    "minutes": 1,
+    "hook": "照片在谁手里，和镜头里是谁，不是一回事",
+    "prompt": "「小王的照片」可以指两种照片。请用「 / 」各写一句，让人分得清。",
+    "answerMode": "objective",
+    "answer": "照片属于小王 / 镜头里的人是小王",
+    "explanation": "「的」可以表示拥有，也可以表示照片的内容就是小王本人。",
+    "spec": {
+      "kind": "readings",
+      "quote": "小王的照片",
+      "readings": ["照片属于小王", "镜头里的人是小王"],
+      "groups": [["属于"], ["镜头里"]]
+    }
+  },
+  {
+    "id": "wj-021",
+    "title": "鸡不吃了",
+    "type": "ambiguity",
+    "difficulty": 1,
+    "minutes": 1,
+    "hook": "可能是鸡歇嘴了，也可能是人不吃了",
+    "prompt": "「鸡不吃了」在饭桌上和在鸡舍里，意思不一样。请用「 / 」写出这两种意思。",
+    "answerMode": "objective",
+    "answer": "鸡不肯再吃饲料 / 人决定不吃鸡肉",
+    "explanation": "主语可以是鸡，它不再吃东西；也可以是人把「鸡」当菜，决定不吃这道菜了。",
+    "spec": {
+      "kind": "readings",
+      "quote": "鸡不吃了",
+      "readings": ["鸡不肯再吃饲料", "人决定不吃鸡肉"],
+      "groups": [["饲料", "不肯再吃"], ["不吃鸡肉", "人不吃鸡"]]
+    }
+  },
+  {
+    "id": "wj-022",
+    "title": "旧书店",
+    "type": "ambiguity",
+    "difficulty": 1,
+    "minutes": 1,
+    "hook": "旧的可能是书，也可能是店",
+    "prompt": "「旧书店」有两种店。请用「 / 」写清：旧的是书，还是店本身开了很久。",
+    "answerMode": "objective",
+    "answer": "店里卖的是旧书 / 这家店开了很久",
+    "explanation": "「旧」可以修饰书，店专门卖旧书；也可以修饰店，只是说这家店年头久。",
+    "spec": {
+      "kind": "readings",
+      "quote": "旧书店",
+      "readings": ["店里卖的是旧书", "这家店开了很久"],
+      "groups": [["卖的是旧书", "卖旧"], ["开了很久"]]
+    }
+  },
+  {
+    "id": "wj-023",
+    "title": "让我打了一小时",
+    "type": "ambiguity",
+    "difficulty": 2,
+    "minutes": 1,
+    "hook": "「让」可能是吩咐，也可能是允许",
+    "prompt": "「他让我打了一小时球」里的「让」，请用「 / 」写出两种不同的意思。",
+    "answerMode": "objective",
+    "answer": "他要求我打球 / 他允许我打球",
+    "explanation": "「让」可以是指派、要求对方去做；也可以是准许对方去做。球打了一小时，两种关系都说得通。",
+    "spec": {
+      "kind": "readings",
+      "quote": "他让我打了一小时球",
+      "readings": ["他要求我打球", "他允许我打球"],
+      "groups": [["要求"], ["允许"]]
+    }
+  },
+  {
+    "id": "wj-024",
+    "title": "三个人一组",
+    "type": "ambiguity",
+    "difficulty": 2,
+    "minutes": 1,
+    "hook": "每组都是三人，还是我们就这三人",
+    "prompt": "「我们三个人一组」有两种分组法。请用「 / 」写清。",
+    "answerMode": "objective",
+    "answer": "每一组都是三个人 / 我们仅此三人编成一组",
+    "explanation": "它可以是一条普遍规则：不管多少人，都按三人一组来分。也可以只描述眼前这三个人，他们自己组成一组。",
+    "spec": {
+      "kind": "readings",
+      "quote": "我们三个人一组",
+      "readings": ["每一组都是三个人", "我们仅此三人编成一组"],
+      "groups": [["每一组"], ["仅此"]]
+    }
+  }
+]

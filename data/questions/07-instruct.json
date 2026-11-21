@@ -1,0 +1,115 @@
+[
+  {
+    "id": "wj-049",
+    "title": "倒序用竖线",
+    "type": "instruct",
+    "difficulty": 1,
+    "minutes": 1,
+    "hook": "顺序反了，连接符还得是全角的",
+    "prompt": "把「雨」「伞」「车站」按所给顺序倒过来排，中间用「｜」连接，整段最前面加上「答：」。不要空格，不要引号。",
+    "answerMode": "objective",
+    "answer": "答：车站｜伞｜雨",
+    "explanation": "倒序是车站、伞、雨。用全角竖线连上，并在最前面加上「答：」，就是「答：车站｜伞｜雨」。",
+    "spec": { "kind": "template", "op": "reverse-join", "parts": ["雨", "伞", "车站"], "sep": "｜", "prefix": "答：" }
+  },
+  {
+    "id": "wj-050",
+    "title": "三行次方",
+    "type": "instruct",
+    "difficulty": 1,
+    "minutes": 1,
+    "hook": "只要数字，而且要分成三行",
+    "prompt": "只输出三行阿拉伯数字，依次是 2 的 1 次方、2 次方和 3 次方。不要空行，不要文字，不要标点。",
+    "answerMode": "objective",
+    "answer": "2\n4\n8",
+    "explanation": "2 的 1 次方是 2，2 次方是 4，3 次方是 8。题目要的是三行，不是一行里的三个数。",
+    "spec": { "kind": "template", "op": "powers", "base": 2, "from": 1, "to": 3 }
+  },
+  {
+    "id": "wj-051",
+    "title": "字和字之间",
+    "type": "instruct",
+    "difficulty": 1,
+    "minutes": 1,
+    "hook": "间隔号要进到字缝里，首尾却不能有",
+    "prompt": "把「馆里很安静」每个字之间插入「·」。首尾不要加，不要引号，不要空格。",
+    "answerMode": "objective",
+    "answer": "馆·里·很·安·静",
+    "explanation": "五个字保持原顺序，只在中间四条缝里各放一个间隔号。",
+    "spec": { "kind": "template", "op": "interpunct", "text": "馆里很安静", "sep": "·" }
+  },
+  {
+    "id": "wj-052",
+    "title": "是或否写两行",
+    "type": "instruct",
+    "difficulty": 1,
+    "minutes": 1,
+    "hook": "第二行不是新的判断，是把第一行再抄一遍",
+    "prompt": "判断「二加二等于五」是否正确。第一行只能写「是」或「否」，第二行把第一行原样再写一遍。不要空格，不要第三行。",
+    "answerMode": "objective",
+    "answer": "否\n否",
+    "explanation": "二加二等于四，不等于五，所以第一行是否。第二行按要求原样再写一次，还是否。",
+    "spec": { "kind": "template", "op": "judge-repeat", "left": 2, "right": 2, "eq": 5 }
+  },
+  {
+    "id": "wj-053",
+    "title": "只有一个键",
+    "type": "instruct",
+    "difficulty": 2,
+    "minutes": 1,
+    "hook": "不要代码块，也不要多一个空格",
+    "prompt": "只输出一行 JSON，不要代码块。对象里只有一个键 n，值是 3 加 4 的结果。不要多余空格。",
+    "answerMode": "objective",
+    "answer": "{\"n\":7}",
+    "explanation": "3 加 4 是 7。JSON.stringify 给出的紧凑写法就是 {\"n\":7}，键和值周围都没有空格。",
+    "spec": { "kind": "template", "op": "json-sum", "key": "n", "a": 3, "b": 4 }
+  },
+  {
+    "id": "wj-054",
+    "title": "删掉所有的",
+    "type": "instruct",
+    "difficulty": 1,
+    "minutes": 1,
+    "hook": "只删一个字，别把句子重新润色",
+    "prompt": "删掉句子里所有的「的」，其他字保持原样。不要引号。句子是：红的灯笼和旧的票。",
+    "answerMode": "objective",
+    "answer": "红灯笼和旧票",
+    "explanation": "两个「的」都去掉，剩下的字连起来读，就是「红灯笼和旧票」。",
+    "spec": { "kind": "template", "op": "delete-char", "text": "红的灯笼和旧的票", "drop": "的" }
+  },
+  {
+    "id": "wj-055",
+    "title": "按字数排队",
+    "type": "instruct",
+    "difficulty": 1,
+    "minutes": 1,
+    "hook": "短的在前，逗号要用英文的",
+    "prompt": "把「馆」「问笺」「陈列室」按字数从少到多排成一行，中间用英文逗号，不要空格，不要引号。",
+    "answerMode": "objective",
+    "answer": "馆,问笺,陈列室",
+    "explanation": "「馆」1 个字，「问笺」2 个字，「陈列室」3 个字。从少到多就是馆,问笺,陈列室。",
+    "spec": { "kind": "template", "op": "sort-len", "items": ["馆", "问笺", "陈列室"], "sep": "," }
+  },
+  {
+    "id": "wj-056",
+    "title": "只点蓝圆",
+    "type": "instruct",
+    "difficulty": 1,
+    "minutes": 1,
+    "hook": "方的不行，红的也不行，大的要在前面",
+    "prompt": "下面这些图形里，只选出蓝色的圆，并且先大后小。用「大/中/小」「红/蓝」「圆/方」来称呼，多个之间用「，然后」连接。",
+    "answerMode": "objective",
+    "answer": "大蓝圆，然后小蓝圆",
+    "explanation": "蓝色的圆有大的和小的。大红圆颜色不对，大蓝方形状不对。先大后小，就是大蓝圆，然后小蓝圆。",
+    "spec": {
+      "kind": "click",
+      "rule": { "shape": "circle", "color": "blue", "order": "sizeDesc" },
+      "shapes": [
+        { "id": "d", "shape": "circle", "color": "red", "size": 2 },
+        { "id": "c", "shape": "square", "color": "blue", "size": 3 },
+        { "id": "b", "shape": "circle", "color": "blue", "size": 1 },
+        { "id": "a", "shape": "circle", "color": "blue", "size": 3 }
+      ]
+    }
+  }
+]

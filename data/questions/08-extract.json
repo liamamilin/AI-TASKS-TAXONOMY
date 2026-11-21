@@ -1,0 +1,154 @@
+[
+  {
+    "id": "wj-057",
+    "title": "夜场几点开",
+    "type": "extract",
+    "difficulty": 1,
+    "minutes": 1,
+    "hook": "票上有三行，只要其中一行",
+    "prompt": "这张夜场票的开场时刻是几点？只写时刻。",
+    "answerMode": "objective",
+    "answer": "19:30",
+    "accept": ["19：30", "19点30"],
+    "explanation": "票面三行里，开场对应 19:30。座位和票价是旁边的信息。",
+    "spec": {
+      "kind": "ticket",
+      "ask": "开场",
+      "rows": [
+        ["座位", "甲区 12 排 8 座"],
+        ["开场", "19:30"],
+        ["票价", "40 元"]
+      ]
+    }
+  },
+  {
+    "id": "wj-058",
+    "title": "改过的价格",
+    "type": "extract",
+    "difficulty": 1,
+    "minutes": 1,
+    "hook": "划掉的那一行已经不作数",
+    "prompt": "便签上的价格改过。现价是多少？连单位一起写。",
+    "answerMode": "objective",
+    "answer": "15 元",
+    "accept": ["15元", "15"],
+    "explanation": "18 元被标成作废，下面写着现价 15 元。要的是改完以后的价格。",
+    "spec": { "kind": "revision", "void": "18 元", "current": "15 元" }
+  },
+  {
+    "id": "wj-059",
+    "title": "谁迟到了",
+    "type": "extract",
+    "difficulty": 1,
+    "minutes": 1,
+    "hook": "准时和请假都不是这一栏",
+    "prompt": "签到表里，谁的状态是迟到？只写姓名。",
+    "answerMode": "objective",
+    "answer": "周宁",
+    "explanation": "三行里只有周宁写着迟到。林夏是准时，陈舟是请假。",
+    "spec": {
+      "kind": "table",
+      "columns": ["姓名", "状态"],
+      "rows": [["林夏", "准时"], ["周宁", "迟到"], ["陈舟", "请假"]],
+      "where": ["状态", "迟到"],
+      "take": "姓名"
+    }
+  },
+  {
+    "id": "wj-060",
+    "title": "哪天要归还",
+    "type": "extract",
+    "difficulty": 1,
+    "minutes": 1,
+    "hook": "借出的那天不是要交回去的那天",
+    "prompt": "便条里哪一天要归还？不要写借出日。",
+    "answerMode": "objective",
+    "answer": "4 月 9 日",
+    "accept": ["4月9日", "四月九日"],
+    "explanation": "4 月 2 日是借出。句子里写着请在 4 月 9 日归还，这一天才是要交回去的日子。",
+    "spec": {
+      "kind": "note",
+      "text": "借出：4 月 2 日。请在 4 月 9 日归还。逾期会发信。",
+      "value": "4 月 9 日",
+      "also": ["4 月 2 日"]
+    }
+  },
+  {
+    "id": "wj-061",
+    "title": "龙井路几号",
+    "type": "extract",
+    "difficulty": 2,
+    "minutes": 1,
+    "hook": "单元和房号都会来捣乱",
+    "prompt": "这个地址里，龙井路的门牌是几号？连「号」一起写，不要写单元或房号。",
+    "answerMode": "objective",
+    "answer": "18 号",
+    "accept": ["18号"],
+    "explanation": "路名后面的 18 号才是门牌。2 单元和 301 是进门以后的位置。",
+    "spec": {
+      "kind": "address",
+      "text": "送到杭州市西湖区龙井路 18 号 2 单元 301。",
+      "value": "18 号",
+      "also": ["2 单元", "301"]
+    }
+  },
+  {
+    "id": "wj-062",
+    "title": "最便宜的素菜",
+    "type": "extract",
+    "difficulty": 1,
+    "minutes": 1,
+    "hook": "素菜不止一道，价钱还得再比一次",
+    "prompt": "菜单里最便宜的素菜叫什么？只写菜名。",
+    "answerMode": "objective",
+    "answer": "青菜",
+    "explanation": "标了素的是青菜 12 和豆腐 15。12 更小，所以是青菜。红烧肉和鱼更便宜与否都不用管，因为它们是荤的。",
+    "spec": {
+      "kind": "menu",
+      "tag": "素",
+      "pick": "cheapest",
+      "items": [
+        { "name": "红烧肉", "price": 42, "tag": "荤" },
+        { "name": "青菜", "price": 12, "tag": "素" },
+        { "name": "豆腐", "price": 15, "tag": "素" },
+        { "name": "鱼", "price": 36, "tag": "荤" }
+      ]
+    }
+  },
+  {
+    "id": "wj-063",
+    "title": "最后定在哪",
+    "type": "extract",
+    "difficulty": 2,
+    "minutes": 1,
+    "hook": "中间有人改过口，结尾又改了回来",
+    "prompt": "他们最后说定的见面地点是哪里？只写地点。",
+    "answerMode": "objective",
+    "answer": "桥头",
+    "explanation": "车站被否掉了。桥头被甲答应过一次。图书馆只是乙提了一下，甲最后说还是桥头。最后一次答应的地点是桥头。",
+    "spec": {
+      "kind": "chat",
+      "lines": [
+        { "who": "甲", "text": "去车站吧。", "act": "propose", "place": "车站" },
+        { "who": "乙", "text": "车站太挤，改到桥头。", "act": "propose", "place": "桥头" },
+        { "who": "甲", "text": "好，就桥头。", "act": "accept", "place": "桥头" },
+        { "who": "乙", "text": "或者图书馆？", "act": "propose", "place": "图书馆" },
+        { "who": "甲", "text": "不了，还是桥头。", "act": "accept", "place": "桥头" }
+      ]
+    }
+  },
+  {
+    "id": "wj-064",
+    "title": "应付多少",
+    "type": "extract",
+    "difficulty": 1,
+    "minutes": 1,
+    "hook": "折扣是减掉的，不是再加一笔",
+    "prompt": "收据上的应付是多少元？折扣从应付里减掉。只写数字。",
+    "answerMode": "objective",
+    "answer": "75",
+    "accept": ["75元"],
+    "explanation": "小计 80，折扣 5，应付是 80 减 5，等于 75。收据上故意没有把结果印出来。",
+    "spec": { "kind": "receipt", "subtotal": 80, "discount": 5 }
+  }
+]

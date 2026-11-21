@@ -1,0 +1,147 @@
+[
+  {
+    "id": "wj-001",
+    "title": "河面上不算",
+    "type": "visual",
+    "difficulty": 1,
+    "minutes": 1,
+    "hook": "倒影往往被一起数进去",
+    "prompt": "数一数该算的红灯笼。名字是「灯」的才算，「影」不算。只写数字。",
+    "answerMode": "objective",
+    "answer": "4",
+    "accept": ["四", "4盏"],
+    "explanation": "桥上三盏、屋檐一盏，都是灯，一共 4。河面上的两团是影，规则里明确不算。",
+    "spec": {
+      "kind": "marks",
+      "mark": "灯",
+      "style": "lantern",
+      "rows": [
+        { "label": "桥", "marks": ["灯", "灯", "灯"] },
+        { "label": "檐", "marks": ["灯"] },
+        { "label": "河", "marks": ["影", "影"] }
+      ]
+    }
+  },
+  {
+    "id": "wj-002",
+    "title": "谁在最前面",
+    "type": "visual",
+    "difficulty": 2,
+    "minutes": 1,
+    "hook": "站得最低的那个，不一定算数",
+    "prompt": "落脚高度的数字越大，越靠近你。影子不算。谁在最前面？只写名字。",
+    "answerMode": "objective",
+    "answer": "球",
+    "accept": ["皮球"],
+    "explanation": "球的落脚高度是 170，猫是 140，箱子是 155。球的影子更低，有 190，但影子被排除。所以最靠前的是球。",
+    "spec": {
+      "kind": "front",
+      "items": [
+        { "name": "猫", "foot": 140 },
+        { "name": "箱子", "foot": 155 },
+        { "name": "球", "foot": 170 },
+        { "name": "球的影子", "foot": 190, "shadow": true }
+      ]
+    }
+  },
+  {
+    "id": "wj-003",
+    "title": "顺时针一下",
+    "type": "visual",
+    "difficulty": 1,
+    "minutes": 1,
+    "hook": "箭头只转一下，先别转两圈",
+    "prompt": "箭头现在指向上方。把它顺时针转 90 度之后，指向哪一边？只写「上」「下」「左」或「右」。",
+    "answerMode": "objective",
+    "answer": "右",
+    "accept": ["右边", "右侧"],
+    "explanation": "上、右、下、左是顺时针的顺序。从「上」走一格，到「右」。",
+    "spec": { "kind": "turn", "start": "上", "steps": 1, "dir": "cw" }
+  },
+  {
+    "id": "wj-004",
+    "title": "镜子里的箭头",
+    "type": "visual",
+    "difficulty": 1,
+    "minutes": 1,
+    "hook": "左右会换，上下不会",
+    "prompt": "一支箭头指向右边。它右侧立着一面竖直的镜子。镜中的箭头指向哪一边？只写「上」「下」「左」或「右」。",
+    "answerMode": "objective",
+    "answer": "左",
+    "accept": ["左边", "左侧"],
+    "explanation": "竖直的镜子只对调左右。指向右的箭头，在镜子里看起来指向左。",
+    "spec": { "kind": "mirror", "arrow": "右" }
+  },
+  {
+    "id": "wj-005",
+    "title": "两根绳子",
+    "type": "visual",
+    "difficulty": 2,
+    "minutes": 2,
+    "hook": "弯的那根，第一眼总像更费绳子",
+    "prompt": "按坐标计算两根绳子的实际长度，不要凭弯不弯来猜。只写「直绳」「折绳」或「一样长」。",
+    "answerMode": "objective",
+    "answer": "一样长",
+    "accept": ["相等", "相同", "一样"],
+    "explanation": "直绳从 (0,0) 到 (20,0)，长度 20。折绳先走 (0,0)→(6,8)，这是 6-8-10 的斜边，长 10；再走 (6,8)→(12,0)，又是 10。折绳一共也是 20。",
+    "spec": {
+      "kind": "lengths",
+      "choices": ["直绳", "折绳", "一样长"],
+      "lines": [
+        { "name": "直绳", "pts": [[0, 0], [20, 0]] },
+        { "name": "折绳", "pts": [[0, 0], [6, 8], [12, 0]] }
+      ]
+    }
+  },
+  {
+    "id": "wj-006",
+    "title": "衬纸不算",
+    "type": "visual",
+    "difficulty": 2,
+    "minutes": 1,
+    "hook": "最大的那张纸只是垫在下面",
+    "prompt": "观察点落在几张「要算的纸」里面？标了衬纸的那张不算。只写数字。",
+    "answerMode": "objective",
+    "answer": "2",
+    "accept": ["二", "两张"],
+    "explanation": "点 (40,40) 在红纸里，也在蓝纸里。黄纸在右边，盖不到它。整张衬纸虽然盖住了点，但题目说不算。所以是 2。",
+    "spec": {
+      "kind": "covers",
+      "point": [40, 40],
+      "rects": [
+        { "label": "红纸", "x": 0, "y": 0, "w": 60, "h": 60 },
+        { "label": "蓝纸", "x": 30, "y": 30, "w": 50, "h": 50 },
+        { "label": "黄纸", "x": 70, "y": 10, "w": 25, "h": 25 },
+        { "label": "衬纸", "x": 0, "y": 0, "w": 100, "h": 100, "ignore": true }
+      ]
+    }
+  },
+  {
+    "id": "wj-007",
+    "title": "他的右手",
+    "type": "visual",
+    "difficulty": 2,
+    "minutes": 1,
+    "hook": "面对面的时候，左右是反的",
+    "prompt": "一个人正面对着你。他的右手出现在画面的哪一侧？只写「左」或「右」。",
+    "answerMode": "objective",
+    "answer": "左",
+    "accept": ["左边", "左侧", "画面左边"],
+    "explanation": "他面向你时，他的右边对着你的左边。所以他的右手在画面左侧。",
+    "spec": { "kind": "facing", "ask": "their-right" }
+  },
+  {
+    "id": "wj-008",
+    "title": "上方是南",
+    "type": "visual",
+    "difficulty": 2,
+    "minutes": 1,
+    "hook": "这张图没有把北放在上面",
+    "prompt": "这张图的上方是南，不是北。图里有一支箭头指向画面的右边。它指向东、南、西、北的哪一个？只写一个字。",
+    "answerMode": "objective",
+    "answer": "西",
+    "accept": ["西边", "西方"],
+    "explanation": "面向一张图，若上方是北，右方就是东。现在整张图转了 180 度，上方变成南，右方就变成西。",
+    "spec": { "kind": "compass", "up": "南", "ask": "right" }
+  }
+]
