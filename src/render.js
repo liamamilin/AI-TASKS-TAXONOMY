@@ -44,7 +44,7 @@ function withParam(params, key, value) {
   const next = new URLSearchParams(params)
   if (!value || next.get(key) === value) next.delete(key)
   else next.set(key, value)
-  return queryHref("/gallery", next)
+  return queryHref("/warmup", next)
 }
 
 function metaLine(question) {
@@ -87,12 +87,12 @@ export function homeView(params, featuredId) {
   const difficulty = params.get("d") || ""
   return `<section class="hero">
     <div>
-      <p class="kicker">短题陈列 · 先给人，再给模型</p>
-      <h1>问笺馆</h1>
-      <p class="lede">馆里是短题：看一幅图、守一条约束、拆开一句歧义、读十行代码。提示词可以整段抄走，参考答案默认扣在展签背面。这里没有模型成绩——没跑过的，就不写。</p>
+      <p class="kicker">短题热身 · 给人先玩，不是主馆</p>
+      <h1>短题</h1>
+      <p class="lede">这 88 道是上一版留下的短题：看图、约束、歧义和几行代码。它们不是模型要交的作品。作品任务在主馆。</p>
       <div class="actions">
-        <a class="btn btn-primary" href="#/gallery">浏览考题</a>
-        <a class="btn btn-ghost" href="#/method">测试方法</a>
+        <a class="btn btn-primary" href="#/tasks">回到作品任务</a>
+        <a class="btn btn-ghost" href="#/warmup">只看短题</a>
       </div>
       <div class="stats">
         <p><b>${questions.length}</b><span>道短题</span></p>
@@ -114,8 +114,8 @@ export function homeView(params, featuredId) {
   <section class="collection" id="collection">
     <div class="section-head">
       <div>
-        <h2>馆藏考题</h2>
-        <p>每道题都标了类型、难度和大概要几分钟，也写了一句它哪里好玩。</p>
+        <h2>短题热身</h2>
+        <p>给人先热手。参考答案默认收着。这里的点击和核对是人在做题，不是模型交作品。</p>
       </div>
       <p class="count" id="shown">${shown.length} 件展品</p>
     </div>
@@ -129,7 +129,7 @@ export function homeView(params, featuredId) {
         ${[1, 2, 3].map((level) => `<a class="chip ${difficulty === String(level) ? "on" : ""}" href="${withParam(params, "d", String(level))}" aria-pressed="${difficulty === String(level)}">${DIFF_LABEL[level]}</a>`).join("")}
       </div>
       <label class="search">检索
-        <input id="qsearch" type="search" value="${escapeHtml(params.get("s") || "")}" placeholder="标题、编号或一句话" autocomplete="off">
+        <input id="qsearch" data-search-base="/warmup" type="search" value="${escapeHtml(params.get("s") || "")}" placeholder="标题、编号或一句话" autocomplete="off">
       </label>
       <button type="button" class="btn btn-primary" data-random>随便逛逛</button>
     </div>
@@ -176,9 +176,9 @@ export function questionView(id, params) {
   const next = list[index + 1]
   const typeLabel = typeMap[question.type].label
   const prompt = fullPrompt(question, typeLabel)
-  const linkBack = queryHref("/gallery", params)
+  const linkBack = queryHref("/warmup", params)
   return `<article class="detail">
-    <p class="crumb"><a href="${linkBack}">馆藏</a> / 展品 No. ${exhibitNumber(question.id)}</p>
+    <p class="crumb"><a href="${linkBack}">短题</a> / 展品 No. ${exhibitNumber(question.id)}</p>
     <p class="kicker">${escapeHtml(typeLabel)} · ${DIFF_LABEL[question.difficulty]} · 约 ${question.minutes} 分钟 · ${question.answerMode === "open" ? "开放题" : "客观题"}</p>
     <h1>${escapeHtml(question.title)}</h1>
     <p class="hook">${escapeHtml(question.hook)}</p>
@@ -228,24 +228,26 @@ export function modelsView() {
   return `<section class="prose">
     <p class="kicker">模型</p>
     <h1>尚未实测</h1>
-    <p class="lede">问笺馆没有调用任何模型，也不会向你要密钥。下面没有分数、没有回答、没有「被哪道题难倒」的记录。那些东西要等原始输出留下来以后才配出现。</p>
+    <p class="lede">一次运行要有供应商返回的模型标识、当时的提示、原始响应，以及成功或失败。没有这些，就不出现在这里。当前构建环境没有配置可用的免费模型接口，所以下面是 0 次。</p>
     <div class="stats">
-      <p><b>0</b><span>条已核记录</span></p>
-      <p><b>${questions.length}</b><span>道待测短题</span></p>
+      <p><b>${resultBook.runs?.length || 0}</b><span>次已记录运行</span></p>
+      <p><b>${questions.length}</b><span>道仍可热身的短题</span></p>
     </div>
-    <div class="callout">记录数组是空的。空，就是目前的全部事实。</div>
+    <div class="callout">运行列表是空的。空表示还没跑，不是所有模型都失败，也不是都成功。</div>
     <h2>一条记录长什么样</h2>
     <p>以后若有人实测，一条记录至少要有题号、模型、日期、逐字提示、原始输出和判定。缺原始输出的，不展示。</p>
     <pre class="prompt">{
-  "questionId": "",
+  "taskId": "",
+  "provider": "",
   "model": "",
-  "date": "",
-  "surface": "",
-  "promptUnchanged": true,
-  "prompt": "",
+  "modelVersion": "",
+  "startedAt": "",
+  "parameters": "",
+  "promptSha256": "",
   "rawOutput": "",
-  "verdict": "",
-  "notes": ""
+  "status": "failure",
+  "checks": [],
+  "repairs": []
 }</pre>
     <div class="actions">
       <button type="button" class="btn btn-primary" data-copy="record">复制测试记录</button>
@@ -261,9 +263,11 @@ export function methodView() {
   return `<section class="prose">
     <p class="kicker">测试方法</p>
     <h1>固定提示，才好复现</h1>
-    <p class="lede">问笺馆用来陈列短题，不用来给模型封榜。一道题上的成败，只说明这一次、这一道。</p>
+    <p class="lede">主馆是作品任务：模型交一个能打开的文件。短题是给人热身的，点选和核对都不算模型已经交卷。</p>
+    <h2>任务和短题</h2>
+    <p>作品任务的「复制题面」只含交给模型的那段话。验收点留在页面上，给人打开产物之后逐条看。短题仍有默认收起的参考答案，那些答案不是模型输出。</p>
     <h2>提示词不要改</h2>
-    <p>每道题的「复制提示」是固定文本，里面已经带上作答需要的文字材料。拿去给模型时，整段粘贴，不要润色，不要追加「请一步步思考」，也不要把参考答案夹进去。改了提示，就不再是同一道题。</p>
+    <p>引用来的题面按原页文字复制。问笺馆原创任务也整段复制。不要把验收清单或别人的答案贴回提示里。</p>
     <h2>复现时记下什么</h2>
     <p>至少留下模型名称、日期、使用的界面，以及你能看到的参数。看不到温度就写「默认」。客观题写符合或不符合；开放题按展签上的要点逐条看，不打总分。原始输出保持原样，跑失败也留着。</p>
     <h2>客观题和开放题</h2>
@@ -272,11 +276,12 @@ export function methodView() {
     <p>做对一道，不能说明一个模型整体更强；做错一道，也不能给它排座次。题库故意短、故意杂，是为了让一次失败或一次成功都容易看懂。它不是全面评测，也不代替任何其他基准。</p>
     <h2>这里拒绝做什么</h2>
     <ul>
-      <li>没有原始输出，就不写模型成绩、回答或「被难倒」的故事。</li>
-      <li>不调用外部模型，不索要密钥，页面本身不需要服务器。</li>
-      <li>不把出题人的参照例句说成模型写的。</li>
+      <li>没有原始响应和模型标识，就不写成功或失败。</li>
+      <li>不把参考站上别人的模型答案算成问笺馆的运行。</li>
+      <li>不把开发时画的示意图标成模型作品。</li>
+      <li>密钥不进仓库，也不进这个静态页面。</li>
     </ul>
-    <p><a href="#/models">去看空着的模型页</a>，或回到 <a href="#/gallery">馆藏</a>。</p>
+    <p><a href="#/models">看运行记录</a>，<a href="#/tasks">看作品任务</a>，或去 <a href="#/warmup">短题热身</a>。</p>
   </section>`
 }
 
@@ -288,7 +293,8 @@ export function shell() {
       <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 7h16M4 12h16M4 17h16" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/></svg>
     </button>
     <nav id="site-nav" aria-label="馆内">
-      <a href="#/gallery" data-nav="gallery">考题</a>
+      <a href="#/tasks" data-nav="tasks">任务</a>
+      <a href="#/warmup" data-nav="warmup">短题</a>
       <details class="menu">
         <summary>模型</summary>
         <div class="menu-pop">
@@ -309,8 +315,8 @@ export function shell() {
   </header>
   <main id="content" tabindex="-1"></main>
   <footer class="foot">
-    <p>问笺馆是独立的短题陈列。题目、插画和文案都是为本馆写的。</p>
-    <p>个例不能当排行榜。没有原始输出的模型，不会出现在馆里。</p>
+    <p>问笺馆的主馆是作品任务。引用的题面链回公开页面；原创任务会标明不是原题。</p>
+    <p>一次运行只代表那一次。没有原始响应，就不写模型成绩。</p>
     <p class="quiet">斜杠键聚焦检索。在题目页按 Esc，先收起答案，再回到刚才的馆藏。</p>
   </footer>
   <div id="toast" role="status" aria-live="polite"></div>`

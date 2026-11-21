@@ -1,4 +1,5 @@
 import { questions, typeList, resultBook } from "../src/bank.js"
+import { taskList } from "../src/task-render.js"
 import { checkGuess, exhibitText, expectedAnswer, fullPrompt, isComputedKind } from "../src/logic.js"
 
 const errors = []
@@ -25,6 +26,32 @@ for (const word of banned) {
 }
 
 if (!Array.isArray(resultBook.records)) fail("results.records 不是数组")
+if (!Array.isArray(resultBook.runs)) fail("results.runs 不是数组")
+for (const run of resultBook.runs) {
+  for (const key of ["taskId", "provider", "model", "rawOutput", "status", "promptSha256"]) {
+    if (!run[key]) fail(`运行记录缺少 ${key}`)
+  }
+  if (run.taskId && !taskList.some((task) => task.id === run.taskId)) fail(`运行指向不存在的任务 ${run.taskId}`)
+  if (run.status && !["success", "failure"].includes(run.status)) fail(`运行状态不合法 ${run.status}`)
+}
+const requiredSlugs = ["pelican-bicycle","bouncing-ball-hexagon","voxel-pagoda","minecraft-web","rubiks-cube","kart-racer","meteor-city","supernova","flappy-bird","tetris","solar-system","web-os-desktop","drowned-gothic-city","brick-builder","flight-sim","hand-gesture-particles","tesseract-ball","starship-control-panel","ai-world-clock","mars-round-trip"]
+const quoted = taskList.filter((task) => task.coverage === "quoted")
+if (quoted.length !== requiredSlugs.length) fail(`引用任务应有 ${requiredSlugs.length} 道，实际 ${quoted.length}`)
+for (const slug of requiredSlugs) {
+  const task = taskList.find((item) => item.slug === slug)
+  if (!task) fail(`缺少参考站任务 ${slug}`)
+  else {
+    if (!task.prompt || task.prompt.length < 20) fail(`${slug} 题面太短`)
+    if (!task.source?.page?.endsWith(`/tests/${slug}`)) fail(`${slug} 来源链接不对`)
+    if (!task.checks || task.checks.length < 3) fail(`${slug} 验收点少于 3`)
+    if (!task.artifact || !task.run) fail(`${slug} 缺少产物或打开方式`)
+  }
+}
+const ticket = taskList.find((task) => task.id === "orig-ticket-json")
+if (!ticket || ticket.expect?.priceYuan !== 40 || ticket.prompt.includes("priceYuan\":40") || ticket.prompt.includes("甲区 12 排 8 座") === false) {
+  fail("票根任务的提示和验收样例不一致，或把样例写进了提示")
+}
+if (taskList.filter((task) => task.coverage === "original").length < 4) fail("原创作品任务太少")
 if (resultBook.records.length !== 0) {
   for (const record of resultBook.records) {
     for (const key of ["questionId", "model", "date", "rawOutput"]) {

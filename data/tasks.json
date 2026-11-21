@@ -1,0 +1,762 @@
+[
+  {
+    "id": "ref-pelican-bicycle",
+    "slug": "pelican-bicycle",
+    "title": "会蹬车的鹈鹕",
+    "kind": "animation",
+    "difficulty": 3,
+    "minutes": 20,
+    "summary": "模型要交出一个自己会动的动画文件：鹈鹕骑着自行车，而且真的在蹬。",
+    "prompt": "Create a self-contained HTML file with a 2D SVG animation of a pelican riding a bicycle",
+    "artifact": "单个 HTML 文件，里面是二维 SVG 动画。",
+    "constraints": [
+      "单文件，浏览器直接打开",
+      "动画循环播放"
+    ],
+    "run": "把模型首次返回的全文存成 .html，用浏览器打开。不要先替它改到能看为止；改过的版本必须另外保存，并标明是后来修的。",
+    "checks": [
+      "画面里同时认得出鹈鹕和自行车",
+      "轮子在转动",
+      "脚踏在转，腿的动作跟着脚踏"
+    ],
+    "coverage": "quoted",
+    "rewritten": false,
+    "source": {
+      "page": "https://aitestmuseum.com/zh/tests/pelican-bicycle",
+      "origin": "Simon Willison（Pelican Benchmark 的动画版本），2024",
+      "licenseNote": "题面引自该公开页的复制提示。任务页没有给出再分发许可。问笺馆不转载该站的模型答案、图片或页面。"
+    }
+  },
+  {
+    "id": "ref-bouncing-ball-hexagon",
+    "slug": "bouncing-ball-hexagon",
+    "title": "旋转六边形里的弹跳球",
+    "kind": "animation",
+    "difficulty": 3,
+    "minutes": 25,
+    "summary": "模型要做出一个会跑的物理画面：球在旋转的六边形里弹，受重力和摩擦影响。",
+    "prompt": "Write an HTML page (single file, canvas + JS) that shows a ball bouncing inside a spinning hexagon. The ball should be affected by gravity and friction, and it must bounce off the rotating walls realistically.",
+    "artifact": "单个 HTML 文件，用 canvas 和 JavaScript。",
+    "constraints": [
+      "单文件",
+      "墙在旋转",
+      "球受重力与摩擦"
+    ],
+    "run": "把模型首次返回的全文存成 .html，用浏览器打开。不要先替它改到能看为止；改过的版本必须另外保存，并标明是后来修的。",
+    "checks": [
+      "六边形在转",
+      "球受重力下落并反复碰撞",
+      "球不会穿过边",
+      "碰撞后的方向看得出墙也在动，而不是只按静止墙反弹"
+    ],
+    "coverage": "quoted",
+    "rewritten": true,
+    "source": {
+      "page": "https://aitestmuseum.com/zh/tests/bouncing-ball-hexagon",
+      "origin": "Flavio Adamo（最初是 Python 版），2025",
+      "licenseNote": "题面引自该公开页的复制提示。该页写明题面相对更早版本有改写，这里引用的就是该页当前题面，不是未改写的最初原文。任务页没有给出再分发许可。问笺馆不转载该站的模型答案、图片或页面。"
+    }
+  },
+  {
+    "id": "ref-voxel-pagoda",
+    "slug": "voxel-pagoda",
+    "title": "体素宝塔花园",
+    "kind": "scene3d",
+    "difficulty": 2,
+    "minutes": 25,
+    "summary": "模型要在一个 HTML 里搭出彩色体素场景：花园、树、樱花和一座宝塔。",
+    "prompt": "Design and create a very creative, elaborate, and detailed voxel art scene of a pagoda in a beautiful garden with trees, including some cherry blossoms. Make the scene impressive and varied and use colorful voxels. Use whatever libraries to get this done but make sure I can paste it all into a single HTML file and open it in Chrome.",
+    "artifact": "单个 HTML 文件，用 Chrome 打开能看到三维场景。",
+    "constraints": [
+      "可以粘贴进一个 HTML",
+      "彩色体素，而不是一张贴图"
+    ],
+    "run": "把模型首次返回的全文存成 .html，用浏览器打开。不要先替它改到能看为止；改过的版本必须另外保存，并标明是后来修的。",
+    "checks": [
+      "看得到宝塔",
+      "看得到树，其中有樱花",
+      "场景由许多彩色方块样的体素组成",
+      "画面不是空白或报错"
+    ],
+    "coverage": "quoted",
+    "rewritten": false,
+    "source": {
+      "page": "https://aitestmuseum.com/zh/tests/voxel-pagoda",
+      "origin": "Google AI，2025",
+      "licenseNote": "题面引自该公开页的复制提示。任务页没有给出再分发许可。问笺馆不转载该站的模型答案、图片或页面。"
+    }
+  },
+  {
+    "id": "ref-minecraft-web",
+    "slug": "minecraft-web",
+    "title": "three.js 方块世界",
+    "kind": "scene3d",
+    "difficulty": 3,
+    "minutes": 40,
+    "summary": "模型要一次交出一个能走进去的方块世界，自己做贴图，没有声音，并带上沙、水一类环境。",
+    "prompt": "create a three.js basic working version of minecraft, make your own textures, no sound. add some environment to make it more interesting, like sand, water etc.",
+    "artifact": "使用 three.js 的单个可运行页面。贴图由代码或内嵌数据生成，不要求外链音频。",
+    "constraints": [
+      "无声音",
+      "自制贴图",
+      "包含沙、水等环境"
+    ],
+    "run": "把模型首次返回的全文存成 .html，用浏览器打开。不要先替它改到能看为止；改过的版本必须另外保存，并标明是后来修的。",
+    "checks": [
+      "页面能进入第一人称或等价的可移动视角",
+      "能看见不同方块或地形",
+      "能看见沙和水一类环境",
+      "没有必须播放的声音文件"
+    ],
+    "coverage": "quoted",
+    "rewritten": false,
+    "source": {
+      "page": "https://aitestmuseum.com/zh/tests/minecraft-web",
+      "origin": "Greg Brockman，2025",
+      "licenseNote": "题面引自该公开页的复制提示。任务页没有给出再分发许可。问笺馆不转载该站的模型答案、图片或页面。"
+    }
+  },
+  {
+    "id": "ref-rubiks-cube",
+    "slug": "rubiks-cube",
+    "title": "会自己还原的魔方",
+    "kind": "scene3d",
+    "difficulty": 3,
+    "minutes": 40,
+    "summary": "模型要做出一个能转、能打乱、能按记录逐步还原的三维魔方。",
+    "prompt": "Create a single HTML file that uses Three.js to visualize a Rubik's Cube with realistic lighting and interactive controls. The cube should be built from 27 cubies with standard Rubik's Cube coloring. Include buttons for standard moves (U, U′, D, D′, L, L′, R, R′, F, F′, B, B′) that animate a 90° rotation on the appropriate face. Also, implement a scramble function that performs a series of random moves (recording each move), and an automatic unscrambler that, every 500 ms, applies the inverse of the recorded moves until the cube is solved. The solved state should be determined by comparing each cubie's current world position and rotation with its originally stored \"solved\" state (using a small tolerance). Use the following script sources:\n<script src=\"https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js\"></script>\n<script src=\"https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/controls/OrbitControls.js\"></script>\nProvide the complete, self-contained HTML file with all necessary code.",
+    "artifact": "单个 HTML 文件。题面指定了 two three.js 脚本地址。",
+    "constraints": [
+      "27 个小方块",
+      "标准配色",
+      "列出的转动按钮",
+      "打乱要记录步骤",
+      "每 500 毫秒撤回一步直到还原"
+    ],
+    "run": "把模型首次返回的全文存成 .html，用浏览器打开。不要先替它改到能看为止；改过的版本必须另外保存，并标明是后来修的。",
+    "checks": [
+      "能拖动视角",
+      "每个转动按钮让对应的面转 90 度",
+      "打乱后魔方变乱，并且记下手顺",
+      "自动还原按记录的逆序进行，而不是重新随机",
+      "还原后各面颜色复原"
+    ],
+    "coverage": "quoted",
+    "rewritten": false,
+    "source": {
+      "page": "https://aitestmuseum.com/zh/tests/rubiks-cube",
+      "origin": "@nobody_qwert（AK 重跑），2025",
+      "licenseNote": "题面引自该公开页的复制提示。任务页没有给出再分发许可。问笺馆不转载该站的模型答案、图片或页面。"
+    }
+  },
+  {
+    "id": "ref-kart-racer",
+    "slug": "kart-racer",
+    "title": "一句话卡丁车",
+    "kind": "game",
+    "difficulty": 3,
+    "minutes": 40,
+    "summary": "模型要根据这一句话交出一个能开的卡丁车比赛页面。问笺馆不提供该名称下的原作素材。",
+    "prompt": "Create a Mario Kart–style kart racing game in a single HTML file using Three.js.",
+    "artifact": "使用 Three.js 的单个 HTML 文件。",
+    "constraints": [
+      "单文件",
+      "能驾驶",
+      "有赛道"
+    ],
+    "run": "把模型首次返回的全文存成 .html，用浏览器打开。不要先替它改到能看为止；改过的版本必须另外保存，并标明是后来修的。",
+    "checks": [
+      "能开始一局并开车",
+      "有可见赛道",
+      "车不会一开始就掉出世界",
+      "有重新开始或完成一圈的反馈"
+    ],
+    "coverage": "quoted",
+    "rewritten": true,
+    "source": {
+      "page": "https://aitestmuseum.com/zh/tests/kart-racer",
+      "origin": "BridgeMind，2026",
+      "licenseNote": "题面引自该公开页的复制提示。该页写明题面相对更早版本有改写，这里引用的就是该页当前题面，不是未改写的最初原文。任务页没有给出再分发许可。问笺馆不转载该站的模型答案、图片或页面。"
+    }
+  },
+  {
+    "id": "ref-meteor-city",
+    "slug": "meteor-city",
+    "title": "陨石撞上城市",
+    "kind": "scene3d",
+    "difficulty": 2,
+    "minutes": 20,
+    "summary": "模型要做出一段城市被陨石击中的三维动画。",
+    "prompt": "Create a Three.js animation of a meteor hitting a city, in a single HTML file.",
+    "artifact": "使用 Three.js 的单个 HTML 文件。",
+    "constraints": [
+      "单文件",
+      "是动画而不是静止海报"
+    ],
+    "run": "把模型首次返回的全文存成 .html，用浏览器打开。不要先替它改到能看为止；改过的版本必须另外保存，并标明是后来修的。",
+    "checks": [
+      "看得到城市",
+      "看得到陨石接近",
+      "发生一次看得见的撞击",
+      "撞击后城市或天空有变化"
+    ],
+    "coverage": "quoted",
+    "rewritten": true,
+    "source": {
+      "page": "https://aitestmuseum.com/zh/tests/meteor-city",
+      "origin": "AI/ML API model comparison，2026",
+      "licenseNote": "题面引自该公开页的复制提示。该页写明题面相对更早版本有改写，这里引用的就是该页当前题面，不是未改写的最初原文。任务页没有给出再分发许可。问笺馆不转载该站的模型答案、图片或页面。"
+    }
+  },
+  {
+    "id": "ref-supernova",
+    "slug": "supernova",
+    "title": "超新星",
+    "kind": "animation",
+    "difficulty": 2,
+    "minutes": 15,
+    "summary": "模型要在一个文件里演出恒星膨胀、坍缩和爆炸。",
+    "prompt": "Create a supernova explosion animation in a single HTML file.",
+    "artifact": "单个 HTML 文件。",
+    "constraints": [
+      "单文件",
+      "动画有先后阶段"
+    ],
+    "run": "把模型首次返回的全文存成 .html，用浏览器打开。不要先替它改到能看为止；改过的版本必须另外保存，并标明是后来修的。",
+    "checks": [
+      "开始时看得到恒星",
+      "随后有膨胀或坍缩",
+      "然后有爆炸",
+      "最后留下和爆炸前不同的残骸或光"
+    ],
+    "coverage": "quoted",
+    "rewritten": true,
+    "source": {
+      "page": "https://aitestmuseum.com/zh/tests/supernova",
+      "origin": "AI/ML API model comparison，2026",
+      "licenseNote": "题面引自该公开页的复制提示。该页写明题面相对更早版本有改写，这里引用的就是该页当前题面，不是未改写的最初原文。任务页没有给出再分发许可。问笺馆不转载该站的模型答案、图片或页面。"
+    }
+  },
+  {
+    "id": "ref-flappy-bird",
+    "slug": "flappy-bird",
+    "title": "单文件飞行小鸟",
+    "kind": "game",
+    "difficulty": 2,
+    "minutes": 25,
+    "summary": "模型要交出一个能玩的飞行躲避游戏。问笺馆不提供该游戏的原画或音效。",
+    "prompt": "Create a complete, playable Flappy Bird game in a single HTML file.",
+    "artifact": "单个 HTML 文件。",
+    "constraints": [
+      "单文件",
+      "能用点击或按键控制",
+      "会碰撞并结束"
+    ],
+    "run": "把模型首次返回的全文存成 .html，用浏览器打开。不要先替它改到能看为止；改过的版本必须另外保存，并标明是后来修的。",
+    "checks": [
+      "角色受输入上升",
+      "不操作时会下落",
+      "障碍会靠近",
+      "撞上后当局结束，并能再开一局"
+    ],
+    "coverage": "quoted",
+    "rewritten": true,
+    "source": {
+      "page": "https://aitestmuseum.com/zh/tests/flappy-bird",
+      "origin": "社区常见一句话题（soikat.dev 做过同提示对比）。该页注明题面有改写。",
+      "licenseNote": "题面引自该公开页的复制提示。该页写明题面相对更早版本有改写，这里引用的就是该页当前题面，不是未改写的最初原文。任务页没有给出再分发许可。问笺馆不转载该站的模型答案、图片或页面。"
+    }
+  },
+  {
+    "id": "ref-tetris",
+    "slug": "tetris",
+    "title": "单文件落块游戏",
+    "kind": "game",
+    "difficulty": 2,
+    "minutes": 30,
+    "summary": "模型要交出一个能旋转、能消行的落块游戏。问笺馆不提供该名称的原作素材。",
+    "prompt": "Create a complete, playable Tetris game in a single HTML file.",
+    "artifact": "单个 HTML 文件。",
+    "constraints": [
+      "单文件",
+      "方块自动下落",
+      "可以旋转"
+    ],
+    "run": "把模型首次返回的全文存成 .html，用浏览器打开。不要先替它改到能看为止；改过的版本必须另外保存，并标明是后来修的。",
+    "checks": [
+      "方块会按格下落",
+      "旋转不会无故穿出边界",
+      "填满的一行会消失",
+      "有结束或重开"
+    ],
+    "coverage": "quoted",
+    "rewritten": true,
+    "source": {
+      "page": "https://aitestmuseum.com/zh/tests/tetris",
+      "origin": "社区常见一句话题。该页注明题面有改写。",
+      "licenseNote": "题面引自该公开页的复制提示。该页写明题面相对更早版本有改写，这里引用的就是该页当前题面，不是未改写的最初原文。任务页没有给出再分发许可。问笺馆不转载该站的模型答案、图片或页面。"
+    }
+  },
+  {
+    "id": "ref-solar-system",
+    "slug": "solar-system",
+    "title": "按公转比例运转的太阳系",
+    "kind": "scene3d",
+    "difficulty": 2,
+    "minutes": 20,
+    "summary": "模型要做出行星绕太阳转的动画，快慢依照真实公转周期的比例。",
+    "prompt": "Create an animated solar system simulation in a single HTML file, with planets orbiting the sun at relative speeds based on their real orbital periods.",
+    "artifact": "单个 HTML 文件。",
+    "constraints": [
+      "单文件",
+      "多颗行星",
+      "转速有真实公转的相对关系"
+    ],
+    "run": "把模型首次返回的全文存成 .html，用浏览器打开。不要先替它改到能看为止；改过的版本必须另外保存，并标明是后来修的。",
+    "checks": [
+      "看得到太阳和多颗行星",
+      "行星在轨道上移动",
+      "内侧行星明显快于外侧",
+      "页面没有脚本报错"
+    ],
+    "coverage": "quoted",
+    "rewritten": true,
+    "source": {
+      "page": "https://aitestmuseum.com/zh/tests/solar-system",
+      "origin": "社区常见题。该页注明题面有改写。",
+      "licenseNote": "题面引自该公开页的复制提示。该页写明题面相对更早版本有改写，这里引用的就是该页当前题面，不是未改写的最初原文。任务页没有给出再分发许可。问笺馆不转载该站的模型答案、图片或页面。"
+    }
+  },
+  {
+    "id": "ref-web-os-desktop",
+    "slug": "web-os-desktop",
+    "title": "一个文件里的桌面",
+    "kind": "app",
+    "difficulty": 3,
+    "minutes": 45,
+    "summary": "模型要在一个 HTML 里做出能打开的桌面，至少包含文本编辑、文件和画图这几类能操作的窗口。",
+    "prompt": "Design and create a web os like mac os full functional features from text editor to file manager to paint to video editor and all important mac os pre bundled software. Use whatever libraries to get this done but make sure I can paste it all into a single HTML file and open it in Chrome. Make it interesting and highly detailed, shows details that no one expected, go full creative and full beauty in one code block",
+    "artifact": "单个 HTML 文件，用 Chrome 打开。",
+    "constraints": [
+      "可以整段粘贴进一个文件",
+      "窗口能打开和关闭"
+    ],
+    "run": "把模型首次返回的全文存成 .html，用浏览器打开。不要先替它改到能看为止；改过的版本必须另外保存，并标明是后来修的。",
+    "checks": [
+      "有桌面和可点击的图标或菜单",
+      "文本编辑里打出的字还在",
+      "文件列表或画布至少有一个能实际操作",
+      "不是只有一张桌面截图式的静态图"
+    ],
+    "coverage": "quoted",
+    "rewritten": false,
+    "source": {
+      "page": "https://aitestmuseum.com/zh/tests/web-os-desktop",
+      "origin": "@chetaslua（提示由 fofr 引用），2025",
+      "licenseNote": "题面引自该公开页的复制提示。任务页没有给出再分发许可。问笺馆不转载该站的模型答案、图片或页面。"
+    }
+  },
+  {
+    "id": "ref-drowned-gothic-city",
+    "slug": "drowned-gothic-city",
+    "title": "被海淹没的哥特城",
+    "kind": "shader",
+    "difficulty": 3,
+    "minutes": 30,
+    "summary": "模型要交出全屏着色器：无尽的新哥特塔楼，半淹在有大浪的海里。",
+    "prompt": "create a visually interesting shader that can run in twigl-dot-app make it like an infinite city of neo-gothic towers partially drowned in a stormy ocean with large waves. Output a single self-contained HTML file that runs the shader full-screen with WebGL.",
+    "artifact": "单个自包含 HTML，用 WebGL 全屏跑着色器。",
+    "constraints": [
+      "不依赖外部贴图",
+      "全屏",
+      "海浪在动"
+    ],
+    "run": "把模型首次返回的全文存成 .html，用浏览器打开。不要先替它改到能看为止；改过的版本必须另外保存，并标明是后来修的。",
+    "checks": [
+      "满屏是程序生成的画面",
+      "看得到高塔和水面",
+      "浪或视角在变化",
+      "拖动或默认动画至少一种在动"
+    ],
+    "coverage": "quoted",
+    "rewritten": true,
+    "source": {
+      "page": "https://aitestmuseum.com/zh/tests/drowned-gothic-city",
+      "origin": "Ethan Mollick，2025。该页注明题面有改写。",
+      "licenseNote": "题面引自该公开页的复制提示。该页写明题面相对更早版本有改写，这里引用的就是该页当前题面，不是未改写的最初原文。任务页没有给出再分发许可。问笺馆不转载该站的模型答案、图片或页面。"
+    }
+  },
+  {
+    "id": "ref-brick-builder",
+    "slug": "brick-builder",
+    "title": "可搭的积木编辑器",
+    "kind": "app",
+    "difficulty": 3,
+    "minutes": 35,
+    "summary": "模型要做出能放、能拆、能转、能换色的三维积木编辑器。问笺馆不提供该品牌的零件数据。",
+    "prompt": "Create a 3D LEGO-style brick editor in a single HTML file using Three.js. Let me place, remove, rotate and recolor bricks of different sizes on a baseplate with snapping, an orbit camera, and a clean UI.",
+    "artifact": "使用 Three.js 的单个 HTML 文件。",
+    "constraints": [
+      "有底板",
+      "吸附到网格",
+      "可环绕观察",
+      "有界面能选尺寸和颜色"
+    ],
+    "run": "把模型首次返回的全文存成 .html，用浏览器打开。不要先替它改到能看为止；改过的版本必须另外保存，并标明是后来修的。",
+    "checks": [
+      "能在底板上放下一块",
+      "能删掉刚放的块",
+      "能旋转或换色",
+      "镜头可以绕着底板转"
+    ],
+    "coverage": "quoted",
+    "rewritten": true,
+    "source": {
+      "page": "https://aitestmuseum.com/zh/tests/brick-builder",
+      "origin": "Pietro Schirano（@skirano），2025。该页注明题面有改写。",
+      "licenseNote": "题面引自该公开页的复制提示。该页写明题面相对更早版本有改写，这里引用的就是该页当前题面，不是未改写的最初原文。任务页没有给出再分发许可。问笺馆不转载该站的模型答案、图片或页面。"
+    }
+  },
+  {
+    "id": "ref-flight-sim",
+    "slug": "flight-sim",
+    "title": "楼群间的飞行",
+    "kind": "game",
+    "difficulty": 3,
+    "minutes": 30,
+    "summary": "模型要按这一句话做出浏览器里的三维飞行：周围是摩天楼。",
+    "prompt": "make a 3d flying game in browser with skyscrapers",
+    "artifact": "浏览器中的三维页面。原题只有这一句，没有指定引擎。",
+    "constraints": [
+      "浏览器里运行",
+      "有摩天楼",
+      "能飞"
+    ],
+    "run": "把模型首次返回的全文存成 .html，用浏览器打开。不要先替它改到能看为止；改过的版本必须另外保存，并标明是后来修的。",
+    "checks": [
+      "看得到高楼",
+      "输入能改变飞行方向或高度",
+      "飞一会后楼还在周围，而不是立刻穿出空场景"
+    ],
+    "coverage": "quoted",
+    "rewritten": false,
+    "source": {
+      "page": "https://aitestmuseum.com/zh/tests/flight-sim",
+      "origin": "@levelsio，2025。该页说明只取第一句，不包含他后来多轮追加的内容。",
+      "licenseNote": "题面引自该公开页的复制提示。任务页没有给出再分发许可。问笺馆不转载该站的模型答案、图片或页面。"
+    }
+  },
+  {
+    "id": "ref-hand-gesture-particles",
+    "slug": "hand-gesture-particles",
+    "title": "用手张开的粒子",
+    "kind": "animation",
+    "difficulty": 3,
+    "minutes": 30,
+    "summary": "模型要做出能在几种形状之间变化的三维粒子，并用摄像头里的双手控制张开程度。",
+    "prompt": "Create a real-time interactive 3D particle system with Three.js.\nrequirements:\n1. Control the scaling and expansion of the particle group by detecting the tension and closing of both hands through the camera.\n2. Provide panels that can choose hearts/flowers/saturn/Buddha statues/fireworks and other templates\n3. Support the colour selector to adjust the particle colour\n4. Particles need to respond to gesture changes in real time. The interface is simple and modern.\n5. The interface is simple and modern",
+    "artifact": "使用 Three.js 的单个页面。需要浏览器允许摄像头。",
+    "constraints": [
+      "至少能选爱心、花、土星等形状",
+      "有颜色选择",
+      "双手张开或合拢会改变粒子大小"
+    ],
+    "run": "保存为 HTML 后用浏览器打开，并允许摄像头。若浏览器拦截摄像头，应记为这次运行的环境限制，不要改代码后再当作同一次成功。",
+    "checks": [
+      "能切换至少两种形状",
+      "改颜色后粒子颜色改变",
+      "摄像头可用时，双手动作会改变粒子展开程度"
+    ],
+    "coverage": "quoted",
+    "rewritten": false,
+    "source": {
+      "page": "https://aitestmuseum.com/zh/tests/hand-gesture-particles",
+      "origin": "@EHuanglu，2025",
+      "licenseNote": "题面引自该公开页的复制提示。任务页没有给出再分发许可。问笺馆不转载该站的模型答案、图片或页面。"
+    }
+  },
+  {
+    "id": "ref-tesseract-ball",
+    "slug": "tesseract-ball",
+    "title": "超立方体里的弹跳球",
+    "kind": "animation",
+    "difficulty": 3,
+    "minutes": 30,
+    "summary": "模型要在一个文件里表现球在旋转的超立方体投影中弹跳。",
+    "prompt": "write a single HTML file (JavaScript, canvas or three.js) of a ball bouncing inside a rotating tesseract",
+    "artifact": "单个 HTML，可用 canvas 或 three.js。",
+    "constraints": [
+      "单文件",
+      "超立方体在旋转",
+      "球在里面弹"
+    ],
+    "run": "把模型首次返回的全文存成 .html，用浏览器打开。不要先替它改到能看为止；改过的版本必须另外保存，并标明是后来修的。",
+    "checks": [
+      "看得到超立方体的投影而不是普通立方体一张皮",
+      "投影在旋转",
+      "球碰到可见的边界会改变方向"
+    ],
+    "coverage": "quoted",
+    "rewritten": true,
+    "source": {
+      "page": "https://aitestmuseum.com/zh/tests/tesseract-ball",
+      "origin": "@Yuchenj_UW（最初要求 Python），2025。该页注明题面有改写。",
+      "licenseNote": "题面引自该公开页的复制提示。该页写明题面相对更早版本有改写，这里引用的就是该页当前题面，不是未改写的最初原文。任务页没有给出再分发许可。问笺馆不转载该站的模型答案、图片或页面。"
+    }
+  },
+  {
+    "id": "ref-starship-control-panel",
+    "slug": "starship-control-panel",
+    "title": "未来星舰的控制台",
+    "kind": "animation",
+    "difficulty": 2,
+    "minutes": 20,
+    "summary": "模型要交出一段能放进 p5.js 的草图，让人看到一具未来星舰控制台。",
+    "prompt": "create something I can paste into p5js that will startle me with its cleverness in creating something that invokes the control panel of a starship in the distant future",
+    "artifact": "可粘贴进 p5.js 的草图。若模型只给草图，验收时放进官方 p5.js 编辑器或一个只加载 p5.js 的空页面，不改草图正文。",
+    "constraints": [
+      "输出应是草图代码",
+      "画面让人认出是控制台而不是普通桌面"
+    ],
+    "run": "把草图粘进 https://editor.p5js.org 运行。不要先美化。",
+    "checks": [
+      "运行后有仪表、按钮或航迹一类控制台元素",
+      "有动画或可点击的反馈",
+      "不是空白画布"
+    ],
+    "coverage": "quoted",
+    "rewritten": false,
+    "source": {
+      "page": "https://aitestmuseum.com/zh/tests/starship-control-panel",
+      "origin": "Ethan Mollick，2025",
+      "licenseNote": "题面引自该公开页的复制提示。任务页没有给出再分发许可。问笺馆不转载该站的模型答案、图片或页面。"
+    }
+  },
+  {
+    "id": "ref-ai-world-clock",
+    "slug": "ai-world-clock",
+    "title": "十点十分的指针钟",
+    "kind": "animation",
+    "difficulty": 2,
+    "minutes": 15,
+    "summary": "模型只应返回一座显示 10:10、秒针会走的响应式指针钟。",
+    "prompt": "Create HTML/CSS of an analog clock showing 10:10AM. Include numbers (or numerals) if you wish, and have a CSS animated second hand. Make it responsive and use a white background. Return ONLY the HTML/CSS code with no markdown formatting.",
+    "artifact": "只有 HTML/CSS，白底，秒针用 CSS 动画。",
+    "constraints": [
+      "不要 Markdown 代码围栏",
+      "时针和分针表示 10:10",
+      "秒针在动",
+      "窄屏也不溢出"
+    ],
+    "run": "若回答夹了 Markdown，先按失败记录原文，再决定要不要去掉围栏另存一份。",
+    "checks": [
+      "表盘是白的",
+      "分针指向 2，时针指向 10",
+      "秒针在转",
+      "把窗口缩窄后表盘仍完整"
+    ],
+    "coverage": "quoted",
+    "rewritten": false,
+    "source": {
+      "page": "https://aitestmuseum.com/zh/tests/ai-world-clock",
+      "origin": "Brian Moore，AI World Clocks，2025",
+      "licenseNote": "题面引自该公开页的复制提示。任务页没有给出再分发许可。问笺馆不转载该站的模型答案、图片或页面。"
+    }
+  },
+  {
+    "id": "ref-mars-round-trip",
+    "slug": "mars-round-trip",
+    "title": "地火往返",
+    "kind": "scene3d",
+    "difficulty": 3,
+    "minutes": 30,
+    "summary": "模型要做出从地球发射、降落火星、并在下一个发射窗口返回的三维动画。",
+    "prompt": "Generate code for an animated 3d plot of a launch from earth landing on mars and then back to earth at the next launch window as a single self-contained HTML file using three.js",
+    "artifact": "使用 three.js 的单个 HTML 文件。",
+    "constraints": [
+      "单文件",
+      "包含去程和回程",
+      "时间上能看出不是瞬间传送"
+    ],
+    "run": "把模型首次返回的全文存成 .html，用浏览器打开。不要先替它改到能看为止；改过的版本必须另外保存，并标明是后来修的。",
+    "checks": [
+      "看得到地球和火星",
+      "飞行器离开地球",
+      "到达火星",
+      "之后又离开火星回到地球"
+    ],
+    "coverage": "quoted",
+    "rewritten": true,
+    "source": {
+      "page": "https://aitestmuseum.com/zh/tests/mars-round-trip",
+      "origin": "xAI Grok 3 发布演示（KCORES 基准中的题）。该页注明题面有改写。",
+      "licenseNote": "题面引自该公开页的复制提示。该页写明题面相对更早版本有改写，这里引用的就是该页当前题面，不是未改写的最初原文。任务页没有给出再分发许可。问笺馆不转载该站的模型答案、图片或页面。"
+    }
+  },
+  {
+    "id": "orig-lantern-bridge",
+    "slug": null,
+    "title": "摇晃的灯笼桥",
+    "kind": "animation",
+    "difficulty": 1,
+    "minutes": 15,
+    "summary": "问笺馆自己的短作品题：一个文件里画出桥、三盏会轻轻摇的灯笼，和水面上的倒影。",
+    "prompt": "做一个单个 HTML 文件，用内嵌 SVG 或 canvas 画出一座石桥、桥上从左到右三盏红灯笼、右侧屋檐再挂一盏红灯笼，以及河面上两团较淡的倒影。灯笼要左右轻轻摇动并循环。不要使用外部图片、字体或脚本。页面背景是白天的天和水。",
+    "artifact": "单个 HTML 文件。",
+    "constraints": [
+      "不引用外部资源",
+      "灯笼一共四盏，倒影两团",
+      "动画循环"
+    ],
+    "run": "把模型首次返回的全文存成 .html，用浏览器打开。不要先替它改到能看为止；改过的版本必须另外保存，并标明是后来修的。",
+    "checks": [
+      "数得清四盏灯笼和两团倒影",
+      "灯笼在摇",
+      "倒影比灯笼淡",
+      "断网打开仍然能看"
+    ],
+    "coverage": "original",
+    "rewritten": false,
+    "source": null,
+    "originalNote": "问笺馆原创。能力上接近“用代码做一段能看的动画”，但画面和提示都不是鹈鹕那一题。"
+  },
+  {
+    "id": "orig-ticket-json",
+    "slug": null,
+    "title": "把夜场票收成 JSON",
+    "kind": "data",
+    "difficulty": 1,
+    "minutes": 10,
+    "summary": "模型要交一个 JSON 对象，字段从给定票面来，不能另编。",
+    "prompt": "只输出一个 JSON 对象，不要 Markdown。根据下面这张票填写，不要增加字段。\n座位：甲区 12 排 8 座\n开场：19:30\n票价：40 元\n字段必须是 seat, startsAt, priceYuan。priceYuan 是数字。",
+    "artifact": "一个 JSON 对象。",
+    "constraints": [
+      "不要代码围栏",
+      "不要额外字段",
+      "票价用数字"
+    ],
+    "run": "把模型的原文存成 answer.json。用 jq 或任何 JSON 解析器打开。解析失败就是失败。",
+    "checks": [
+      "是合法 JSON",
+      "seat 等于「甲区 12 排 8 座」",
+      "startsAt 等于「19:30」",
+      "priceYuan 等于 40"
+    ],
+    "coverage": "original",
+    "rewritten": false,
+    "source": null,
+    "expect": {
+      "seat": "甲区 12 排 8 座",
+      "startsAt": "19:30",
+      "priceYuan": 40
+    },
+    "originalNote": "问笺馆原创。验收样例只放在数据文件里供人对照，复制给模型的提示不含样例。"
+  },
+  {
+    "id": "orig-ferry",
+    "slug": null,
+    "title": "能玩的过河",
+    "kind": "game",
+    "difficulty": 2,
+    "minutes": 25,
+    "summary": "模型要交出一个能点击游玩的过河页面，规则写在提示里。",
+    "prompt": "做一个单个 HTML 文件的小游戏。左岸开始有人、猫、鱼、鱼食。点击选择人和至多一件东西，再渡到对岸。人不在时，猫会吃鱼，鱼会吃鱼食，猫不吃鱼食。非法局面要提示并取消这次移动。全部到右岸时显示用了几次。不要外部库。",
+    "artifact": "单个 HTML 文件。",
+    "constraints": [
+      "无外部库",
+      "规则与提示一致",
+      "能重开"
+    ],
+    "run": "把模型首次返回的全文存成 .html，用浏览器打开。不要先替它改到能看为止；改过的版本必须另外保存，并标明是后来修的。",
+    "checks": [
+      "四样东西一开始都在左岸",
+      "一次只能再带一件",
+      "非法组合会被拒绝",
+      "存在一条能全部过河的玩法"
+    ],
+    "coverage": "original",
+    "rewritten": false,
+    "source": null,
+    "originalNote": "问笺馆原创的小游戏作品题。人可以自己试玩来验收，这不等于模型已经运行过。"
+  },
+  {
+    "id": "orig-three-lamps",
+    "slug": null,
+    "title": "三盏连动灯",
+    "kind": "app",
+    "difficulty": 1,
+    "minutes": 15,
+    "summary": "模型要按写死的按钮规则做出三盏灯，验收时只按规定的顺序。",
+    "prompt": "做一个单个 HTML 文件。三盏灯横排，开始全灭。按钮 A 切换第一和第二盏，按钮 B 切换第二和第三盏，按钮 C 切换第一和第三盏。每盏灯要看得出亮或灭。不要外部库。",
+    "artifact": "单个 HTML 文件。",
+    "constraints": [
+      "无外部库",
+      "初始全灭",
+      "按钮只按上述规则切换"
+    ],
+    "run": "把模型首次返回的全文存成 .html，用浏览器打开。不要先替它改到能看为止；改过的版本必须另外保存，并标明是后来修的。",
+    "checks": [
+      "打开时三盏都灭",
+      "只按 A 后第一和第二盏亮",
+      "在此基础上按 C 后，亮着的是第二和第三盏",
+      "再按一次 A 能把第二盏关掉"
+    ],
+    "coverage": "original",
+    "rewritten": false,
+    "source": null,
+    "originalNote": "问笺馆原创。验收步骤是给人检查产物的，不要写进给模型的提示以外的隐藏规则。"
+  },
+  {
+    "id": "orig-tea-timer",
+    "slug": null,
+    "title": "泡茶计时板",
+    "kind": "app",
+    "difficulty": 1,
+    "minutes": 15,
+    "summary": "模型要做一个能同时走表的小页面：烧水 8 分钟，其间可以给洗杯和找茶叶计时。",
+    "prompt": "做一个单个 HTML 文件的计时板。三项可分别开始：烧水 8 分钟、洗杯 2 分钟、找茶叶 1 分钟。三项可以同时走。全部结束后显示“可以泡了”。用按钮开始，时间每秒可见。不要外部库。",
+    "artifact": "单个 HTML 文件。",
+    "constraints": [
+      "无外部库",
+      "三项可并行",
+      "到点有可见状态"
+    ],
+    "run": "把模型首次返回的全文存成 .html，用浏览器打开。不要先替它改到能看为止；改过的版本必须另外保存，并标明是后来修的。",
+    "checks": [
+      "三项都有自己的剩余时间",
+      "同时开始时互不等待",
+      "洗杯先结束，烧水仍在走",
+      "三项都结束后出现可以泡了"
+    ],
+    "coverage": "original",
+    "rewritten": false,
+    "source": null,
+    "originalNote": "问笺馆原创的小工具作品题。"
+  },
+  {
+    "id": "orig-plaque",
+    "slug": null,
+    "title": "一张可打印的展签",
+    "kind": "data",
+    "difficulty": 1,
+    "minutes": 10,
+    "summary": "模型要把给定的三行文字排成一张白底展签，而不是再写一段介绍。",
+    "prompt": "只输出一个 HTML 文件。白底、黑字、衬线字体栈。页面中央一张卡片，从上到下正好三行：展品 No. 014、门外那盏灯、先加热再进门。不要加入第四行，不要图片，不要外部字体。",
+    "artifact": "单个 HTML 文件。",
+    "constraints": [
+      "只有给定的三行",
+      "无外部字体与图片",
+      "白底"
+    ],
+    "run": "把模型首次返回的全文存成 .html，用浏览器打开。不要先替它改到能看为止；改过的版本必须另外保存，并标明是后来修的。",
+    "checks": [
+      "三行文字都在且顺序正确",
+      "没有多出来的说明段落",
+      "打印预览仍是一张卡片"
+    ],
+    "coverage": "original",
+    "rewritten": false,
+    "source": null,
+    "originalNote": "问笺馆原创的排版作品题。"
+  }
+]

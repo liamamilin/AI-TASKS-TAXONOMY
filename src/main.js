@@ -13,9 +13,11 @@ import {
   questionView,
   shell,
 } from "./render.js"
+import { featuredTaskIds, filterTasks, taskDetail, taskHome, taskPrompt, taskChecklist } from "./task-render.js"
 
 const featuredIds = ["wj-001", "wj-005", "wj-011", "wj-030", "wj-067", "wj-072", "wj-079"]
 let featureIndex = 0
+let taskFeatureIndex = 0
 let route = parseRoute()
 let internalNav = false
 let preserveScroll = false
@@ -43,16 +45,20 @@ function parseRoute() {
   const params = new URLSearchParams(query)
   const parts = path.split("/").filter(Boolean)
   if (parts[0] === "q") return { name: "question", id: decodeURIComponent(parts[1] || ""), params }
+  if (parts[0] === "t") return { name: "task", id: decodeURIComponent(parts[1] || ""), params }
   if (parts[0] === "models") return { name: "models", params }
   if (parts[0] === "method") return { name: "method", params }
-  if (parts[0] && parts[0] !== "gallery") return { name: "missing", params }
-  return { name: "home", params, gallery: parts[0] === "gallery" }
+  if (parts[0] === "warmup" || parts[0] === "gallery") return { name: "warmup", params, gallery: true }
+  if (parts[0] && parts[0] !== "tasks") return { name: "missing", params }
+  return { name: "home", params, gallery: false }
 }
 
 function render() {
   const y = window.scrollY
   try {
-    if (route.name === "home") content.innerHTML = homeView(route.params, featuredIds[featureIndex])
+    if (route.name === "home") content.innerHTML = taskHome(route.params, featuredTaskIds[taskFeatureIndex])
+    else if (route.name === "task") content.innerHTML = taskDetail(route.id, route.params)
+    else if (route.name === "warmup") content.innerHTML = homeView(route.params, featuredIds[featureIndex])
     else if (route.name === "question") content.innerHTML = questionView(route.id, route.params)
     else if (route.name === "models") content.innerHTML = modelsView()
     else if (route.name === "method") content.innerHTML = methodView()
@@ -78,7 +84,8 @@ function render() {
 function markNav() {
   document.querySelectorAll("#site-nav a").forEach((link) => {
     const href = link.getAttribute("href")
-    const current = (href === "#/gallery" && (route.name === "home" || route.name === "question"))
+    const current = (href === "#/tasks" && (route.name === "home" || route.name === "task"))
+      || (href === "#/warmup" && (route.name === "warmup" || route.name === "question"))
       || (href === "#/models" && route.name === "models")
       || (href === "#/method" && route.name === "method")
     if (current) link.setAttribute("aria-current", "page")
@@ -120,7 +127,8 @@ function onSearch(event) {
   if (value) route.params.set("s", event.target.value)
   else route.params.delete("s")
   const query = route.params.toString()
-  history.replaceState({ app: 1 }, "", `#/gallery${query ? `?${query}` : ""}`)
+  const base = event.target.dataset.searchBase || "/tasks"
+  history.replaceState({ app: 1 }, "", `#${base}${query ? `?${query}` : ""}`)
   route = parseRoute()
   preserveScroll = true
   render()
@@ -146,6 +154,14 @@ function onGuess(event) {
 }
 
 function onContentClick(event) {
+  const taskFeature = event.target.closest("[data-task-feature]")
+  if (taskFeature) {
+    const step = Number(taskFeature.dataset.taskFeature)
+    taskFeatureIndex = (taskFeatureIndex + step + featuredTaskIds.length) % featuredTaskIds.length
+    preserveScroll = true
+    render()
+    return
+  }
   const feature = event.target.closest("[data-feature]")
   if (feature) {
     const step = Number(feature.dataset.feature)
@@ -156,7 +172,8 @@ function onContentClick(event) {
   }
   const random = event.target.closest("[data-random]")
   if (random) {
-    const pool = filterQuestions(route.params)
+    const tasksMode = random.dataset.random === "tasks"
+    const pool = tasksMode ? filterTasks(route.params) : filterQuestions(route.params)
     if (!pool.length) {
       toast("没有可逛的题")
       return
@@ -164,16 +181,18 @@ function onContentClick(event) {
     const pick = pool[Math.floor(Math.random() * pool.length)]
     internalNav = true
     const query = route.params.toString()
-    location.hash = `#/q/${pick.id}${query ? `?${query}` : ""}`
+    location.hash = `#/${tasksMode ? "t" : "q"}/${pick.id}${query ? `?${query}` : ""}`
     return
   }
   const copy = event.target.closest("[data-copy]")
   if (copy) {
     const kind = copy.dataset.copy
     const text = kind === "prompt" ? promptFor(route.id)
+      : kind === "task" ? taskPrompt(route.id)
+      : kind === "task-link" ? canonicalTask(route.id)
       : kind === "link" ? canonical(route.id)
       : kind === "record" ? RECORD_TEMPLATE
-      : checklistText()
+      : `${taskChecklist()}\n\n短题\n${checklistText()}`
     copyText(text, kind === "link" ? "链接已复制" : "已复制")
     return
   }
@@ -185,6 +204,13 @@ function onContentClick(event) {
     reveal.setAttribute("aria-expanded", String(open))
     if (open) panel.focus()
   }
+}
+
+function canonicalTask(id) {
+  const url = new URL(location.href)
+  url.hash = `#/t/${id}`
+  url.search = ""
+  return `${url.origin}${url.pathname}${url.hash}`
 }
 
 function canonical(id) {
@@ -239,8 +265,8 @@ function onKey(event) {
     if (search) {
       event.preventDefault()
       search.focus()
-    } else if (route.name !== "home") {
-      location.hash = "#/gallery"
+    } else if (route.name !== "home" && route.name !== "warmup") {
+      location.hash = "#/tasks"
     }
     return
   }
@@ -258,7 +284,7 @@ function onKey(event) {
     document.querySelector(".nav-toggle").setAttribute("aria-expanded", "false")
     return
   }
-  if (route.name === "question") {
+  if (route.name === "question" || route.name === "task") {
     if (internalNav) history.back()
     else location.hash = "#/gallery"
   }
