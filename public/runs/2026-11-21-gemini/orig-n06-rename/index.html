@@ -1,0 +1,46 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>照片改名先后悔药 · 只读对照页</title>
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body { background: #f3ecdf; color: #1d1916; font-family: system-ui, -apple-system, sans-serif; padding: 20px; line-height: 1.55; }
+    .wrap { max-width: 880px; margin: 0 auto; display: grid; gap: 16px; }
+    .card { background: #fffaf2; border: 1px solid #dfd3bf; border-radius: 12px; padding: 16px 18px; }
+    h1 { font-size: 22px; margin-bottom: 6px; }
+    h2 { font-size: 15px; color: #5e554a; margin-bottom: 10px; }
+    table { width: 100%; border-collapse: collapse; font-size: 13px; }
+    th, td { text-align: left; padding: 8px; border-bottom: 1px solid #e7dccb; }
+    th { background: #f5ede0; }
+    .ok { color: #2b6e3f; font-weight: 700; }
+    .err { color: #a83329; font-weight: 700; }
+    code { font-family: ui-monospace, monospace; font-size: 12px; }
+  </style>
+</head>
+<body>
+  <main class="wrap">
+    <section class="card">
+      <h1>照片改名先后悔药（只读前后对照）</h1>
+      <p style="font-size:13px;color:#5e554a;">同目录 <code>rename_tool.py</code> 已在 <code>sandbox/</code> 内完成「冲突拦阻 → 修复应用 → 撤销恢复初态 → 越界路径拒绝」四步实测。</p>
+    </section>
+    <section class="card">
+      <h2>步骤 1：冲突计划拦阻（全有或全无）</h2>
+      <p class="err">已拦截：IMG_01.jpg 与 IMG_02.jpg 同时映射到 2026-04-01_cloud.jpg，且目标已被现有文件占用。apply 拒绝执行，三个原始文件哈希不变。</p>
+    </section>
+    <section class="card">
+      <h2>步骤 2 & 3：按 fixes 应用并执行 undo 恢复</h2>
+      <table>
+        <thead><tr><th>初始路径</th><th>修复后目标路径</th><th>undo 恢复后路径</th><th>字节内容</th></tr></thead>
+        <tbody>
+          <tr><td><code>IMG_01.jpg</code></td><td><code>2026-04-01_red.jpg</code></td><td><code>IMG_01.jpg</code></td><td><code>SYNTHETIC_RED</code></td></tr>
+          <tr><td><code>IMG_02.jpg</code></td><td><code>2026-04-01_blue.jpg</code></td><td><code>IMG_02.jpg</code></td><td><code>SYNTHETIC_BLUE</code></td></tr>
+          <tr><td><code>2026-04-01_cloud.jpg</code></td><td><code>2026-04-01_cloud.jpg</code>（未改动）</td><td><code>2026-04-01_cloud.jpg</code></td><td><code>SYNTHETIC_EXISTING</code></td></tr>
+        </tbody>
+      </table>
+      <p class="ok" style="margin-top:10px;">安全边界校验：传入 <code>../outside.jpg</code> 时直接拒绝并退出，目录外零写入。</p>
+    </section>
+  </main>
+</body>
+</html>

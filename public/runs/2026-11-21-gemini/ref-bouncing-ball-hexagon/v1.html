@@ -1,0 +1,187 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Ball Bouncing Inside a Spinning Hexagon</title>
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    html, body {
+      width: 100%; height: 100%; overflow: hidden;
+      background: #0e1118; color: #eaeef8;
+      font-family: system-ui, -apple-system, sans-serif;
+    }
+    canvas { display: block; width: 100%; height: 100%; }
+    .controls {
+      position: fixed; left: 16px; top: 14px;
+      display: flex; gap: 12px; align-items: center; flex-wrap: wrap;
+      background: rgba(20, 25, 38, 0.82);
+      border: 1px solid rgba(255, 255, 255, 0.14);
+      border-radius: 999px; padding: 8px 14px; font-size: 13px;
+    }
+    .controls input[type="range"] { width: 80px; accent-color: #ff6b4a; }
+    .controls button {
+      background: #252e42; color: #fff; border: 1px solid rgba(255,255,255,.2);
+      border-radius: 999px; padding: 4px 12px; cursor: pointer; font: inherit;
+    }
+  </style>
+</head>
+<body>
+  <canvas id="c"></canvas>
+  <div class="controls">
+    <label>Spin <input id="spin" type="range" min="-3" max="3" step="0.1" value="1.15"></label>
+    <label>Gravity <input id="grav" type="range" min="150" max="1200" step="20" value="620"></label>
+    <button id="reset" type="button">Drop Ball</button>
+  </div>
+  <script>
+    const canvas = document.getElementById("c");
+    const ctx = canvas.getContext("2d");
+    const spinInput = document.getElementById("spin");
+    const gravInput = document.getElementById("grav");
+    const resetBtn = document.getElementById("reset");
+
+    let W = innerWidth, H = innerHeight, cx = W / 2, cy = H / 2, hexR = 200;
+    let hexAngle = 0;
+    const ball = { x: 0, y: 0, vx: 95, vy: -40, r: 14 };
+    const trail = [];
+
+    function resize() {
+      const dpr = Math.min(devicePixelRatio || 1, 2);
+      W = innerWidth; H = innerHeight;
+      cx = W / 2; cy = H / 2;
+      hexR = Math.min(W, H) * 0.37;
+      canvas.width = Math.floor(W * dpr);
+      canvas.height = Math.floor(H * dpr);
+      ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+    }
+    function resetBall() {
+      ball.x = cx - 20;
+      ball.y = cy - hexR * 0.35;
+      ball.vx = 110;
+      ball.vy = -30;
+      trail.length = 0;
+    }
+    window.addEventListener("resize", () => { resize(); resetBall(); });
+    resetBtn.addEventListener("click", resetBall);
+    resize();
+    resetBall();
+
+    function getVertices(angle) {
+      const verts = [];
+      for (let i = 0; i < 6; i++) {
+        const a = angle + (i * Math.PI) / 3;
+        verts.push({ x: cx + Math.cos(a) * hexR, y: cy + Math.sin(a) * hexR });
+      }
+      return verts;
+    }
+
+    let last = performance.now();
+    function step(now) {
+      const dt = Math.min(0.032, (now - last) / 1000);
+      last = now;
+      const omega = Number(spinInput.value);
+      const gravity = Number(gravInput.value);
+      const substeps = 6;
+      const sdt = dt / substeps;
+
+      for (let s = 0; s < substeps; s++) {
+        hexAngle += omega * sdt;
+        ball.vy += gravity * sdt;
+        ball.vx *= Math.pow(0.996, sdt * 60);
+        ball.vy *= Math.pow(0.996, sdt * 60);
+        ball.x += ball.vx * sdt;
+        ball.y += ball.vy * sdt;
+
+        const verts = getVertices(hexAngle);
+        for (let i = 0; i < 6; i++) {
+          const a = verts[i];
+          const b = verts[(i + 1) % 6];
+          const ex = b.x - a.x;
+          const ey = b.y - a.y;
+          const len = Math.hypot(ex, ey);
+          const tx = ex / len;
+          const ty = ey / len;
+          // Inward normal for CW/CCW polygon centered at (cx, cy)
+          let nx = -ty, ny = tx;
+          if ((cx - a.x) * nx + (cy - a.y) * ny < 0) { nx = -nx; ny = -ny; }
+
+          const px = ball.x - a.x;
+          const py = ball.y - a.y;
+          const dist = px * nx + py * ny;
+          if (dist < ball.r) {
+            const proj = Math.max(0, Math.min(len, px * tx + py * ty));
+            const contactX = a.x + tx * proj;
+            const contactY = a.y + ty * proj;
+            // Push ball inside
+            const pen = ball.r - dist;
+            ball.x += nx * pen;
+            ball.y += ny * pen;
+
+            // Rotating wall velocity at contact point: v = omega x r
+            const rx = contactX - cx;
+            const ry = contactY - cy;
+            const wallVx = -omega * ry;
+            const wallVy = omega * rx;
+
+            const relVx = ball.vx - wallVx;
+            const relVy = ball.vy - wallVy;
+            const vn = relVx * nx + relVy * ny;
+            if (vn < 0) {
+              const vt = relVx * tx + relVy * ty;
+              const restitution = 0.84;
+              const friction = 0.16;
+              const newVn = -vn * restitution;
+              const newVt = vt * (1 - friction);
+              ball.vx = wallVx + newVn * nx + newVt * tx;
+              ball.vy = wallVy + newVn * ny + newVt * ty;
+            }
+          }
+        }
+      }
+
+      trail.push({ x: ball.x, y: ball.y });
+      if (trail.length > 34) trail.shift();
+
+      ctx.fillStyle = "#0e1118";
+      ctx.fillRect(0, 0, W, H);
+
+      const verts = getVertices(hexAngle);
+      ctx.beginPath();
+      verts.forEach((v, i) => (i === 0 ? ctx.moveTo(v.x, v.y) : ctx.lineTo(v.x, v.y)));
+      ctx.closePath();
+      ctx.fillStyle = "rgba(30, 40, 62, 0.36)";
+      ctx.fill();
+      ctx.lineWidth = 5;
+      ctx.strokeStyle = "#62b6ff";
+      ctx.stroke();
+
+      // Corner markers so rotation is visually unmistakable
+      for (const v of verts) {
+        ctx.fillStyle = "#9ad3ff";
+        ctx.beginPath(); ctx.arc(v.x, v.y, 4.5, 0, Math.PI * 2); ctx.fill();
+      }
+
+      for (let i = 0; i < trail.length; i++) {
+        const p = trail[i];
+        const ratio = (i + 1) / trail.length;
+        ctx.fillStyle = `rgba(255, 107, 74, ${(ratio * 0.42).toFixed(2)})`;
+        ctx.beginPath();
+        ctx.arc(p.x, p.y, ball.r * (0.25 + 0.65 * ratio), 0, Math.PI * 2);
+        ctx.fill();
+      }
+
+      const bg = ctx.createRadialGradient(ball.x - 4, ball.y - 4, 2, ball.x, ball.y, ball.r);
+      bg.addColorStop(0, "#ffd2a6");
+      bg.addColorStop(0.55, "#ff6b4a");
+      bg.addColorStop(1, "#b83018");
+      ctx.fillStyle = bg;
+      ctx.beginPath();
+      ctx.arc(ball.x, ball.y, ball.r, 0, Math.PI * 2);
+      ctx.fill();
+
+      requestAnimationFrame(step);
+    }
+    requestAnimationFrame(step);
+  </script>
+</body>
+</html>

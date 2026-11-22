@@ -1,0 +1,150 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>10:10 Analog Clock</title>
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    html, body {
+      width: 100%;
+      height: 100%;
+      background: #ffffff;
+      display: grid;
+      place-items: center;
+      font-family: Georgia, "Times New Roman", serif;
+      overflow: hidden;
+    }
+    .clock {
+      position: relative;
+      width: min(82vw, 82vh, 380px);
+      aspect-ratio: 1 / 1;
+      border-radius: 50%;
+      background: #ffffff;
+      border: max(5px, 2.2%) solid #1b1d20;
+      box-shadow: 0 12px 32px rgba(0, 0, 0, 0.08), inset 0 0 0 2px #e8eaee;
+    }
+    .clock::before {
+      content: "";
+      position: absolute;
+      inset: 3.5%;
+      border-radius: 50%;
+      background:
+        repeating-conic-gradient(
+          from -0.5deg,
+          #c4c8cf 0deg 1deg,
+          transparent 1deg 6deg
+        );
+      -webkit-mask: radial-gradient(circle, transparent 67%, #000 67.5%);
+      mask: radial-gradient(circle, transparent 67%, #000 67.5%);
+    }
+    .clock::after {
+      content: "";
+      position: absolute;
+      inset: 3.5%;
+      border-radius: 50%;
+      background:
+        repeating-conic-gradient(
+          from -1deg,
+          #1b1d20 0deg 2deg,
+          transparent 2deg 30deg
+        );
+      -webkit-mask: radial-gradient(circle, transparent 63%, #000 63.5%);
+      mask: radial-gradient(circle, transparent 63%, #000 63.5%);
+    }
+    .num {
+      position: absolute;
+      font-size: clamp(14px, 4.6vmin, 24px);
+      font-weight: 600;
+      color: #1b1d20;
+      transform: translate(-50%, -50%);
+      line-height: 1;
+      user-select: none;
+    }
+    .n12 { left: 50%;    top: 15%;   }
+    .n1  { left: 67.5%;  top: 19.7%; }
+    .n2  { left: 80.3%;  top: 32.5%; }
+    .n3  { left: 85%;    top: 50%;   }
+    .n4  { left: 80.3%;  top: 67.5%; }
+    .n5  { left: 67.5%;  top: 80.3%; }
+    .n6  { left: 50%;    top: 85%;   }
+    .n7  { left: 32.5%;  top: 80.3%; }
+    .n8  { left: 19.7%;  top: 67.5%; }
+    .n9  { left: 15%;    top: 50%;   }
+    .n10 { left: 19.7%;  top: 32.5%; }
+    .n11 { left: 32.5%;  top: 19.7%; }
+
+    .hand {
+      position: absolute;
+      left: 50%;
+      bottom: 50%;
+      transform-origin: 50% 100%;
+      border-radius: 999px;
+    }
+    .hour {
+      width: 2.8%;
+      height: 27%;
+      background: #1b1d20;
+      transform: translateX(-50%) rotate(305deg);
+    }
+    .minute {
+      width: 2%;
+      height: 38%;
+      background: #1b1d20;
+      transform: translateX(-50%) rotate(60deg);
+    }
+    .second {
+      width: 0.9%;
+      height: 43%;
+      bottom: 42%;
+      transform-origin: 50% 81.4%;
+      background: #c93b2b;
+      transform: translateX(-50%) rotate(0deg);
+      animation: sweep 60s linear infinite;
+    }
+    .pivot {
+      position: absolute;
+      left: 50%;
+      top: 50%;
+      width: 5.4%;
+      height: 5.4%;
+      border-radius: 50%;
+      background: #1b1d20;
+      border: 2px solid #ffffff;
+      transform: translate(-50%, -50%);
+      z-index: 4;
+    }
+    .pivot::after {
+      content: "";
+      position: absolute;
+      inset: 28%;
+      border-radius: 50%;
+      background: #c93b2b;
+    }
+    @keyframes sweep {
+      from { transform: translateX(-50%) rotate(0deg); }
+      to   { transform: translateX(-50%) rotate(360deg); }
+    }
+  </style>
+</head>
+<body>
+  <div class="clock" role="img" aria-label="Analog clock showing 10:10 AM with animated second hand">
+    <span class="num n12">12</span>
+    <span class="num n1">1</span>
+    <span class="num n2">2</span>
+    <span class="num n3">3</span>
+    <span class="num n4">4</span>
+    <span class="num n5">5</span>
+    <span class="num n6">6</span>
+    <span class="num n7">7</span>
+    <span class="num n8">8</span>
+    <span class="num n9">9</span>
+    <span class="num n10">10</span>
+    <span class="num n11">11</span>
+    <div class="hand hour"></div>
+    <div class="hand minute"></div>
+    <div class="hand second"></div>
+    <div class="pivot"></div>
+  </div>
+</body>
+</html>

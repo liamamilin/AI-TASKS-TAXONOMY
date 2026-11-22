@@ -1,0 +1,135 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>种子图书馆小账本</title>
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body { background: #f3ecdf; color: #1d1916; font-family: system-ui, -apple-system, sans-serif; padding: 20px; line-height: 1.55; }
+    .wrap { max-width: 860px; margin: 0 auto; display: grid; gap: 16px; }
+    .card { background: #fffaf2; border: 1px solid #dfd3bf; border-radius: 12px; padding: 16px 18px; }
+    .notice { background: #f6ead6; border-left: 3px solid #9c3b32; padding: 8px 12px; font-size: 12.5px; margin-top: 8px; }
+    h1 { font-size: 22px; }
+    h2 { font-size: 15px; color: #5e554a; margin-bottom: 10px; }
+    .grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 12px; }
+    .stock { background: #f8f2e7; border: 1px solid #dfd3bf; border-radius: 10px; padding: 14px; cursor: pointer; }
+    .stock.on { border-color: #1d1916; box-shadow: 0 0 0 1px #1d1916; }
+    .stock b { font-size: 28px; display: block; color: #9c3b32; }
+    .bar { display: flex; flex-wrap: wrap; gap: 8px; align-items: center; }
+    select, input { padding: 7px 10px; border: 1px solid #cbbba2; border-radius: 8px; font: inherit; background: #fff; }
+    button { border-radius: 999px; padding: 7px 14px; border: 1px solid #1d1916; background: #1d1916; color: #fffaf2; cursor: pointer; font: 600 13px inherit; }
+    button.ghost { background: transparent; color: #1d1916; border-color: #cbbba2; }
+    .msg { min-height: 22px; font-size: 13px; font-weight: 600; color: #2b6e3f; margin-top: 8px; }
+    .msg.err { color: #a83329; }
+    ul { list-style: none; display: grid; gap: 6px; font-size: 13px; }
+    li { padding: 7px 10px; background: #f8f2e7; border-radius: 8px; }
+    li.undone { opacity: 0.6; text-decoration: line-through; }
+  </style>
+</head>
+<body>
+  <main class="wrap">
+    <section class="card">
+      <h1>种子图书馆小账本</h1>
+      <div class="notice">合成数据 · 仅保存在当前浏览器 localStorage · 不收集任何姓名或个人资料。</div>
+      <div class="grid" id="cards" style="margin-top:12px;"></div>
+    </section>
+    <section class="card">
+      <h2>演示动作（按步骤单步执行）与手动登记</h2>
+      <div class="bar" id="demo-btns" style="margin-bottom:12px;"></div>
+      <form class="bar" id="form">
+        <select id="f-item"><option value="豆星">豆星</option><option value="月瓜">月瓜</option></select>
+        <select id="f-type"><option value="borrow">借出</option><option value="return">归还</option></select>
+        <input id="f-qty" type="text" value="1" size="5" aria-label="数量">
+        <button type="submit">记账</button>
+        <button type="button" class="ghost" id="undo">撤销最后一步</button>
+        <button type="button" class="ghost" id="reset">重置初态</button>
+        <button type="button" class="ghost" id="dl">下载 ledger.json</button>
+      </form>
+      <p class="msg" id="msg" role="status"></p>
+    </section>
+    <section class="card">
+      <h2>事件记录（点击上方种类卡可按种类筛选）</h2>
+      <ul id="events"></ul>
+    </section>
+  </main>
+  <script>
+    const KEY = "wenjian-gemini-seed-ledger-v1";
+    const INITIAL = { "豆星": 3, "月瓜": 1 };
+    const DEMO = [
+      { label: "1. 借出 豆星×2", type: "borrow", item: "豆星", qty: 2 },
+      { label: "2. 借出 豆星×2（应拒绝）", type: "borrow", item: "豆星", qty: 2 },
+      { label: "3. 归还 月瓜×2", type: "return", item: "月瓜", qty: 2 },
+      { label: "4. 撤销最后一步", type: "undo" },
+    ];
+    let filterItem = "全部";
+    let events = [];
+    try { events = JSON.parse(localStorage.getItem(KEY) || "[]"); } catch { events = []; }
+
+    function replay(evts) {
+      const stock = { ...INITIAL };
+      for (const e of evts) {
+        if (e.undone) continue;
+        stock[e.item] += e.type === "borrow" ? -e.qty : e.qty;
+      }
+      return stock;
+    }
+    function save() { try { localStorage.setItem(KEY, JSON.stringify(events)); } catch {} }
+    function setMsg(text, err = false) {
+      const m = document.getElementById("msg");
+      m.textContent = text; m.className = err ? "msg err" : "msg";
+    }
+    function applyAction(type, item, qtyRaw) {
+      if (type === "undo") {
+        const last = [...events].reverse().find((e) => !e.undone);
+        if (!last) { setMsg("没有可撤销的有效事件。", true); return; }
+        last.undone = true;
+        last.undoNote = `已撤销：${last.type === "borrow" ? "借出" : "归还"} ${last.item}×${last.qty}`;
+        save(); setMsg(last.undoNote); render(); return;
+      }
+      if (!/^[1-9]\d*$/.test(String(qtyRaw).trim())) { setMsg("数量必须为正整数，已拒绝且不入账。", true); return; }
+      const qty = Number(qtyRaw);
+      const stock = replay(events);
+      if (type === "borrow" && stock[item] < qty) { setMsg(`${item} 库存仅剩 ${stock[item]}，借出 ${qty} 被拒绝且不写入事件。`, true); return; }
+      events.push({ id: events.length + 1, type, item, qty, undone: false, undoNote: "" });
+      save(); setMsg(`已记录：${type === "borrow" ? "借出" : "归还"} ${item} × ${qty}`); render();
+    }
+
+    function render() {
+      const stock = replay(events);
+      document.getElementById("cards").innerHTML = Object.entries(stock).map(([k, v]) => `
+        <div class="stock ${filterItem === k ? "on" : ""}" data-filter="${k}">
+          <span>${k}</span><b>${v}</b><small>${filterItem === k ? "已筛选（再点显示全部）" : "点击筛选该种类事件"}</small>
+        </div>
+      `).join("");
+      const shown = filterItem === "全部" ? events : events.filter((e) => e.item === filterItem);
+      document.getElementById("events").innerHTML = shown.length
+        ? shown.map((e) => `<li class="${e.undone ? "undone" : ""}">#${e.id} ${e.type === "borrow" ? "借出" : "归还"} ${e.item} × ${e.qty}${e.undone ? `（${e.undoNote}）` : ""}</li>`).join("")
+        : `<li>暂无有效事件。</li>`;
+    }
+
+    document.getElementById("demo-btns").innerHTML = DEMO.map((d, i) => `<button type="button" class="ghost" data-demo="${i}">${d.label}</button>`).join("");
+    document.getElementById("demo-btns").addEventListener("click", (e) => {
+      const b = e.target.closest("[data-demo]"); if (!b) return;
+      const d = DEMO[Number(b.dataset.demo)]; applyAction(d.type, d.item, d.qty);
+    });
+    document.getElementById("cards").addEventListener("click", (e) => {
+      const c = e.target.closest("[data-filter]"); if (!c) return;
+      filterItem = filterItem === c.dataset.filter ? "全部" : c.dataset.filter; render();
+    });
+    document.getElementById("form").addEventListener("submit", (e) => {
+      e.preventDefault();
+      applyAction(document.getElementById("f-type").value, document.getElementById("f-item").value, document.getElementById("f-qty").value);
+    });
+    document.getElementById("undo").addEventListener("click", () => applyAction("undo"));
+    document.getElementById("reset").addEventListener("click", () => { events = []; save(); setMsg("已重置为初始库存（豆星 3 / 月瓜 1）。"); render(); });
+    document.getElementById("dl").addEventListener("click", () => {
+      const payload = { initial: INITIAL, events, current: replay(events) };
+      const a = document.createElement("a");
+      a.href = URL.createObjectURL(new Blob([JSON.stringify(payload, null, 2)], { type: "application/json" }));
+      a.download = "ledger.json"; a.click(); URL.revokeObjectURL(a.href);
+    });
+    render();
+  </script>
+</body>
+</html>

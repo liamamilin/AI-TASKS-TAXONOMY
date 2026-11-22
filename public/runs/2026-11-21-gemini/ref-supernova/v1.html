@@ -1,0 +1,178 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Supernova Explosion</title>
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    html, body { width: 100%; height: 100%; overflow: hidden; background: #03050a; color: #e8eef8; font-family: system-ui, sans-serif; }
+    canvas { display: block; width: 100%; height: 100%; }
+    .hud {
+      position: fixed; left: 16px; top: 14px; display: flex; gap: 10px; align-items: center;
+      background: rgba(10, 14, 24, 0.78); border: 1px solid rgba(160, 190, 240, 0.22);
+      border-radius: 999px; padding: 7px 14px; font-size: 13px; backdrop-filter: blur(8px);
+    }
+    .hud button {
+      background: #23314f; color: #fff; border: 1px solid rgba(160,190,240,.35);
+      border-radius: 999px; padding: 4px 12px; cursor: pointer; font: inherit;
+    }
+    .stage { color: #ffd180; font-weight: 600; }
+  </style>
+</head>
+<body>
+  <canvas id="c"></canvas>
+  <div class="hud">
+    <span class="stage" id="stage">Phase 1: Red Supergiant</span>
+    <button id="replay" type="button">Replay</button>
+  </div>
+  <script>
+    const canvas = document.getElementById("c");
+    const ctx = canvas.getContext("2d");
+    const stageEl = document.getElementById("stage");
+    const replayBtn = document.getElementById("replay");
+
+    let W = innerWidth, H = innerHeight, cx = W / 2, cy = H / 2;
+    function resize() {
+      const dpr = Math.min(devicePixelRatio || 1, 2);
+      W = innerWidth; H = innerHeight; cx = W / 2; cy = H / 2;
+      canvas.width = Math.floor(W * dpr); canvas.height = Math.floor(H * dpr);
+      ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+    }
+    window.addEventListener("resize", resize);
+    resize();
+
+    const bgStars = Array.from({ length: 240 }, (_, i) => ({
+      x: ((i * 73.1) % 100) / 100, y: ((i * 41.7) % 100) / 100,
+      r: i % 5 === 0 ? 1.5 : 0.9, a: 0.25 + ((i * 17) % 65) / 100,
+    }));
+
+    let particles = [];
+    let t = 0;
+
+    function reset() {
+      t = 0;
+      particles = Array.from({ length: 280 }, (_, i) => {
+        const ang = (i / 280) * Math.PI * 2 + (Math.random() - 0.5) * 0.25;
+        const spd = 45 + Math.random() * 260;
+        const hue = i % 3 === 0 ? 195 + Math.random() * 35 : (i % 3 === 1 ? 20 + Math.random() * 30 : 300 + Math.random() * 45);
+        return { ang, spd, dist: 0, size: 1.5 + Math.random() * 3.5, hue, drag: 0.985 - Math.random() * 0.01 };
+      });
+    }
+    replayBtn.addEventListener("click", reset);
+    reset();
+
+    let last = performance.now();
+    function loop(now) {
+      const dt = Math.min(0.05, (now - last) / 1000);
+      last = now;
+      t += dt;
+      if (t > 16) reset();
+
+      ctx.fillStyle = "rgba(3, 5, 10, 0.24)";
+      ctx.fillRect(0, 0, W, H);
+
+      for (const s of bgStars) {
+        ctx.fillStyle = `rgba(220, 232, 255, ${s.a})`;
+        ctx.fillRect(s.x * W, s.y * H, s.r, s.r);
+      }
+
+      if (t < 3.0) {
+        // Phase 1: Red Supergiant swelling & pulsing
+        stageEl.textContent = "Phase 1: Red Supergiant";
+        const p = t / 3.0;
+        const r = 34 + p * 26 + Math.sin(t * 9) * 3;
+        const g = ctx.createRadialGradient(cx, cy, r * 0.15, cx, cy, r * 2.6);
+        g.addColorStop(0, "#fff4d2");
+        g.addColorStop(0.35, "#ff8b3d");
+        g.addColorStop(0.7, "rgba(210, 48, 28, 0.45)");
+        g.addColorStop(1, "rgba(210, 48, 28, 0)");
+        ctx.fillStyle = g;
+        ctx.beginPath(); ctx.arc(cx, cy, r * 2.6, 0, Math.PI * 2); ctx.fill();
+      } else if (t < 4.4) {
+        // Phase 2: Core Collapse
+        stageEl.textContent = "Phase 2: Core Collapse";
+        const p = (t - 3.0) / 1.4;
+        const r = Math.max(6, 60 * (1 - p * 0.88));
+        const g = ctx.createRadialGradient(cx, cy, 2, cx, cy, r * 3.2);
+        g.addColorStop(0, "#ffffff");
+        g.addColorStop(0.4, "#8fd3ff");
+        g.addColorStop(1, "rgba(60, 120, 255, 0)");
+        ctx.fillStyle = g;
+        ctx.beginPath(); ctx.arc(cx, cy, r * 3.2, 0, Math.PI * 2); ctx.fill();
+        // Inward accretion streaks
+        ctx.strokeStyle = `rgba(180, 220, 255, ${(0.5 * p).toFixed(2)})`;
+        ctx.lineWidth = 1.5;
+        for (let i = 0; i < 24; i++) {
+          const a = (i / 24) * Math.PI * 2 + t * 2;
+          const d1 = 150 * (1 - p) + 18;
+          ctx.beginPath();
+          ctx.moveTo(cx + Math.cos(a) * (d1 + 26), cy + Math.sin(a) * (d1 + 26));
+          ctx.lineTo(cx + Math.cos(a) * d1, cy + Math.sin(a) * d1);
+          ctx.stroke();
+        }
+      } else if (t < 8.5) {
+        // Phase 3: Supernova Explosion & Shockwave
+        stageEl.textContent = "Phase 3: Supernova Detonation";
+        const e = t - 4.4;
+        const flash = Math.max(0, 1 - e * 1.4);
+        if (flash > 0) {
+          ctx.fillStyle = `rgba(255, 252, 245, ${(flash * 0.85).toFixed(2)})`;
+          ctx.fillRect(0, 0, W, H);
+        }
+        const waveR = e * 145;
+        ctx.strokeStyle = `rgba(140, 215, 255, ${Math.max(0, 0.85 - e * 0.2).toFixed(2)})`;
+        ctx.lineWidth = 5;
+        ctx.beginPath(); ctx.arc(cx, cy, waveR, 0, Math.PI * 2); ctx.stroke();
+
+        ctx.strokeStyle = `rgba(255, 165, 90, ${Math.max(0, 0.7 - e * 0.16).toFixed(2)})`;
+        ctx.lineWidth = 3;
+        ctx.beginPath(); ctx.arc(cx, cy, waveR * 0.76, 0, Math.PI * 2); ctx.stroke();
+
+        for (const p of particles) {
+          p.dist += p.spd * dt;
+          p.spd *= p.drag;
+          const x = cx + Math.cos(p.ang) * p.dist;
+          const y = cy + Math.sin(p.ang) * p.dist;
+          ctx.fillStyle = `hsla(${p.hue}, 95%, 70%, 0.9)`;
+          ctx.beginPath(); ctx.arc(x, y, p.size, 0, Math.PI * 2); ctx.fill();
+        }
+      } else {
+        // Phase 4: Expanding Nebula Remnant & Spinning Pulsar
+        stageEl.textContent = "Phase 4: Nebula Remnant & Pulsar";
+        const e = t - 8.5;
+        for (const p of particles) {
+          p.dist += p.spd * dt * 0.65;
+          p.spd *= 0.996;
+          const x = cx + Math.cos(p.ang) * p.dist;
+          const y = cy + Math.sin(p.ang) * p.dist;
+          const rad = p.size * 5.2;
+          const ng = ctx.createRadialGradient(x, y, 0, x, y, rad);
+          ng.addColorStop(0, `hsla(${p.hue}, 90%, 66%, 0.28)`);
+          ng.addColorStop(1, `hsla(${p.hue}, 90%, 50%, 0)`);
+          ctx.fillStyle = ng;
+          ctx.beginPath(); ctx.arc(x, y, rad, 0, Math.PI * 2); ctx.fill();
+        }
+        // Spinning neutron star pulsar jets
+        const jetA = e * 4.5;
+        ctx.save();
+        ctx.translate(cx, cy);
+        ctx.rotate(jetA);
+        const jg = ctx.createLinearGradient(0, -140, 0, 140);
+        jg.addColorStop(0, "rgba(120, 210, 255, 0)");
+        jg.addColorStop(0.5, "rgba(210, 245, 255, 0.85)");
+        jg.addColorStop(1, "rgba(120, 210, 255, 0)");
+        ctx.strokeStyle = jg;
+        ctx.lineWidth = 4;
+        ctx.beginPath(); ctx.moveTo(0, -140); ctx.lineTo(0, 140); ctx.stroke();
+        ctx.fillStyle = "#ffffff";
+        ctx.beginPath(); ctx.arc(0, 0, 6, 0, Math.PI * 2); ctx.fill();
+        ctx.restore();
+      }
+
+      requestAnimationFrame(loop);
+    }
+    requestAnimationFrame(loop);
+  </script>
+</body>
+</html>

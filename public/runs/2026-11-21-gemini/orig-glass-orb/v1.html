@@ -1,0 +1,116 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>折射玻璃球着色器</title>
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    html, body { width: 100%; height: 100%; overflow: hidden; background: #0c1018; font-family: "Noto Serif SC", system-ui, sans-serif; }
+    canvas { display: block; width: 100%; height: 100%; cursor: grab; }
+    canvas:active { cursor: grabbing; }
+    .hud {
+      position: fixed; left: 14px; top: 12px; display: flex; gap: 10px; align-items: center;
+      background: rgba(14, 18, 28, 0.8); color: #eef3fb; border: 1px solid rgba(180,210,255,0.2);
+      border-radius: 999px; padding: 7px 14px; font-size: 12.5px;
+    }
+    .hud input[type="range"] { width: 78px; accent-color: #7cc6fe; }
+  </style>
+</head>
+<body>
+  <canvas id="gl"></canvas>
+  <div class="hud">
+    <span>折射玻璃球 · 拖动旋转</span>
+    <label>折射率 <input id="ior" type="range" min="1.1" max="2.1" step="0.05" value="1.52"></label>
+  </div>
+  <script>
+    const canvas = document.getElementById("gl");
+    const gl = canvas.getContext("webgl") || canvas.getContext("experimental-webgl");
+    const iorEl = document.getElementById("ior");
+    let yaw = 0.4, drag = false, lx = 0;
+    canvas.addEventListener("pointerdown", (e) => { drag = true; lx = e.clientX; });
+    window.addEventListener("pointerup", () => { drag = false; });
+    window.addEventListener("pointermove", (e) => { if (!drag) return; yaw += (e.clientX - lx) * 0.008; lx = e.clientX; });
+    function resize() {
+      const dpr = Math.min(devicePixelRatio || 1, 1.5);
+      canvas.width = Math.floor(innerWidth * dpr); canvas.height = Math.floor(innerHeight * dpr);
+      if (gl) gl.viewport(0, 0, canvas.width, canvas.height);
+    }
+    window.addEventListener("resize", resize); resize();
+
+    if (gl) {
+      const vs = `attribute vec2 p; void main(){ gl_Position=vec4(p,0.,1.); }`;
+      const fs = `
+        precision highp float;
+        uniform vec2 u_res;
+        uniform float u_t;
+        uniform float u_ior;
+        uniform float u_yaw;
+
+        vec3 envColor(vec3 rd) {
+          vec3 sky = mix(vec3(0.08, 0.12, 0.22), vec3(0.85, 0.56, 0.36), pow(max(0.0, 1.0 - abs(rd.y)), 3.0));
+          vec3 sunDir = normalize(vec3(0.6, 0.55, 0.58));
+          sky += vec3(1.0, 0.92, 0.78) * pow(max(dot(rd, sunDir), 0.0), 48.0);
+          if (rd.y < 0.0) {
+            float t = -1.2 / rd.y;
+            vec2 fp = rd.xz * t;
+            float chk = mod(floor(fp.x) + floor(fp.y), 2.0);
+            vec3 tile = mix(vec3(0.14, 0.16, 0.20), vec3(0.88, 0.85, 0.78), chk);
+            float caustic = exp(-length(fp - vec2(0.4, 0.2)) * 1.1) * 0.65;
+            return mix(tile + vec3(0.95, 0.88, 0.7) * caustic, sky, 1.0 - exp(-t * 0.06));
+          }
+          return sky;
+        }
+        void main() {
+          vec2 uv = (gl_FragCoord.xy - 0.5 * u_res) / u_res.y;
+          float ang = u_yaw + u_t * 0.28;
+          vec3 ro = vec3(sin(ang) * 3.4, 0.55, cos(ang) * 3.4);
+          vec3 fw = normalize(-ro);
+          vec3 rt = normalize(cross(vec3(0.0, 1.0, 0.0), fw));
+          vec3 up = cross(fw, rt);
+          vec3 rd = normalize(fw * 1.55 + rt * uv.x + up * uv.y);
+
+          // Ray-sphere intersection at origin, radius 1.05
+          float b = dot(ro, rd);
+          float c = dot(ro, ro) - 1.1025;
+          float h = b * b - c;
+          vec3 col = envColor(rd);
+          if (h > 0.0) {
+            float tHit = -b - sqrt(h);
+            if (tHit > 0.0) {
+              vec3 pos = ro + rd * tHit;
+              vec3 n = normalize(pos);
+              float fres = pow(1.0 - max(dot(n, -rd), 0.0), 4.0);
+              vec3 refl = envColor(reflect(rd, n));
+              // Chromatic dispersion across R, G, B
+              vec3 rr = refract(rd, n, 1.0 / (u_ior - 0.04));
+              vec3 rg = refract(rd, n, 1.0 / u_ior);
+              vec3 rb = refract(rd, n, 1.0 / (u_ior + 0.04));
+              vec3 refr = vec3(envColor(rr).r, envColor(rg).g, envColor(rb).b);
+              col = mix(refr, refl, 0.14 + 0.82 * fres);
+            }
+          }
+          gl_FragColor = vec4(pow(col, vec3(0.9)), 1.0);
+        }
+      `;
+      const compile = (type, src) => { const s = gl.createShader(type); gl.shaderSource(s, src); gl.compileShader(s); return s; };
+      const prog = gl.createProgram();
+      gl.attachShader(prog, compile(gl.VERTEX_SHADER, vs));
+      gl.attachShader(prog, compile(gl.FRAGMENT_SHADER, fs));
+      gl.linkProgram(prog); gl.useProgram(prog);
+      const buf = gl.createBuffer(); gl.bindBuffer(gl.ARRAY_BUFFER, buf);
+      gl.bufferData(gl.ARRAY_BUFFER, new Float32Array([-1,-1, 1,-1, -1,1, 1,1]), gl.STATIC_DRAW);
+      const loc = gl.getAttribLocation(prog, "p"); gl.enableVertexAttribArray(loc); gl.vertexAttribPointer(loc, 2, gl.FLOAT, false, 0, 0);
+      const uRes = gl.getUniformLocation(prog, "u_res"), uT = gl.getUniformLocation(prog, "u_t");
+      const uIor = gl.getUniformLocation(prog, "u_ior"), uYaw = gl.getUniformLocation(prog, "u_yaw");
+      function render(now) {
+        gl.uniform2f(uRes, canvas.width, canvas.height);
+        gl.uniform1f(uT, now * 0.001); gl.uniform1f(uIor, Number(iorEl.value)); gl.uniform1f(uYaw, yaw);
+        gl.drawArrays(gl.TRIANGLE_STRIP, 0, 4);
+        requestAnimationFrame(render);
+      }
+      requestAnimationFrame(render);
+    }
+  </script>
+</body>
+</html>

@@ -1,23 +1,29 @@
-# AI-TASKS-TAXONOMY
+# AI-TASKS-TAXONOMY（问笺馆）
 
-问笺馆：中文静态站。主馆是作品任务，模型要交出能打开的文件。88 道短题留在「短题」里，只供人热身。引用的题面链回公开页面，不转载别人的模型答案。没有带原始响应的运行，就不写成功或失败。
+问笺馆：中文多模型作品任务静态陈列馆。主馆收录 **48 道**需要交付可运行文件的作品任务（覆盖动画、三维场景、游戏、应用、着色器、数据与排版六大门类），同时保留 **88 道**短题在「短题热身」板块供人热身。
 
-## 本地
+当前已收录 **Gemini（`gemini-2.5-pro`）** 全量 48 题首次实测与 **Grok（`grok-4.7-high-fast` / Cursor 辅助执行）** 39 题实测，共 **92 次**带真实产物与 SHA-256 摘要的运行记录，其中 39 道任务支持同屏并排对比。引用的题面链回公开页面，不转载他人模型答案；没有原始产物的运行不记成功或失败。
+
+## 本地开发与构建
 
 ```bash
 npm ci
 npm test
 npm run dev
+npm run build
 ```
 
-`npm test` 会核对编号唯一、类型数量、客观题答案能否由题目数据重算。`npm run build` 会先跑校验，再把站点生成到 `dist/`。资源使用相对路径，以便放在 GitHub Pages 的仓库子路径下。
+- `npm test`：运行 `scripts/validate.mjs`，核对作品任务结构、运行记录必填字段与状态合法性、短题编号唯一性、类型数量及客观题重算答案。
+- `npm run build`：先执行校验，再使用 Vite 将站点构建到 `dist/`（热身短题自动拆分为独立按需加载 chunk，资源采用相对路径以兼容 GitHub Pages 仓库子路径）。
 
-## 题目放在哪里
+## 目录与数据规范
 
-`data/questions/` 里按类型分了 JSON 文件。新增题目时沿用现有字段：`id`、`title`、`type`、`difficulty`、`minutes`、`hook`、`prompt`、`answerMode`、`answer`、`explanation`、`spec`。客观题的 `spec.kind` 必须是校验脚本已经会重算的一种。开放题使用 `spec.kind = "rubric"`，并写至少三条 `rubric`。
-
-`data/results.json` 的 `records` 现在是空数组。没有原始输出，就不要往里面填。
+- `data/tasks.json`：48 道作品任务定义（20 道 `quoted` 引用公开题面 + 28 道 `original` 原创任务）。
+- `data/results.json`：`runs` 数组记录每一次真实执行（含 `taskId`、`provider`、`model`、`status`、`checks`、`promptSha256`、`artifact`、`artifactSha256`、`rawOutput`）；`records` 保持空数组，不填无原始输出的短题成绩。
+- `data/previews.json`：首页展框预览配置（支持静态截图、文本数据预览与视口懒挂载实时预览）。
+- `public/runs/<日期-执行器>/<taskId>/`：按批次保存每道任务的 `prompt.txt` 与首次产物文件（如 `v1.html` / `index.html` / `v1.json`），首次产物原样保留，不因后续修复覆盖。
+- `data/questions/`：88 道热身短题按类型分文件存放；客观题 `spec.kind` 需可由校验脚本重算，开放题使用 `spec.kind = "rubric"` 且至少 3 条 `rubric`。
 
 ## 发布
 
-GitHub Pages 使用 Actions 部署，工作流在 `.github/workflows/pages.yml`。推送到 `main` 后，工作流会校验、构建，并把 `dist/` 发到 Pages。不要改回从分支直接发布。
+GitHub Pages 通过 `.github/workflows/pages.yml` 自动部署。推送到 `main` 分支后，工作流会自动执行 `npm test` 与 `npm run build`，并将 `dist/` 发布到 GitHub Pages。

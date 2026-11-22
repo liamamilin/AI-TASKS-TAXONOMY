@@ -1,0 +1,111 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>分形光影峡谷</title>
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    html, body { width: 100%; height: 100%; overflow: hidden; background: #1c120d; font-family: "Noto Serif SC", system-ui, sans-serif; }
+    canvas { display: block; width: 100%; height: 100%; }
+    .hud {
+      position: fixed; left: 14px; top: 12px; display: flex; gap: 10px; align-items: center;
+      background: rgba(28, 18, 12, 0.78); color: #f7e6cf; border: 1px solid rgba(240,190,130,0.28);
+      border-radius: 999px; padding: 7px 14px; font-size: 12.5px;
+    }
+    .hud button {
+      background: #9c3b32; color: #fff; border: 0; border-radius: 999px; padding: 4px 12px; cursor: pointer; font: inherit;
+    }
+  </style>
+</head>
+<body>
+  <canvas id="gl"></canvas>
+  <div class="hud">
+    <span>分形光影峡谷</span>
+    <button id="toggle" type="button">暂停巡航</button>
+  </div>
+  <script>
+    const canvas = document.getElementById("gl");
+    const gl = canvas.getContext("webgl") || canvas.getContext("experimental-webgl");
+    const toggleBtn = document.getElementById("toggle");
+    let paused = false;
+    toggleBtn.addEventListener("click", () => { paused = !paused; toggleBtn.textContent = paused ? "继续巡航" : "暂停巡航"; });
+    function resize() {
+      const dpr = Math.min(devicePixelRatio || 1, 1.5);
+      canvas.width = Math.floor(innerWidth * dpr); canvas.height = Math.floor(innerHeight * dpr);
+      if (gl) gl.viewport(0, 0, canvas.width, canvas.height);
+    }
+    window.addEventListener("resize", resize); resize();
+
+    if (gl) {
+      const vs = `attribute vec2 p; void main(){ gl_Position=vec4(p,0.,1.); }`;
+      const fs = `
+        precision highp float;
+        uniform vec2 u_res;
+        uniform float u_t;
+
+        float map(vec3 p) {
+          vec3 q = p;
+          q.x += sin(p.z * 0.25) * 1.4;
+          // Canyon walls with folded sandstone strata
+          float walls = 2.4 - abs(q.x);
+          float strata = sin(q.y * 3.8 + sin(q.z * 0.8)) * 0.18 + sin(q.z * 1.7) * 0.22;
+          // Fractal fold ribs
+          vec3 f = abs(mod(q, 3.2) - 1.6);
+          float arch = max(length(f.xy) - 1.25, abs(f.z) - 0.35);
+          float floorD = q.y + 1.35 + sin(q.x * 2.0 + q.z * 1.2) * 0.08;
+          return min(floorD, min(walls + strata, max(-walls - 0.8, arch)));
+        }
+        vec3 calcNorm(vec3 p) {
+          vec2 e = vec2(0.01, 0.0);
+          return normalize(vec3(map(p+e.xyy)-map(p-e.xyy), map(p+e.yxy)-map(p-e.yxy), map(p+e.yyx)-map(p-e.yyx)));
+        }
+        void main() {
+          vec2 uv = (gl_FragCoord.xy - 0.5 * u_res) / u_res.y;
+          vec3 ro = vec3(-sin(u_t * 0.35) * 1.1, 0.2 + sin(u_t * 0.6) * 0.15, u_t * 1.6);
+          vec3 rd = normalize(vec3(uv.x, uv.y - 0.06, 1.3));
+          float d = 0.0;
+          for (int i = 0; i < 64; i++) {
+            float h = map(ro + rd * d);
+            if (h < 0.01 || d > 42.0) break;
+            d += h * 0.72;
+          }
+          vec3 sunDir = normalize(vec3(0.25, 0.85, 0.45));
+          vec3 sky = mix(vec3(0.95, 0.62, 0.36), vec3(0.25, 0.32, 0.52), clamp(uv.y + 0.3, 0.0, 1.0));
+          vec3 col = sky;
+          if (d < 42.0) {
+            vec3 p = ro + rd * d;
+            vec3 n = calcNorm(p);
+            float diff = max(dot(n, sunDir), 0.0);
+            float band = 0.5 + 0.5 * sin(p.y * 8.0 + sin(p.z * 2.0));
+            vec3 rock = mix(vec3(0.62, 0.27, 0.16), vec3(0.86, 0.54, 0.30), band);
+            col = rock * (0.24 + 0.95 * diff);
+            float fog = 1.0 - exp(-d * 0.055);
+            col = mix(col, sky, fog);
+          }
+          gl_FragColor = vec4(pow(col, vec3(0.88)), 1.0);
+        }
+      `;
+      const compile = (type, src) => { const s = gl.createShader(type); gl.shaderSource(s, src); gl.compileShader(s); return s; };
+      const prog = gl.createProgram();
+      gl.attachShader(prog, compile(gl.VERTEX_SHADER, vs));
+      gl.attachShader(prog, compile(gl.FRAGMENT_SHADER, fs));
+      gl.linkProgram(prog); gl.useProgram(prog);
+      const buf = gl.createBuffer(); gl.bindBuffer(gl.ARRAY_BUFFER, buf);
+      gl.bufferData(gl.ARRAY_BUFFER, new Float32Array([-1,-1, 1,-1, -1,1, 1,1]), gl.STATIC_DRAW);
+      const loc = gl.getAttribLocation(prog, "p"); gl.enableVertexAttribArray(loc); gl.vertexAttribPointer(loc, 2, gl.FLOAT, false, 0, 0);
+      const uRes = gl.getUniformLocation(prog, "u_res"), uT = gl.getUniformLocation(prog, "u_t");
+      let t = 0, last = performance.now();
+      function render(now) {
+        const dt = Math.min(0.05, (now - last) / 1000); last = now;
+        if (!paused) t += dt;
+        gl.uniform2f(uRes, canvas.width, canvas.height);
+        gl.uniform1f(uT, t);
+        gl.drawArrays(gl.TRIANGLE_STRIP, 0, 4);
+        requestAnimationFrame(render);
+      }
+      requestAnimationFrame(render);
+    }
+  </script>
+</body>
+</html>

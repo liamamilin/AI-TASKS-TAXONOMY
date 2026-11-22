@@ -1,0 +1,109 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>丢了逗号的迷你校对室</title>
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body { background: #f3ecdf; color: #1d1916; font-family: system-ui, -apple-system, sans-serif; padding: 20px; line-height: 1.6; }
+    .wrap { max-width: 920px; margin: 0 auto; display: grid; gap: 16px; }
+    .card { background: #fffaf2; border: 1px solid #dfd3bf; border-radius: 12px; padding: 16px 18px; }
+    h1 { font-size: 22px; margin-bottom: 6px; }
+    .cols { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-top: 10px; }
+    textarea { width: 100%; min-height: 110px; padding: 10px; border: 1px solid #cbbba2; border-radius: 8px; font: 14px/1.6 ui-monospace, monospace; background: #fff; }
+    .bar { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 10px; align-items: center; }
+    button { border-radius: 999px; padding: 7px 14px; border: 1px solid #1d1916; background: #1d1916; color: #fffaf2; cursor: pointer; font: 600 13px inherit; }
+    button.ghost { background: transparent; color: #1d1916; border-color: #cbbba2; }
+    .diff-box { white-space: pre-wrap; font: 14px/1.8 ui-monospace, monospace; padding: 12px; background: #fff; border: 1px solid #e4d9c8; border-radius: 8px; }
+    .del { background: #fbe2df; color: #8c241b; text-decoration: line-through; padding: 1px 3px; border-radius: 3px; }
+    .ins { background: #dff2e4; color: #1f6034; padding: 1px 3px; border-radius: 3px; }
+    @media (max-width: 640px) { .cols { grid-template-columns: 1fr; } }
+  </style>
+</head>
+<body>
+  <main class="wrap">
+    <section class="card">
+      <h1>丢了逗号的迷你校对室（Unicode 字符级差异）</h1>
+      <div class="cols">
+        <div><label for="old-t">原文 (old)</label><textarea id="old-t"></textarea></div>
+        <div><label for="new-t">改文 (new)</label><textarea id="new-t"></textarea></div>
+      </div>
+      <div class="bar">
+        <button type="button" id="swap">互换版本</button>
+        <button type="button" class="ghost" id="probe-sec">载入安全探针</button>
+        <button type="button" class="ghost" id="probe-tiny">载入短例子</button>
+        <button type="button" class="ghost" id="copy-txt">复制差异纯文本</button>
+        <button type="button" class="ghost" id="dl">下载 diff.json</button>
+        <strong id="cost-label" style="margin-left:auto;color:#9c3b32;">最小代价：0</strong>
+      </div>
+    </section>
+    <section class="card">
+      <div class="diff-box" id="diff-out"></div>
+    </section>
+  </main>
+  <script>
+    const oldEl = document.getElementById("old-t");
+    const newEl = document.getElementById("new-t");
+    oldEl.value = "星港📮开门了\n周六 10:00见。\n请带纸船。";
+    newEl.value = "星港📮开门啦\n周日 10:30见。\n请带纸船！";
+    let lastDiff = null;
+
+    function computeDiff(oldStr, newStr) {
+      const a = Array.from(oldStr);
+      const b = Array.from(newStr);
+      const m = a.length, n = b.length;
+      const dp = Array.from({ length: m + 1 }, () => new Int32Array(n + 1));
+      for (let i = m - 1; i >= 0; i--) {
+        for (let j = n - 1; j >= 0; j--) {
+          dp[i][j] = a[i] === b[j] ? dp[i + 1][j + 1] + 1 : Math.max(dp[i + 1][j], dp[i][j + 1]);
+        }
+      }
+      const ops = [];
+      let i = 0, j = 0;
+      while (i < m || j < n) {
+        if (i < m && j < n && a[i] === b[j]) { ops.push({ op: "equal", text: a[i] }); i++; j++; }
+        else if (i < m && (j === n || dp[i + 1][j] >= dp[i][j + 1])) { ops.push({ op: "delete", text: a[i] }); i++; }
+        else { ops.push({ op: "insert", text: b[j] }); j++; }
+      }
+      const segments = [];
+      for (const step of ops) {
+        if (segments.length && segments[segments.length - 1].op === step.op) segments[segments.length - 1].text += step.text;
+        else segments.push({ ...step });
+      }
+      const cost = (m - dp[0][0]) + (n - dp[0][0]);
+      return { old: oldStr, new: newStr, cost, segments };
+    }
+
+    function render() {
+      lastDiff = computeDiff(oldEl.value, newEl.value);
+      document.getElementById("cost-label").textContent = `最小编辑代价：${lastDiff.cost}`;
+      const out = document.getElementById("diff-out");
+      out.innerHTML = "";
+      for (const seg of lastDiff.segments) {
+        const span = document.createElement("span");
+        if (seg.op === "delete") { span.className = "del"; span.textContent = `[-${seg.text}-]`; }
+        else if (seg.op === "insert") { span.className = "ins"; span.textContent = `[+${seg.text}+]`; }
+        else { span.textContent = seg.text; }
+        out.appendChild(span);
+      }
+    }
+
+    oldEl.addEventListener("input", render);
+    newEl.addEventListener("input", render);
+    document.getElementById("swap").addEventListener("click", () => { [oldEl.value, newEl.value] = [newEl.value, oldEl.value]; render(); });
+    document.getElementById("probe-sec").addEventListener("click", () => { oldEl.value = "<b>纸船</b>"; newEl.value = "<" + "script>合成文本</" + "script>"; render(); });
+    document.getElementById("probe-tiny").addEventListener("click", () => { oldEl.value = "纸船"; newEl.value = "小纸船"; render(); });
+    document.getElementById("copy-txt").addEventListener("click", () => {
+      const txt = lastDiff.segments.map((s) => s.op === "delete" ? `[-${s.text}-]` : s.op === "insert" ? `[+${s.text}+]` : s.text).join("");
+      navigator.clipboard?.writeText(txt).catch(() => {});
+    });
+    document.getElementById("dl").addEventListener("click", () => {
+      const a = document.createElement("a");
+      a.href = URL.createObjectURL(new Blob([JSON.stringify(lastDiff, null, 2)], { type: "application/json" }));
+      a.download = "diff.json"; a.click(); URL.revokeObjectURL(a.href);
+    });
+    render();
+  </script>
+</body>
+</html>

@@ -1,0 +1,156 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Voxel Pagoda Garden</title>
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    html, body { width: 100%; height: 100%; overflow: hidden; background: #cfe7f5; font-family: system-ui, sans-serif; }
+    .badge {
+      position: fixed; left: 14px; top: 12px; background: rgba(25, 22, 20, 0.72); color: #f8f2e8;
+      padding: 6px 12px; border-radius: 999px; font-size: 12.5px; backdrop-filter: blur(6px);
+    }
+  </style>
+</head>
+<body>
+  <div class="badge">Voxel Pagoda Garden · Drag to Orbit · Scroll to Zoom</div>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/controls/OrbitControls.js"></script>
+  <script>
+    const scene = new THREE.Scene();
+    scene.background = new THREE.Color(0xd5ebf8);
+    scene.fog = new THREE.Fog(0xd5ebf8, 36, 95);
+
+    const camera = new THREE.PerspectiveCamera(45, innerWidth / innerHeight, 0.1, 200);
+    camera.position.set(22, 18, 24);
+
+    const renderer = new THREE.WebGLRenderer({ antialias: true });
+    renderer.setSize(innerWidth, innerHeight);
+    renderer.setPixelRatio(Math.min(devicePixelRatio || 1, 2));
+    renderer.shadowMap.enabled = true;
+    document.body.appendChild(renderer.domElement);
+
+    const controls = new THREE.OrbitControls(camera, renderer.domElement);
+    controls.enableDamping = true;
+    controls.target.set(0, 6, 0);
+
+    scene.add(new THREE.AmbientLight(0xfff4e8, 0.65));
+    const sun = new THREE.DirectionalLight(0xfff2d6, 0.95);
+    sun.position.set(24, 34, 18);
+    sun.castShadow = true;
+    scene.add(sun);
+
+    const boxGeo = new THREE.BoxGeometry(1, 1, 1);
+    const matCache = new Map();
+    function getMat(hex) {
+      if (!matCache.has(hex)) matCache.set(hex, new THREE.MeshStandardMaterial({ color: hex, roughness: 0.78 }));
+      return matCache.get(hex);
+    }
+    const world = new THREE.Group();
+    scene.add(world);
+
+    function vox(x, y, z, hex) {
+      const m = new THREE.Mesh(boxGeo, getMat(hex));
+      m.position.set(x, y, z);
+      m.castShadow = true;
+      m.receiveShadow = true;
+      world.add(m);
+    }
+
+    // Garden island ground + pond + stone path
+    for (let x = -11; x <= 11; x++) {
+      for (let z = -11; z <= 11; z++) {
+        const dist = Math.hypot(x, z);
+        if (dist > 11.4) continue;
+        const isPond = (x >= 3 && x <= 8 && z >= 2 && z <= 7);
+        const isPath = (Math.abs(x) <= 1 && z >= 4 && z <= 10);
+        const topCol = isPond ? 0x4ca3c9 : (isPath ? 0xcfc8bc : ((x + z) % 2 === 0 ? 0x6ea854 : 0x629b4a));
+        vox(x, isPond ? -0.25 : 0, z, topCol);
+        vox(x, -1, z, 0x7c6148);
+      }
+    }
+
+    // 4-Tier Colorful Voxel Pagoda
+    const tiers = [
+      { y: 1, bodyR: 3, roofR: 5, h: 3 },
+      { y: 5, bodyR: 2, roofR: 4, h: 3 },
+      { y: 9, bodyR: 2, roofR: 3, h: 2 },
+      { y: 12, bodyR: 1, roofR: 2, h: 2 },
+    ];
+    for (let x = -4; x <= 4; x++) for (let z = -4; z <= 4; z++) vox(x, 1, z, 0xb8afa3);
+
+    for (const t of tiers) {
+      for (let dy = 0; dy < t.h; dy++) {
+        for (let x = -t.bodyR; x <= t.bodyR; x++) {
+          for (let z = -t.bodyR; z <= t.bodyR; z++) {
+            const onEdge = Math.abs(x) === t.bodyR || Math.abs(z) === t.bodyR;
+            if (!onEdge) continue;
+            const corner = Math.abs(x) === t.bodyR && Math.abs(z) === t.bodyR;
+            const col = corner ? 0xc0392b : (dy === 1 && (x === 0 || z === 0) ? 0xf6d365 : 0xf4eee1);
+            vox(x, t.y + 1 + dy, z, col);
+          }
+        }
+      }
+      const ry = t.y + 1 + t.h;
+      for (let x = -t.roofR; x <= t.roofR; x++) {
+        for (let z = -t.roofR; z <= t.roofR; z++) {
+          const edge = Math.abs(x) === t.roofR || Math.abs(z) === t.roofR;
+          const corner = Math.abs(x) === t.roofR && Math.abs(z) === t.roofR;
+          vox(x, ry + (corner ? 1 : 0), z, edge ? 0x2f5d62 : 0x3b6e75);
+        }
+      }
+    }
+    // Golden spire
+    for (let y = 16; y <= 19; y++) vox(0, y, 0, 0xe8b931);
+
+    // Cherry Blossom & Pine Trees
+    function addTree(tx, tz, leavesColors, height) {
+      for (let y = 1; y <= height; y++) vox(tx, y, tz, 0x6b4730);
+      for (let dx = -2; dx <= 2; dx++) {
+        for (let dy = 0; dy <= 2; dy++) {
+          for (let dz = -2; dz <= 2; dz++) {
+            if (Math.abs(dx) + Math.abs(dy) + Math.abs(dz) <= 3) {
+              const col = leavesColors[(Math.abs(dx * 3 + dy * 5 + dz * 7)) % leavesColors.length];
+              vox(tx + dx, height + dy, tz + dz, col);
+            }
+          }
+        }
+      }
+    }
+    addTree(-7, 5, [0xf7a8c4, 0xfbc6d8, 0xf08bb0], 4);
+    addTree(7, -6, [0xf7a8c4, 0xfbc6d8, 0xe97aa3], 4);
+    addTree(-7, -6, [0x3d7a47, 0x4c9157, 0x2f6338], 5);
+    addTree(-4, 8, [0xf7a8c4, 0xfcd5e3], 3);
+
+    // Falling cherry blossom petals
+    const petals = [];
+    for (let i = 0; i < 45; i++) {
+      const p = new THREE.Mesh(new THREE.BoxGeometry(0.22, 0.08, 0.22), getMat(0xffb7d1));
+      p.position.set((Math.random() - 0.5) * 20, 4 + Math.random() * 14, (Math.random() - 0.5) * 20);
+      scene.add(p);
+      petals.push(p);
+    }
+
+    window.addEventListener("resize", () => {
+      camera.aspect = innerWidth / innerHeight;
+      camera.updateProjectionMatrix();
+      renderer.setSize(innerWidth, innerHeight);
+    });
+
+    function animate(now) {
+      requestAnimationFrame(animate);
+      const t = now * 0.001;
+      for (let i = 0; i < petals.length; i++) {
+        const p = petals[i];
+        p.position.y -= 0.03;
+        p.position.x += Math.sin(t + i) * 0.015;
+        if (p.position.y < 0.5) p.position.y = 14 + Math.random() * 4;
+      }
+      controls.update();
+      renderer.render(scene, camera);
+    }
+    animate(0);
+  </script>
+</body>
+</html>

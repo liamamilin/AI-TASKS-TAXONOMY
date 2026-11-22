@@ -1,0 +1,184 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>摆波共振墙</title>
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    html, body {
+      width: 100%; height: 100%; overflow: hidden;
+      background: #10141c; color: #f0ece3;
+      font-family: "Noto Serif SC", system-ui, sans-serif;
+    }
+    canvas { display: block; width: 100%; height: 100%; }
+    .hud {
+      position: fixed; left: 16px; top: 14px; right: 16px;
+      display: flex; flex-wrap: wrap; gap: 10px; align-items: center; justify-content: space-between;
+      pointer-events: none;
+    }
+    .panel {
+      pointer-events: auto;
+      display: flex; flex-wrap: wrap; gap: 10px; align-items: center;
+      background: rgba(18, 23, 33, 0.84);
+      border: 1px solid rgba(240, 228, 206, 0.16);
+      border-radius: 999px; padding: 7px 14px; font-size: 13px;
+      backdrop-filter: blur(8px);
+    }
+    .panel button {
+      background: #273247; color: #f7f2e7; border: 1px solid rgba(240,228,206,.24);
+      border-radius: 999px; padding: 4px 12px; cursor: pointer; font: inherit;
+    }
+    .panel button.active { background: #d46a43; border-color: #d46a43; color: #fff; }
+    .panel input[type="range"] { width: 84px; accent-color: #e6a856; }
+    .phase { font-variant-numeric: tabular-nums; color: #e6c999; }
+  </style>
+</head>
+<body>
+  <canvas id="c"></canvas>
+  <div class="hud">
+    <div class="panel">
+      <button id="toggle" type="button">暂停</button>
+      <button id="reset" type="button">齐步释放</button>
+      <button id="view" type="button">切换俯视</button>
+      <label>倍速 <input id="speed" type="range" min="0.2" max="3" step="0.1" value="1"></label>
+    </div>
+    <div class="panel">
+      <span class="phase" id="phase">周期 0.0 / 60.0 s</span>
+    </div>
+  </div>
+  <script>
+    const canvas = document.getElementById("c");
+    const ctx = canvas.getContext("2d");
+    const toggleBtn = document.getElementById("toggle");
+    const resetBtn = document.getElementById("reset");
+    const viewBtn = document.getElementById("view");
+    const speedInput = document.getElementById("speed");
+    const phaseEl = document.getElementById("phase");
+
+    const COUNT = 15;
+    const CYCLE = 60; // seconds for all pendulums to realign
+    const BASE_OSC = 24;
+    const MAX_ANGLE = 0.56;
+
+    const pendulums = Array.from({ length: COUNT }, (_, i) => {
+      const freq = (BASE_OSC + i) / CYCLE; // oscillations per second
+      const lenRatio = Math.pow(BASE_OSC / (BASE_OSC + i), 2);
+      const hue = 24 + (i / (COUNT - 1)) * 185;
+      return { i, freq, lenRatio, hue };
+    });
+
+    let simTime = 8.4; // start mid-wave so initial frame is visually expressive
+    let paused = false;
+    let topView = false;
+    let last = performance.now();
+
+    toggleBtn.addEventListener("click", () => {
+      paused = !paused;
+      toggleBtn.textContent = paused ? "继续" : "暂停";
+    });
+    resetBtn.addEventListener("click", () => { simTime = 0; });
+    viewBtn.addEventListener("click", () => {
+      topView = !topView;
+      viewBtn.classList.toggle("active", topView);
+      viewBtn.textContent = topView ? "切换正视" : "切换俯视";
+    });
+
+    function resize() {
+      const dpr = Math.min(devicePixelRatio || 1, 2);
+      canvas.width = Math.floor(innerWidth * dpr);
+      canvas.height = Math.floor(innerHeight * dpr);
+      ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+    }
+    window.addEventListener("resize", resize);
+    resize();
+
+    function draw(now) {
+      const dt = Math.min(0.05, (now - last) / 1000);
+      last = now;
+      if (!paused) {
+        simTime = (simTime + dt * Number(speedInput.value)) % CYCLE;
+      }
+      phaseEl.textContent = `周期 ${simTime.toFixed(1)} / ${CYCLE.toFixed(1)} s`;
+
+      const w = innerWidth, h = innerHeight;
+      ctx.fillStyle = "#10141c";
+      ctx.fillRect(0, 0, w, h);
+
+      // Subtle vertical guide grid
+      ctx.strokeStyle = "rgba(255,255,255,0.04)";
+      ctx.lineWidth = 1;
+      for (let x = w * 0.1; x <= w * 0.9; x += w * 0.1) {
+        ctx.beginPath(); ctx.moveTo(x, 0); ctx.lineTo(x, h); ctx.stroke();
+      }
+
+      const bobs = [];
+      if (!topView) {
+        const beamY = h * 0.16;
+        const maxLen = h * 0.68;
+        const leftX = w * 0.12;
+        const rightX = w * 0.88;
+
+        ctx.strokeStyle = "rgba(235, 219, 190, 0.35)";
+        ctx.lineWidth = 4;
+        ctx.beginPath();
+        ctx.moveTo(leftX - 24, beamY);
+        ctx.lineTo(rightX + 24, beamY);
+        ctx.stroke();
+
+        for (const p of pendulums) {
+          const anchorX = leftX + (p.i / (COUNT - 1)) * (rightX - leftX);
+          const theta = MAX_ANGLE * Math.cos(2 * Math.PI * p.freq * simTime);
+          const len = maxLen * (0.46 + 0.54 * p.lenRatio);
+          const bx = anchorX + Math.sin(theta) * len * 0.55;
+          const by = beamY + Math.cos(theta) * len;
+          bobs.push({ x: bx, y: by, hue: p.hue, r: 10 + (COUNT - p.i) * 0.35 });
+
+          ctx.strokeStyle = "rgba(215, 224, 240, 0.28)";
+          ctx.lineWidth = 1.5;
+          ctx.beginPath(); ctx.moveTo(anchorX, beamY); ctx.lineTo(bx, by); ctx.stroke();
+        }
+      } else {
+        const leftX = w * 0.12;
+        const rightX = w * 0.88;
+        const midY = h * 0.54;
+        const ampY = h * 0.32;
+
+        ctx.strokeStyle = "rgba(235, 219, 190, 0.18)";
+        ctx.setLineDash([6, 6]);
+        ctx.beginPath(); ctx.moveTo(leftX, midY); ctx.lineTo(rightX, midY); ctx.stroke();
+        ctx.setLineDash([]);
+
+        for (const p of pendulums) {
+          const bx = leftX + (p.i / (COUNT - 1)) * (rightX - leftX);
+          const theta = Math.cos(2 * Math.PI * p.freq * simTime);
+          const by = midY + theta * ampY;
+          bobs.push({ x: bx, y: by, hue: p.hue, r: 11 });
+        }
+      }
+
+      // Connecting harmonic curve
+      ctx.beginPath();
+      bobs.forEach((b, idx) => (idx === 0 ? ctx.moveTo(b.x, b.y) : ctx.lineTo(b.x, b.y)));
+      ctx.strokeStyle = "rgba(246, 206, 134, 0.34)";
+      ctx.lineWidth = 2;
+      ctx.stroke();
+
+      for (const b of bobs) {
+        const g = ctx.createRadialGradient(b.x - 3, b.y - 3, 1, b.x, b.y, b.r * 2.1);
+        g.addColorStop(0, `hsla(${b.hue}, 92%, 78%, 1)`);
+        g.addColorStop(0.45, `hsla(${b.hue}, 82%, 58%, 0.92)`);
+        g.addColorStop(1, `hsla(${b.hue}, 82%, 50%, 0)`);
+        ctx.fillStyle = g;
+        ctx.beginPath(); ctx.arc(b.x, b.y, b.r * 2.1, 0, Math.PI * 2); ctx.fill();
+
+        ctx.fillStyle = `hsl(${b.hue}, 88%, 68%)`;
+        ctx.beginPath(); ctx.arc(b.x, b.y, b.r, 0, Math.PI * 2); ctx.fill();
+      }
+
+      requestAnimationFrame(draw);
+    }
+    requestAnimationFrame(draw);
+  </script>
+</body>
+</html>

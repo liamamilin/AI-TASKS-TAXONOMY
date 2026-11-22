@@ -1,0 +1,148 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Starship Bridge Control Panel</title>
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    html, body { width: 100%; height: 100%; overflow: hidden; background: #050a12; color: #aef0ff; font-family: ui-monospace, "SF Mono", monospace; }
+    canvas { display: block; width: 100%; height: 100%; cursor: pointer; }
+  </style>
+</head>
+<body>
+  <canvas id="c"></canvas>
+  <script>
+    const canvas = document.getElementById("c");
+    const ctx = canvas.getContext("2d");
+
+    const systems = [
+      { id: "WARP", label: "WARP CORE", on: true, val: 84, color: "#4de1ff" },
+      { id: "SHLD", label: "DEFLECTOR", on: true, val: 92, color: "#5ef2a8" },
+      { id: "SENS", label: "LONG SCAN", on: true, val: 76, color: "#ffd166" },
+      { id: "ALRT", label: "RED ALERT", on: false, val: 100, color: "#ff5c6c" },
+    ];
+    let hitBoxes = [];
+    let warpSpeed = 6.4;
+
+    function resize() {
+      const dpr = Math.min(devicePixelRatio || 1, 2);
+      canvas.width = Math.floor(innerWidth * dpr);
+      canvas.height = Math.floor(innerHeight * dpr);
+      ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+    }
+    window.addEventListener("resize", resize);
+    resize();
+
+    canvas.addEventListener("pointerdown", (e) => {
+      const rect = canvas.getBoundingClientRect();
+      const mx = e.clientX - rect.left, my = e.clientY - rect.top;
+      for (const b of hitBoxes) {
+        if (mx >= b.x && mx <= b.x + b.w && my >= b.y && my <= b.y + b.h) {
+          b.sys.on = !b.sys.on;
+          if (b.sys.id === "WARP") warpSpeed = b.sys.on ? 6.4 : 0.8;
+        }
+      }
+    });
+
+    const blips = Array.from({ length: 14 }, (_, i) => ({
+      a: i * 1.1, d: 0.22 + (i % 5) * 0.15, spd: 0.08 + (i % 3) * 0.05,
+    }));
+
+    function draw(now) {
+      const t = now * 0.001;
+      const w = innerWidth, h = innerHeight;
+      const alertOn = systems[3].on;
+      const accent = alertOn ? "#ff5c6c" : "#4de1ff";
+
+      ctx.fillStyle = alertOn ? "#12060a" : "#050a12";
+      ctx.fillRect(0, 0, w, h);
+
+      // Subtle holographic scanlines
+      ctx.fillStyle = "rgba(120, 220, 255, 0.03)";
+      for (let y = 0; y < h; y += 4) ctx.fillRect(0, y, w, 1);
+
+      // Outer console bezel
+      ctx.strokeStyle = accent;
+      ctx.lineWidth = 2;
+      ctx.strokeRect(14, 14, w - 28, h - 28);
+      ctx.fillStyle = accent;
+      ctx.font = "700 13px ui-monospace, monospace";
+      ctx.fillText(`USS AETHEL // BRIDGE CONSOLE  ·  WARP ${warpSpeed.toFixed(1)}  ·  STATUS: ${alertOn ? "RED ALERT" : "NOMINAL"}`, 28, 38);
+
+      // Left Panel: Tactical Radar
+      const rx = w * 0.22, ry = h * 0.47, rr = Math.min(w * 0.16, h * 0.28);
+      ctx.strokeStyle = "rgba(77, 225, 255, 0.35)";
+      ctx.lineWidth = 1.2;
+      for (const frac of [0.33, 0.66, 1]) {
+        ctx.beginPath(); ctx.arc(rx, ry, rr * frac, 0, Math.PI * 2); ctx.stroke();
+      }
+      ctx.beginPath(); ctx.moveTo(rx - rr, ry); ctx.lineTo(rx + rr, ry); ctx.moveTo(rx, ry - rr); ctx.lineTo(rx, ry + rr); ctx.stroke();
+      const sweep = t * 1.6;
+      ctx.strokeStyle = accent;
+      ctx.lineWidth = 2;
+      ctx.beginPath(); ctx.moveTo(rx, ry); ctx.lineTo(rx + Math.cos(sweep) * rr, ry + Math.sin(sweep) * rr); ctx.stroke();
+      for (const b of blips) {
+        const a = b.a + t * b.spd;
+        ctx.fillStyle = alertOn ? "#ff8b94" : "#5ef2a8";
+        ctx.beginPath(); ctx.arc(rx + Math.cos(a) * rr * b.d, ry + Math.sin(a) * rr * b.d, 3, 0, Math.PI * 2); ctx.fill();
+      }
+
+      // Center Panel: Warp Core Harmonic Waveform
+      const cx = w * 0.43, cy = h * 0.20, cw = w * 0.34, ch = h * 0.44;
+      ctx.strokeStyle = "rgba(77, 225, 255, 0.32)";
+      ctx.strokeRect(cx, cy, cw, ch);
+      ctx.strokeStyle = systems[0].on ? accent : "#445566";
+      ctx.lineWidth = 2.2;
+      ctx.beginPath();
+      for (let i = 0; i <= 120; i++) {
+        const u = i / 120;
+        const amp = systems[0].on ? ch * 0.32 : ch * 0.04;
+        const y = cy + ch / 2 + Math.sin(u * 14 + t * 5) * Math.cos(u * 3 - t * 2) * amp;
+        if (i === 0) ctx.moveTo(cx + u * cw, y); else ctx.lineTo(cx + u * cw, y);
+      }
+      ctx.stroke();
+
+      // Right Panel: Telemetry Bars
+      const bx = w * 0.80, by = h * 0.20, bw = w * 0.15, bh = h * 0.44;
+      ctx.strokeStyle = "rgba(77, 225, 255, 0.32)";
+      ctx.strokeRect(bx, by, bw, bh);
+      const bars = ["PLASMA", "SHIELD", "OXYGEN", "THRUST", "GRAV"];
+      bars.forEach((name, idx) => {
+        const y = by + 22 + idx * ((bh - 30) / bars.length);
+        const pct = 0.55 + 0.35 * Math.sin(t * (1.2 + idx * 0.4) + idx);
+        ctx.fillStyle = "#8ab4c8";
+        ctx.font = "11px ui-monospace, monospace";
+        ctx.fillText(name, bx + 10, y);
+        ctx.fillStyle = "rgba(77, 225, 255, 0.14)";
+        ctx.fillRect(bx + 10, y + 6, bw - 20, 10);
+        ctx.fillStyle = idx === 1 && alertOn ? "#ff5c6c" : accent;
+        ctx.fillRect(bx + 10, y + 6, (bw - 20) * pct, 10);
+      });
+
+      // Bottom Interactive Subsystem Toggle Switches
+      hitBoxes = [];
+      const btnY = h * 0.74, btnH = Math.min(72, h * 0.16), gap = 14;
+      const totalW = w - 56;
+      const btnW = (totalW - gap * (systems.length - 1)) / systems.length;
+      systems.forEach((sys, i) => {
+        const x = 28 + i * (btnW + gap);
+        hitBoxes.push({ x, y: btnY, w: btnW, h: btnH, sys });
+        ctx.fillStyle = sys.on ? "rgba(77, 225, 255, 0.18)" : "rgba(255, 255, 255, 0.04)";
+        ctx.strokeStyle = sys.on ? sys.color : "#33475b";
+        ctx.lineWidth = 2;
+        ctx.fillRect(x, btnY, btnW, btnH);
+        ctx.strokeRect(x, btnY, btnW, btnH);
+        ctx.fillStyle = sys.on ? sys.color : "#6c8499";
+        ctx.font = "700 13px ui-monospace, monospace";
+        ctx.fillText(sys.label, x + 12, btnY + 26);
+        ctx.font = "12px ui-monospace, monospace";
+        ctx.fillText(sys.on ? "ONLINE · CLICK TO TOGGLE" : "STANDBY", x + 12, btnY + 48);
+      });
+
+      requestAnimationFrame(draw);
+    }
+    requestAnimationFrame(draw);
+  </script>
+</body>
+</html>

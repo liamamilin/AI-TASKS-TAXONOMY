@@ -1,0 +1,31 @@
+{
+  "title": "风筝纸工坊",
+  "date": "2026-04-18",
+  "place": "云尾室",
+  "host_id": "HOST-SYN-01",
+  "people": 12,
+  "paper_per_person": 3,
+  "paper_in_stock": 10,
+  "totalPaper": 36,
+  "restock": 26,
+  "schedule": [
+    {
+      "name": "签到",
+      "start": "10:30",
+      "end": "10:40",
+      "minutes": 10
+    },
+    {
+      "name": "制作",
+      "start": "10:40",
+      "end": "11:30",
+      "minutes": 50
+    },
+    {
+      "name": "收拾",
+      "start": "11:30",
+      "end": "11:40",
+      "minutes": 10
+    }
+  ]
+}

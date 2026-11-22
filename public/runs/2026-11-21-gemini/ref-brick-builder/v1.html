@@ -1,0 +1,177 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>3D Brick Builder</title>
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    html, body { width: 100%; height: 100%; overflow: hidden; background: #e9eff5; font-family: system-ui, sans-serif; }
+    .panel {
+      position: fixed; left: 14px; top: 14px; background: rgba(255,255,255,0.92); color: #1b2230;
+      border: 1px solid #d2dbe6; border-radius: 14px; padding: 12px; display: grid; gap: 10px;
+      box-shadow: 0 12px 28px rgba(20, 30, 50, 0.14); width: 240px; font-size: 13px;
+    }
+    .row { display: flex; flex-wrap: wrap; gap: 6px; }
+    button {
+      border: 1px solid #c6d0de; background: #f3f6fa; color: #1b2230;
+      border-radius: 8px; padding: 5px 10px; cursor: pointer; font: 600 12px inherit;
+    }
+    button.on { background: #1b2230; color: #fff; border-color: #1b2230; }
+    .swatch { width: 24px; height: 24px; border-radius: 50%; border: 2px solid transparent; padding: 0; }
+    .swatch.on { border-color: #1b2230; transform: scale(1.1); }
+    .hint { font-size: 11.5px; color: #5b667a; line-height: 1.45; }
+  </style>
+</head>
+<body>
+  <div class="panel">
+    <strong>3D Brick Builder</strong>
+    <div class="row" id="sizes">
+      <button type="button" data-size="1x1">1×1</button>
+      <button type="button" data-size="2x1">2×1</button>
+      <button type="button" data-size="2x2" class="on">2×2</button>
+      <button type="button" data-size="4x2">4×2</button>
+    </div>
+    <div class="row" id="colors"></div>
+    <div class="row">
+      <button type="button" id="rotate">Rotate (R)</button>
+      <button type="button" id="mode">Mode: Place</button>
+      <button type="button" id="clear">Clear</button>
+    </div>
+    <p class="hint">Click baseplate or brick to place. Switch to Remove or Shift+Click to delete. Drag to orbit.</p>
+  </div>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/controls/OrbitControls.js"></script>
+  <script>
+    const scene = new THREE.Scene();
+    scene.background = new THREE.Color(0xe9eff5);
+    const camera = new THREE.PerspectiveCamera(45, innerWidth / innerHeight, 0.1, 200);
+    camera.position.set(14, 13, 14);
+    const renderer = new THREE.WebGLRenderer({ antialias: true });
+    renderer.setSize(innerWidth, innerHeight);
+    renderer.setPixelRatio(Math.min(devicePixelRatio || 1, 2));
+    renderer.shadowMap.enabled = true;
+    document.body.appendChild(renderer.domElement);
+
+    const controls = new THREE.OrbitControls(camera, renderer.domElement);
+    controls.enableDamping = true;
+    controls.target.set(0, 1, 0);
+
+    scene.add(new THREE.AmbientLight(0xffffff, 0.65));
+    const sun = new THREE.DirectionalLight(0xffffff, 0.8);
+    sun.position.set(16, 24, 14);
+    sun.castShadow = true;
+    scene.add(sun);
+
+    const BASE = 16;
+    const baseMesh = new THREE.Mesh(
+      new THREE.BoxGeometry(BASE, 0.4, BASE),
+      new THREE.MeshStandardMaterial({ color: 0x5ca45b, roughness: 0.7 })
+    );
+    baseMesh.position.y = -0.2;
+    baseMesh.receiveShadow = true;
+    scene.add(baseMesh);
+    scene.add(new THREE.GridHelper(BASE, BASE, 0x3b723b, 0x4b874a));
+
+    const PALETTE = ["#d63a2f", "#f2b705", "#2d6cdf", "#2f9e5b", "#f4f6f9", "#2a2f38", "#e87826"];
+    let curColor = PALETTE[0], curW = 2, curD = 2, removeMode = false;
+    const bricks = [];
+
+    const colorsDiv = document.getElementById("colors");
+    PALETTE.forEach((hex, idx) => {
+      const b = document.createElement("button");
+      b.type = "button"; b.className = "swatch" + (idx === 0 ? " on" : "");
+      b.style.background = hex;
+      b.addEventListener("click", () => {
+        curColor = hex;
+        colorsDiv.querySelectorAll(".swatch").forEach((s) => s.classList.remove("on"));
+        b.classList.add("on");
+      });
+      colorsDiv.appendChild(b);
+    });
+
+    document.getElementById("sizes").addEventListener("click", (e) => {
+      const btn = e.target.closest("[data-size]");
+      if (!btn) return;
+      [curW, curD] = btn.dataset.size.split("x").map(Number);
+      document.querySelectorAll("#sizes button").forEach((b) => b.classList.toggle("on", b === btn));
+    });
+    document.getElementById("rotate").addEventListener("click", () => { [curW, curD] = [curD, curW]; });
+    const modeBtn = document.getElementById("mode");
+    modeBtn.addEventListener("click", () => {
+      removeMode = !removeMode;
+      modeBtn.classList.toggle("on", removeMode);
+      modeBtn.textContent = removeMode ? "Mode: Remove" : "Mode: Place";
+    });
+    document.getElementById("clear").addEventListener("click", () => {
+      bricks.forEach((b) => scene.remove(b));
+      bricks.length = 0;
+    });
+    window.addEventListener("keydown", (e) => { if (e.key.toLowerCase() === "r") [curW, curD] = [curD, curW]; });
+
+    function makeBrick(w, d, hex) {
+      const g = new THREE.Group();
+      const mat = new THREE.MeshStandardMaterial({ color: hex, roughness: 0.35 });
+      const body = new THREE.Mesh(new THREE.BoxGeometry(w - 0.04, 1.0, d - 0.04), mat);
+      body.castShadow = true; body.receiveShadow = true;
+      g.add(body);
+      const studGeo = new THREE.CylinderGeometry(0.28, 0.28, 0.2, 16);
+      for (let ix = 0; ix < w; ix++) {
+        for (let iz = 0; iz < d; iz++) {
+          const stud = new THREE.Mesh(studGeo, mat);
+          stud.position.set(-w / 2 + 0.5 + ix, 0.6, -d / 2 + 0.5 + iz);
+          stud.castShadow = true;
+          g.add(stud);
+        }
+      }
+      return g;
+    }
+
+    // Starter sample structure
+    [[0,0.5,0,4,2,"#d63a2f"], [0,1.5,0,2,2,"#f2b705"], [-3,0.5,2,2,2,"#2d6cdf"]].forEach(([x,y,z,w,d,c]) => {
+      const b = makeBrick(w, d, c); b.position.set(x, y, z); scene.add(b); bricks.push(b);
+    });
+
+    const raycaster = new THREE.Raycaster();
+    const pointer = new THREE.Vector2();
+    let downX = 0, downY = 0;
+    renderer.domElement.addEventListener("pointerdown", (e) => { downX = e.clientX; downY = e.clientY; });
+    renderer.domElement.addEventListener("pointerup", (e) => {
+      if (Math.hypot(e.clientX - downX, e.clientY - downY) > 6) return;
+      pointer.x = (e.clientX / innerWidth) * 2 - 1;
+      pointer.y = -(e.clientY / innerHeight) * 2 + 1;
+      raycaster.setFromCamera(pointer, camera);
+      const hits = raycaster.intersectObjects([baseMesh, ...bricks], true);
+      if (!hits.length) return;
+      const hit = hits[0];
+      if (removeMode || e.shiftKey) {
+        let obj = hit.object;
+        while (obj && !bricks.includes(obj)) obj = obj.parent;
+        if (obj) { scene.remove(obj); bricks.splice(bricks.indexOf(obj), 1); }
+        return;
+      }
+      const p = hit.point.clone().add(hit.face.normal.clone().multiplyScalar(0.5));
+      const sx = Math.round(p.x - (curW % 2 ? 0.5 : 0)) + (curW % 2 ? 0.5 : 0);
+      const sz = Math.round(p.z - (curD % 2 ? 0.5 : 0)) + (curD % 2 ? 0.5 : 0);
+      const sy = Math.max(0.5, Math.floor(p.y) + 0.5);
+      const brick = makeBrick(curW, curD, curColor);
+      brick.position.set(sx, sy, sz);
+      scene.add(brick);
+      bricks.push(brick);
+    });
+
+    window.addEventListener("resize", () => {
+      camera.aspect = innerWidth / innerHeight;
+      camera.updateProjectionMatrix();
+      renderer.setSize(innerWidth, innerHeight);
+    });
+
+    function animate() {
+      requestAnimationFrame(animate);
+      controls.update();
+      renderer.render(scene, camera);
+    }
+    animate();
+  </script>
+</body>
+</html>

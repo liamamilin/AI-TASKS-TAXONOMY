@@ -1,0 +1,141 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>小修订也得算数</title>
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body { background: #f3ecdf; color: #1d1916; font-family: system-ui, -apple-system, sans-serif; padding: 20px; line-height: 1.55; }
+    .wrap { max-width: 920px; margin: 0 auto; display: grid; gap: 16px; }
+    .card { background: #fffaf2; border: 1px solid #dfd3bf; border-radius: 12px; padding: 16px 18px; }
+    .grid3 { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; }
+    h1 { font-size: 22px; margin-bottom: 6px; }
+    h2 { font-size: 15px; color: #5e554a; margin-bottom: 8px; }
+    .bar { display: flex; flex-wrap: wrap; gap: 8px; align-items: center; margin-top: 10px; }
+    button { border-radius: 999px; padding: 6px 14px; border: 1px solid #cbbba2; background: #f5ede0; color: #1d1916; cursor: pointer; font: 600 13px inherit; }
+    button.on { background: #1d1916; color: #fffaf2; border-color: #1d1916; }
+    input[type="number"] { width: 72px; padding: 5px 8px; border: 1px solid #cbbba2; border-radius: 8px; font: inherit; }
+    table { width: 100%; border-collapse: collapse; font-size: 13px; }
+    th, td { text-align: left; padding: 6px; border-bottom: 1px solid #e7dccb; }
+    @media (max-width: 720px) { .grid3 { grid-template-columns: 1fr; } }
+  </style>
+</head>
+<body>
+  <main class="wrap">
+    <section class="card">
+      <h1>小修订也得算数（单一数据源多视图同步）</h1>
+      <div class="bar">
+        <button type="button" id="btn-rev" class="on">查看修订版</button>
+        <button type="button" id="btn-orig">查看原版（不可污染）</button>
+        <label>修订人数 <input id="in-people" type="number" min="0" value="12"></label>
+        <label>每人纸张 <input id="in-ppp" type="number" min="0" value="3"></label>
+        <button type="button" id="dl-rev">下载 revised.json</button>
+        <button type="button" id="dl-log">下载 change-log.json</button>
+      </div>
+    </section>
+    <section class="grid3">
+      <article class="card"><h2>视图 1：活动公告</h2><div id="v-notice"></div></article>
+      <article class="card"><h2>视图 2：流程表</h2><div id="v-sched"></div></article>
+      <article class="card"><h2>视图 3：物资单</h2><div id="v-supply"></div></article>
+    </section>
+    <section class="card">
+      <h2>逐项修改记录（直接变更与衍生变更）</h2>
+      <div id="changelog"></div>
+    </section>
+  </main>
+  <script>
+    const ORIGINAL = Object.freeze({
+      title: "风筝纸工坊", date: "2026-04-18", place: "云尾室", host_id: "HOST-SYN-01",
+      people: 8, paper_per_person: 3, paper_in_stock: 10,
+      schedule: [
+        { name: "签到", start: "10:00", minutes: 10 },
+        { name: "制作", start: "10:10", minutes: 40 },
+        { name: "收拾", start: "10:50", minutes: 10 },
+      ],
+    });
+    const toMin = (hhmm) => { const [h, m] = hhmm.split(":").map(Number); return h * 60 + m; };
+    const toHHMM = (m) => `${String(Math.floor(m / 60)).padStart(2,"0")}:${String(m % 60).padStart(2,"0")}`;
+
+    function enrich(base) {
+      let cur = toMin(base.schedule[0].start);
+      const sched = base.schedule.map((s) => {
+        const st = toHHMM(cur); cur += s.minutes; const en = toHHMM(cur);
+        return { ...s, start: st, end: en };
+      });
+      const totalPaper = base.people * base.paper_per_person;
+      const restock = Math.max(0, totalPaper - base.paper_in_stock);
+      return { ...base, schedule: sched, totalPaper, restock };
+    }
+
+    let mode = "revised";
+    let curRevised = null, curLog = null;
+
+    function buildRevised() {
+      const people = Math.max(0, Number(document.getElementById("in-people").value) || 0);
+      const ppp = Math.max(0, Number(document.getElementById("in-ppp").value) || 0);
+      const startShift = 30, makeDur = 50;
+      const base = {
+        ...ORIGINAL,
+        people,
+        paper_per_person: ppp,
+        schedule: [
+          { name: "签到", start: toHHMM(toMin("10:00") + startShift), minutes: 10 },
+          { name: "制作", start: "", minutes: makeDur },
+          { name: "收拾", start: "", minutes: 10 },
+        ],
+      };
+      const orig = enrich(ORIGINAL);
+      const rev = enrich(base);
+      const log = [
+        { field: "people", type: "直接变更", from: orig.people, to: rev.people },
+        { field: "paper_per_person", type: "直接变更", from: orig.paper_per_person, to: rev.paper_per_person },
+        { field: "schedule[0].start", type: "直接变更", from: orig.schedule[0].start, to: rev.schedule[0].start },
+        { field: "schedule[1].minutes", type: "直接变更", from: orig.schedule[1].minutes, to: rev.schedule[1].minutes },
+        { field: "schedule 区间", type: "衍生变更", from: orig.schedule.map((s)=>`${s.name}${s.start}–${s.end}`).join(" / "), to: rev.schedule.map((s)=>`${s.name}${s.start}–${s.end}`).join(" / ") },
+        { field: "totalPaper", type: "衍生变更", from: orig.totalPaper, to: rev.totalPaper },
+        { field: "restock", type: "衍生变更", from: orig.restock, to: rev.restock },
+      ];
+      return { orig, rev, log };
+    }
+
+    function render() {
+      const { orig, rev, log } = buildRevised();
+      curRevised = rev; curLog = log;
+      const data = mode === "revised" ? rev : orig;
+      document.getElementById("btn-rev").classList.toggle("on", mode === "revised");
+      document.getElementById("btn-orig").classList.toggle("on", mode === "original");
+
+      document.getElementById("v-notice").innerHTML = `
+        <p><strong>${data.title}</strong>（${mode === "revised" ? "修订版" : "原版"}）</p>
+        <p>日期：${data.date} · 地点：${data.place}</p>
+        <p>主持编号：${data.host_id}</p>
+        <p>时间：${data.schedule[0].start}–${data.schedule[2].end} · 人数：${data.people} 人</p>`;
+      document.getElementById("v-sched").innerHTML = `<table><thead><tr><th>环节</th><th>时段</th><th>时长</th></tr></thead><tbody>${
+        data.schedule.map((s) => `<tr><td>${s.name}</td><td>${s.start}–${s.end}</td><td>${s.minutes} 分</td></tr>`).join("")
+      }</tbody></table>`;
+      document.getElementById("v-supply").innerHTML = `
+        <p>人数：${data.people} 人 × 每人 ${data.paper_per_person} 张</p>
+        <p>总需纸张：<strong>${data.totalPaper}</strong> 张</p>
+        <p>现有库存：${data.paper_in_stock} 张</p>
+        <p>需补采购：<strong>${data.restock}</strong> 张</p>`;
+      document.getElementById("changelog").innerHTML = `<table><thead><tr><th>字段</th><th>类别</th><th>原版</th><th>修订版</th></tr></thead><tbody>${
+        log.map((c) => `<tr><td>${c.field}</td><td>${c.type}</td><td>${c.from}</td><td>${c.to}</td></tr>`).join("")
+      }</tbody></table>`;
+    }
+
+    document.getElementById("btn-rev").addEventListener("click", () => { mode = "revised"; render(); });
+    document.getElementById("btn-orig").addEventListener("click", () => { mode = "original"; render(); });
+    document.getElementById("in-people").addEventListener("input", render);
+    document.getElementById("in-ppp").addEventListener("input", render);
+    const dl = (name, obj) => {
+      const a = document.createElement("a");
+      a.href = URL.createObjectURL(new Blob([JSON.stringify(obj, null, 2)], { type: "application/json" }));
+      a.download = name; a.click(); URL.revokeObjectURL(a.href);
+    };
+    document.getElementById("dl-rev").addEventListener("click", () => dl("revised.json", curRevised));
+    document.getElementById("dl-log").addEventListener("click", () => dl("change-log.json", curLog));
+    render();
+  </script>
+</body>
+</html>

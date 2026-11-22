@@ -1,0 +1,130 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>字幕慢了半拍 · 离线校时台</title>
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body { background: #f3ecdf; color: #1d1916; font-family: system-ui, -apple-system, sans-serif; padding: 20px; line-height: 1.55; }
+    .wrap { max-width: 880px; margin: 0 auto; display: grid; gap: 16px; }
+    .card { background: #fffaf2; border: 1px solid #dfd3bf; border-radius: 12px; padding: 16px 18px; }
+    h1 { font-size: 22px; margin-bottom: 6px; }
+    h2 { font-size: 15px; color: #5e554a; margin-bottom: 10px; }
+    .bar { display: flex; flex-wrap: wrap; gap: 10px; align-items: center; }
+    input[type="number"] { width: 96px; padding: 6px 8px; border: 1px solid #cbbba2; border-radius: 8px; font: inherit; }
+    button { border-radius: 999px; padding: 7px 14px; border: 1px solid #1d1916; background: #1d1916; color: #fffaf2; cursor: pointer; font: 600 13px inherit; }
+    button.ghost { background: transparent; color: #1d1916; border-color: #cbbba2; }
+    .stage { background: #1c1815; color: #f7f1e5; border-radius: 10px; padding: 20px; min-height: 86px; display: grid; place-items: center; text-align: center; font-size: 17px; }
+    table { width: 100%; border-collapse: collapse; font-size: 13px; margin-top: 8px; }
+    th, td { text-align: left; padding: 7px 8px; border-bottom: 1px solid #e7dccb; }
+    th { background: #f5ede0; }
+  </style>
+</head>
+<body>
+  <main class="wrap">
+    <section class="card">
+      <h1>字幕慢了半拍（离线校时台）</h1>
+      <div class="bar" style="margin-top:10px;">
+        <label>偏移 delta (ms) <input id="delta" type="number" step="50" value="-700"></label>
+        <button type="button" id="apply">重新校时</button>
+        <button type="button" class="ghost" id="dl-srt">下载 corrected.srt</button>
+        <button type="button" class="ghost" id="dl-vtt">下载 corrected.vtt</button>
+        <button type="button" class="ghost" id="dl-rep">下载 report.json</button>
+      </div>
+    </section>
+    <section class="card">
+      <h2>时间游标预览（0–8 秒，支持重叠同时显示，HTML 当纯文本渲染）</h2>
+      <div class="bar" style="margin-bottom:10px;">
+        <input id="scrub" type="range" min="0" max="8000" step="50" value="2200" style="flex:1;">
+        <strong id="cur-t">2.20 s</strong>
+      </div>
+      <div class="stage" id="stage"></div>
+    </section>
+    <section class="card">
+      <h2>校时结果与报告</h2>
+      <div id="report-box"></div>
+    </section>
+  </main>
+  <script>
+    const RAW_SRT = "1\n00:00:00,100 --> 00:00:00,500\n片头\n\n2\n00:00:01,000 --> 00:00:03,000\n小纸船出发了\n\n3\n00:00:02,800 --> 00:00:04,000\n风把它吹向窗边\n\n4\n00:00:05,000 --> 00:00:07,000\n<i>这是原样文字</i>\n";
+
+    function toMs(ts) {
+      const m = /^(\d+):(\d+):(\d+),(\d+)$/.exec(ts.trim());
+      return ((+m[1] * 3600 + +m[2] * 60 + +m[3]) * 1000) + +m[4];
+    }
+    function fmtMs(ms, sep) {
+      const h = Math.floor(ms / 3600000), m = Math.floor((ms % 3600000) / 60000), s = Math.floor((ms % 60000) / 1000), r = ms % 1000;
+      return `${String(h).padStart(2,"0")}:${String(m).padStart(2,"0")}:${String(s).padStart(2,"0")}${sep}${String(r).padStart(3,"0")}`;
+    }
+    function parseSRT(text) {
+      return text.trim().split(/\n\s*\n/).map((block) => {
+        const lines = block.split("\n");
+        const [s, e] = lines[1].split("-->").map(toMs);
+        return { origIndex: Number(lines[0]), start: s, end: e, text: lines.slice(2).join("\n") };
+      });
+    }
+
+    let cur = null;
+    function recompute() {
+      const delta = Number(document.getElementById("delta").value) || 0;
+      const entries = parseSRT(RAW_SRT);
+      const kept = [], dropped = [];
+      for (const e of entries) {
+        const ns = Math.max(0, e.start + delta);
+        const ne = Math.max(0, e.end + delta);
+        if (ne <= ns) dropped.push({ origIndex: e.origIndex, text: e.text, reason: `修正后区间 [${ns}, ${ne}] 无效（end <= start）` });
+        else kept.push({ origIndex: e.origIndex, start: ns, end: ne, text: e.text });
+      }
+      kept.sort((a, b) => a.start - b.start || a.origIndex - b.origIndex);
+      kept.forEach((k, i) => { k.index = i + 1; });
+      const overlaps = [];
+      for (let i = 0; i < kept.length - 1; i++) {
+        if (kept[i].end > kept[i + 1].start) {
+          overlaps.push({ firstOrig: kept[i].origIndex, secondOrig: kept[i + 1].origIndex, overlapMs: kept[i].end - kept[i + 1].start });
+        }
+      }
+      const srt = kept.map((k) => `${k.index}\n${fmtMs(k.start, ",")} --> ${fmtMs(k.end, ",")}\n${k.text}`).join("\n\n") + "\n";
+      const vtt = "WEBVTT\n\n" + kept.map((k) => `${fmtMs(k.start, ".")} --> ${fmtMs(k.end, ".")}\n${k.text}`).join("\n\n") + "\n";
+      cur = { delta_ms: delta, kept, dropped, overlaps, srt, vtt };
+      renderReport();
+      renderStage();
+    }
+
+    function escH(s) { return String(s).replace(/[&<>"']/g, (c) => ({ "&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;" }[c])); }
+    function renderStage() {
+      const t = Number(document.getElementById("scrub").value);
+      document.getElementById("cur-t").textContent = `${(t / 1000).toFixed(2)} s`;
+      const active = cur.kept.filter((k) => k.start <= t && t < k.end);
+      const stage = document.getElementById("stage");
+      stage.innerHTML = "";
+      if (!active.length) { stage.textContent = "（当前时刻无活动字幕）"; return; }
+      for (const a of active) {
+        const p = document.createElement("div");
+        p.textContent = a.text; // safe plain text
+        stage.appendChild(p);
+      }
+    }
+
+    function renderReport() {
+      document.getElementById("report-box").innerHTML = `
+        <p style="font-size:13px;">丢弃 ${cur.dropped.length} 条；保留 ${cur.kept.length} 条；重叠对 ${cur.overlaps.length} 组${cur.overlaps.length ? `（原条目 ${cur.overlaps[0].firstOrig}/${cur.overlaps[0].secondOrig}，重叠 ${cur.overlaps[0].overlapMs} ms，未擅自截断）` : ""}。</p>
+        <table><thead><tr><th>新编号</th><th>原编号</th><th>修正区间 (ms)</th><th>原文（安全文本）</th></tr></thead><tbody>${
+          cur.kept.map((k) => `<tr><td>${k.index}</td><td>${k.origIndex}</td><td>[${k.start}, ${k.end})</td><td>${escH(k.text)}</td></tr>`).join("")
+        }</tbody></table>`;
+    }
+
+    function dl(name, text, mime) {
+      const a = document.createElement("a");
+      a.href = URL.createObjectURL(new Blob([text], { type: mime }));
+      a.download = name; a.click(); URL.revokeObjectURL(a.href);
+    }
+    document.getElementById("apply").addEventListener("click", recompute);
+    document.getElementById("scrub").addEventListener("input", renderStage);
+    document.getElementById("dl-srt").addEventListener("click", () => dl("corrected.srt", cur.srt, "text/plain;charset=utf-8"));
+    document.getElementById("dl-vtt").addEventListener("click", () => dl("corrected.vtt", cur.vtt, "text/vtt;charset=utf-8"));
+    document.getElementById("dl-rep").addEventListener("click", () => dl("report.json", JSON.stringify({ delta_ms: cur.delta_ms, kept: cur.kept, dropped: cur.dropped, overlaps: cur.overlaps }, null, 2), "application/json"));
+    recompute();
+  </script>
+</body>
+</html>

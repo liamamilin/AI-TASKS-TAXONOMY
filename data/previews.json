@@ -280,5 +280,77 @@
     "artifact": "runs/2026-11-22-cursor/orig-n14-sound-postcard/index.html",
     "image": "previews/orig-n14-sound-postcard.jpg",
     "label": "展示 v1"
+  },
+  "orig-pendulum-wave": {
+    "revision": "v1",
+    "status": "success",
+    "artifact": "runs/2026-11-21-gemini/orig-pendulum-wave/v1.html",
+    "live": true,
+    "label": "Gemini v1",
+    "note": "实时内嵌展示 Gemini 首次生成的单文件产物。"
+  },
+  "orig-isometric-courtyard": {
+    "revision": "v1",
+    "status": "success",
+    "artifact": "runs/2026-11-21-gemini/orig-isometric-courtyard/v1.html",
+    "live": true,
+    "label": "Gemini v1",
+    "note": "实时内嵌展示 Gemini 首次生成的单文件产物。"
+  },
+  "orig-orbit-slingshot": {
+    "revision": "v1",
+    "status": "success",
+    "artifact": "runs/2026-11-21-gemini/orig-orbit-slingshot/v1.html",
+    "live": true,
+    "label": "Gemini v1",
+    "note": "实时内嵌展示 Gemini 首次生成的单文件产物。"
+  },
+  "orig-chord-synth": {
+    "revision": "v1",
+    "status": "success",
+    "artifact": "runs/2026-11-21-gemini/orig-chord-synth/v1.html",
+    "live": true,
+    "label": "Gemini v1",
+    "note": "实时内嵌展示 Gemini 首次生成的单文件产物。"
+  },
+  "orig-ink-fluid": {
+    "revision": "v1",
+    "status": "success",
+    "artifact": "runs/2026-11-21-gemini/orig-ink-fluid/v1.html",
+    "live": true,
+    "label": "Gemini v1",
+    "note": "实时内嵌展示 Gemini 首次生成的单文件产物。"
+  },
+  "orig-solar-almanac": {
+    "revision": "v1",
+    "status": "success",
+    "artifact": "runs/2026-11-21-gemini/orig-solar-almanac/v1.html",
+    "live": true,
+    "label": "Gemini v1",
+    "note": "实时内嵌展示 Gemini 首次生成的单文件产物。"
+  },
+  "orig-aurora-sky": {
+    "revision": "v1",
+    "status": "success",
+    "artifact": "runs/2026-11-21-gemini/orig-aurora-sky/v1.html",
+    "live": true,
+    "label": "Gemini v1",
+    "note": "实时内嵌展示 Gemini 首次生成的单文件着色器产物。"
+  },
+  "orig-glass-orb": {
+    "revision": "v1",
+    "status": "success",
+    "artifact": "runs/2026-11-21-gemini/orig-glass-orb/v1.html",
+    "live": true,
+    "label": "Gemini v1",
+    "note": "实时内嵌展示 Gemini 首次生成的单文件着色器产物。"
+  },
+  "orig-fractal-canyon": {
+    "revision": "v1",
+    "status": "success",
+    "artifact": "runs/2026-11-21-gemini/orig-fractal-canyon/v1.html",
+    "live": true,
+    "label": "Gemini v1",
+    "note": "实时内嵌展示 Gemini 首次生成的单文件着色器产物。"
   }
 }

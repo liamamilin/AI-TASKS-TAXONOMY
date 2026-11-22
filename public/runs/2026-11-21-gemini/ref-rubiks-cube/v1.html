@@ -1,0 +1,190 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Auto-Solving Rubik's Cube</title>
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    html, body { width: 100%; height: 100%; overflow: hidden; background: #141821; color: #f0f3fa; font-family: system-ui, sans-serif; }
+    .ui {
+      position: fixed; left: 14px; top: 12px; max-width: 310px;
+      background: rgba(20, 25, 36, 0.86); border: 1px solid rgba(255,255,255,0.14);
+      border-radius: 14px; padding: 12px; display: grid; gap: 8px; backdrop-filter: blur(8px);
+    }
+    .moves { display: grid; grid-template-columns: repeat(6, 1fr); gap: 5px; }
+    button {
+      background: #283247; color: #fff; border: 1px solid rgba(255,255,255,0.18);
+      border-radius: 8px; padding: 6px 4px; cursor: pointer; font: 600 12.5px inherit;
+    }
+    button:hover { background: #3b4a69; }
+    .row { display: flex; gap: 8px; }
+    .row button { flex: 1; padding: 8px; }
+    .row button.primary { background: #d95d39; border-color: #d95d39; }
+    .row button.solve { background: #2e8b57; border-color: #2e8b57; }
+    .status { font-size: 12.5px; color: #b9c5dc; }
+  </style>
+</head>
+<body>
+  <div class="ui">
+    <div class="moves" id="moves"></div>
+    <div class="row">
+      <button id="scramble" class="primary" type="button">Scramble</button>
+      <button id="solve" class="solve" type="button">Unscramble</button>
+    </div>
+    <div class="status" id="status">State: Solved · Moves: 0</div>
+  </div>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/controls/OrbitControls.js"></script>
+  <script>
+    const scene = new THREE.Scene();
+    scene.background = new THREE.Color(0x141821);
+    const camera = new THREE.PerspectiveCamera(42, innerWidth / innerHeight, 0.1, 100);
+    camera.position.set(5.2, 4.4, 5.8);
+
+    const renderer = new THREE.WebGLRenderer({ antialias: true });
+    renderer.setSize(innerWidth, innerHeight);
+    renderer.setPixelRatio(Math.min(devicePixelRatio || 1, 2));
+    document.body.appendChild(renderer.domElement);
+
+    const controls = new THREE.OrbitControls(camera, renderer.domElement);
+    controls.enableDamping = true;
+
+    scene.add(new THREE.AmbientLight(0xffffff, 0.65));
+    const dir1 = new THREE.DirectionalLight(0xffffff, 0.85); dir1.position.set(8, 12, 10); scene.add(dir1);
+    const dir2 = new THREE.DirectionalLight(0x9ec5ff, 0.35); dir2.position.set(-8, -6, -8); scene.add(dir2);
+
+    const cubeRoot = new THREE.Group();
+    scene.add(cubeRoot);
+
+    const COLORS = {
+      R: 0xb71234, L: 0xff5800, U: 0xffffff, D: 0xffd500, F: 0x009b48, B: 0x0046ad, dark: 0x1a1c20
+    };
+    const cubies = [];
+    const geo = new THREE.BoxGeometry(0.94, 0.94, 0.94);
+
+    for (let x = -1; x <= 1; x++) {
+      for (let y = -1; y <= 1; y++) {
+        for (let z = -1; z <= 1; z++) {
+          const mats = [
+            new THREE.MeshStandardMaterial({ color: x === 1 ? COLORS.R : COLORS.dark, roughness: 0.35 }),
+            new THREE.MeshStandardMaterial({ color: x === -1 ? COLORS.L : COLORS.dark, roughness: 0.35 }),
+            new THREE.MeshStandardMaterial({ color: y === 1 ? COLORS.U : COLORS.dark, roughness: 0.35 }),
+            new THREE.MeshStandardMaterial({ color: y === -1 ? COLORS.D : COLORS.dark, roughness: 0.35 }),
+            new THREE.MeshStandardMaterial({ color: z === 1 ? COLORS.F : COLORS.dark, roughness: 0.35 }),
+            new THREE.MeshStandardMaterial({ color: z === -1 ? COLORS.B : COLORS.dark, roughness: 0.35 }),
+          ];
+          const mesh = new THREE.Mesh(geo, mats);
+          mesh.position.set(x, y, z);
+          mesh.userData.solvedPos = new THREE.Vector3(x, y, z);
+          mesh.userData.solvedQuat = new THREE.Quaternion();
+          cubeRoot.add(mesh);
+          cubies.push(mesh);
+        }
+      }
+    }
+
+    const MOVE_DEFS = {
+      "U":  { axis: "y", layer: 1,  dir: -1 }, "U'": { axis: "y", layer: 1,  dir: 1 },
+      "D":  { axis: "y", layer: -1, dir: 1 },  "D'": { axis: "y", layer: -1, dir: -1 },
+      "L":  { axis: "x", layer: -1, dir: 1 },  "L'": { axis: "x", layer: -1, dir: -1 },
+      "R":  { axis: "x", layer: 1,  dir: -1 }, "R'": { axis: "x", layer: 1,  dir: 1 },
+      "F":  { axis: "z", layer: 1,  dir: -1 }, "F'": { axis: "z", layer: 1,  dir: 1 },
+      "B":  { axis: "z", layer: -1, dir: 1 },  "B'": { axis: "z", layer: -1, dir: -1 },
+    };
+    const invMove = (m) => m.endsWith("'") ? m.slice(0, -1) : m + "'";
+
+    const history = [];
+    const queue = [];
+    let activeAnim = null;
+    let solveTimer = null;
+    const statusEl = document.getElementById("status");
+
+    function isSolved() {
+      const wp = new THREE.Vector3();
+      const wq = new THREE.Quaternion();
+      for (const c of cubies) {
+        c.getWorldPosition(wp);
+        c.getWorldQuaternion(wq);
+        if (wp.distanceTo(c.userData.solvedPos) > 0.05) return false;
+        if (Math.abs(wq.dot(c.userData.solvedQuat)) < 0.995) return false;
+      }
+      return true;
+    }
+
+    function updateStatus() {
+      statusEl.textContent = `State: ${isSolved() ? "Solved" : "Scrambled"} · Recorded: ${history.length}`;
+    }
+
+    function enqueue(move, record = true, duration = 220) {
+      queue.push({ move, record, duration });
+    }
+
+    function startNext() {
+      if (activeAnim || !queue.length) return;
+      const { move, record, duration } = queue.shift();
+      const def = MOVE_DEFS[move];
+      const pivot = new THREE.Group();
+      cubeRoot.add(pivot);
+      const selected = cubies.filter((c) => Math.round(c.position[def.axis]) === def.layer);
+      selected.forEach((c) => pivot.attach(c));
+      if (record) history.push(move);
+      activeAnim = { pivot, selected, axis: def.axis, target: def.dir * (Math.PI / 2), start: performance.now(), duration };
+    }
+
+    const movesDiv = document.getElementById("moves");
+    Object.keys(MOVE_DEFS).forEach((m) => {
+      const b = document.createElement("button");
+      b.type = "button"; b.textContent = m.replace("'", "′");
+      b.addEventListener("click", () => enqueue(m, true, 220));
+      movesDiv.appendChild(b);
+    });
+
+    document.getElementById("scramble").addEventListener("click", () => {
+      if (solveTimer) { clearInterval(solveTimer); solveTimer = null; }
+      const keys = Object.keys(MOVE_DEFS);
+      for (let i = 0; i < 12; i++) {
+        enqueue(keys[Math.floor(Math.random() * keys.length)], true, 120);
+      }
+    });
+
+    document.getElementById("solve").addEventListener("click", () => {
+      if (solveTimer || !history.length) return;
+      solveTimer = setInterval(() => {
+        if (!history.length) { clearInterval(solveTimer); solveTimer = null; return; }
+        const lastMove = history.pop();
+        enqueue(invMove(lastMove), false, 240);
+      }, 500);
+    });
+
+    window.addEventListener("resize", () => {
+      camera.aspect = innerWidth / innerHeight;
+      camera.updateProjectionMatrix();
+      renderer.setSize(innerWidth, innerHeight);
+    });
+
+    function animate(now) {
+      requestAnimationFrame(animate);
+      startNext();
+      if (activeAnim) {
+        const p = Math.min(1, (now - activeAnim.start) / activeAnim.duration);
+        const eased = p < 0.5 ? 2 * p * p : 1 - Math.pow(-2 * p + 2, 2) / 2;
+        activeAnim.pivot.rotation[activeAnim.axis] = activeAnim.target * eased;
+        if (p >= 1) {
+          activeAnim.pivot.updateMatrixWorld(true);
+          for (const c of activeAnim.selected) {
+            cubeRoot.attach(c);
+            c.position.set(Math.round(c.position.x), Math.round(c.position.y), Math.round(c.position.z));
+          }
+          cubeRoot.remove(activeAnim.pivot);
+          activeAnim = null;
+          updateStatus();
+        }
+      }
+      controls.update();
+      renderer.render(scene, camera);
+    }
+    animate(0);
+  </script>
+</body>
+</html>

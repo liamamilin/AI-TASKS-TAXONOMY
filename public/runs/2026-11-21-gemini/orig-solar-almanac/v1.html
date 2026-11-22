@@ -1,0 +1,145 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>二十四节气历法卡</title>
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      background: #f3ecdf; color: #1e1a16;
+      font-family: "Noto Serif SC", "Songti SC", serif;
+      padding: 20px; line-height: 1.6;
+    }
+    .sheet {
+      max-width: 900px; margin: 0 auto; background: #fffaf2;
+      border: 1px solid #dfd3bf; padding: 24px 28px;
+      box-shadow: 0 18px 36px rgba(50, 34, 16, 0.08);
+    }
+    header { display: flex; flex-wrap: wrap; justify-content: space-between; align-items: end; gap: 12px; border-bottom: 1.5px solid #1e1a16; padding-bottom: 14px; margin-bottom: 18px; }
+    h1 { font-size: 26px; letter-spacing: 0.06em; }
+    .sub { color: #675d52; font-size: 13.5px; }
+    .toolbar { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 16px; }
+    .chip {
+      border: 1px solid #d7c9b3; background: #f5ede0; color: #1e1a16;
+      border-radius: 999px; padding: 5px 14px; cursor: pointer; font: inherit; font-size: 13px;
+    }
+    .chip.on { background: #1e1a16; color: #fffaf2; border-color: #1e1a16; }
+    .chart-box { background: #f8f2e7; border: 1px solid #e4d8c5; padding: 12px 14px; margin-bottom: 18px; }
+    .chart-box h2 { font-size: 14px; color: #675d52; margin-bottom: 6px; font-weight: 600; }
+    .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(190px, 1fr)); gap: 12px; }
+    .card {
+      border: 1px solid #dfd3bf; background: #fffdf8; padding: 12px 14px;
+      display: flex; flex-direction: column; gap: 4px;
+    }
+    .card .top { display: flex; justify-content: space-between; align-items: baseline; }
+    .card strong { font-size: 18px; }
+    .card .deg { color: #9c3b32; font-size: 12.5px; font-weight: 600; }
+    .card .date { font-size: 12.5px; color: #675d52; }
+    .card .pheno { font-size: 12.5px; color: #3d352d; margin-top: 4px; }
+    @media print {
+      body { background: #fff; padding: 0; }
+      .sheet { box-shadow: none; border: 0; max-width: none; padding: 8mm; }
+      .toolbar { display: none; }
+      .grid { grid-template-columns: repeat(4, 1fr); gap: 8px; }
+      .card { break-inside: avoid; }
+    }
+  </style>
+</head>
+<body>
+  <main class="sheet">
+    <header>
+      <div>
+        <h1>二十四节气历法卡</h1>
+        <p class="sub">太阳黄经每 15° 一节气 · 含常年公历区间、物候三候与北纬 35° 昼长曲线</p>
+      </div>
+      <button class="chip" type="button" onclick="window.print()">打印展卡</button>
+    </header>
+    <div class="toolbar" id="tabs"></div>
+    <div class="chart-box">
+      <h2>北纬 35° 全年昼长变化曲线（小时）</h2>
+      <svg id="curve" viewBox="0 0 840 110" width="100%" height="110" aria-label="二十四节气昼长曲线"></svg>
+    </div>
+    <section class="grid" id="grid"></section>
+  </main>
+  <script>
+    const TERMS = [
+      ["春","立春",315,"2月3–5日","东风解冻 · 蛰虫始振 · 鱼陟负冰",10.6],
+      ["春","雨水",330,"2月18–20日","獭祭鱼 · 鸿雁来 · 草木萌动",11.1],
+      ["春","惊蛰",345,"3月5–7日","桃始华 · 仓庚鸣 · 鹰化为鸠",11.6],
+      ["春","春分",0,  "3月20–22日","玄鸟至 · 雷乃发声 · 始电",12.1],
+      ["春","清明",15, "4月4–6日","桐始华 · 田鼠化为鴽 · 虹始见",12.7],
+      ["春","谷雨",30, "4月19–21日","萍始生 · 鸣鸠拂其羽 · 戴胜降于桑",13.2],
+      ["夏","立夏",45, "5月5–7日","蝼蝈鸣 · 蚯蚓出 · 王瓜生",13.8],
+      ["夏","小满",60, "5月20–22日","苦菜秀 · 靡草死 · 麦秋至",14.2],
+      ["夏","芒种",75, "6月5–7日","螳螂生 · 鵙始鸣 · 反舌无声",14.5],
+      ["夏","夏至",90, "6月21–22日","鹿角解 · 蜩始鸣 · 半夏生",14.6],
+      ["夏","小暑",105,"7月6–8日","温风至 · 蟋蟀居宇 · 鹰始鸷",14.4],
+      ["夏","大暑",120,"7月22–24日","腐草为萤 · 土润溽暑 · 大雨时行",14.1],
+      ["秋","立秋",135,"8月7–9日","凉风至 · 白露生 · 寒蝉鸣",13.6],
+      ["秋","处暑",150,"8月22–24日","鹰乃祭鸟 · 天地始肃 · 禾乃登",13.1],
+      ["秋","白露",165,"9月7–9日","鸿雁来 · 玄鸟归 · 群鸟养羞",12.5],
+      ["秋","秋分",180,"9月22–24日","雷始收声 · 蛰虫坯户 · 水始涸",12.0],
+      ["秋","寒露",195,"10月8–9日","鸿雁来宾 · 雀入大水为蛤 · 菊有黄华",11.5],
+      ["秋","霜降",210,"10月23–24日","豺乃祭兽 · 草木黄落 · 蛰虫咸俯",10.9],
+      ["冬","立冬",225,"11月7–8日","水始冰 · 地始冻 · 雉入大水为蜃",10.4],
+      ["冬","小雪",240,"11月22–23日","虹藏不见 · 天气上升地气下降 · 闭塞而成冬",10.0],
+      ["冬","大雪",255,"12月6–8日","鹖鴠不鸣 · 虎始交 · 荔挺出",9.8],
+      ["冬","冬至",270,"12月21–23日","蚯蚓结 · 麋角解 · 水泉动",9.7],
+      ["冬","小寒",285,"1月5–7日","雁北乡 · 鹊始巢 · 雉始雊",9.9],
+      ["冬","大寒",300,"1月20–21日","鸡始乳 · 征鸟厉疾 · 水泽腹坚",10.2],
+    ];
+
+    const tabsEl = document.getElementById("tabs");
+    const gridEl = document.getElementById("grid");
+    const curveEl = document.getElementById("curve");
+    let season = "全部";
+
+    function renderCurve() {
+      const padX = 28, padY = 14, w = 840 - padX * 2, h = 110 - padY * 2;
+      const pts = TERMS.map((t, i) => {
+        const x = padX + (i / (TERMS.length - 1)) * w;
+        const y = padY + (1 - (t[5] - 9.2) / 5.8) * h;
+        return { x, y, t };
+      });
+      const path = pts.map((p, i) => `${i === 0 ? "M" : "L"}${p.x.toFixed(1)},${p.y.toFixed(1)}`).join(" ");
+      const midY = padY + (1 - (12.0 - 9.2) / 5.8) * h;
+      curveEl.innerHTML = `
+        <line x1="${padX}" y1="${midY.toFixed(1)}" x2="${840-padX}" y2="${midY.toFixed(1)}" stroke="#cbbda7" stroke-dasharray="4 4"/>
+        <text x="4" y="${(midY + 4).toFixed(1)}" font-size="10" fill="#7a6f62">12h</text>
+        <path d="${path}" fill="none" stroke="#9c3b32" stroke-width="2.2"/>
+        ${pts.map((p) => {
+          const active = season === "全部" || p.t[0] === season;
+          const key = ["春分","夏至","秋分","冬至"].includes(p.t[1]);
+          return `<circle cx="${p.x.toFixed(1)}" cy="${p.y.toFixed(1)}" r="${key ? 4.2 : 2.6}" fill="${active ? "#9c3b32" : "#cfc3b0"}"/>`
+            + (key ? `<text x="${p.x.toFixed(1)}" y="${(p.y - 7).toFixed(1)}" text-anchor="middle" font-size="10.5" fill="#1e1a16">${p.t[1]}</text>` : "");
+        }).join("")}
+      `;
+    }
+
+    function render() {
+      tabsEl.innerHTML = ["全部","春","夏","秋","冬"].map((s) =>
+        `<button type="button" class="chip ${season === s ? "on" : ""}" data-s="${s}">${s === "全部" ? "全年 24 节气" : s + "季（6）"}</button>`
+      ).join("");
+      const shown = season === "全部" ? TERMS : TERMS.filter((t) => t[0] === season);
+      gridEl.innerHTML = shown.map((t) => `
+        <article class="card">
+          <div class="top"><strong>${t[1]}</strong><span class="deg">黄经 ${t[2]}°</span></div>
+          <div class="date">${t[0]}季 · ${t[3]} · 昼长约 ${t[5]}h</div>
+          <div class="pheno">${t[4]}</div>
+        </article>
+      `).join("");
+      renderCurve();
+    }
+
+    tabsEl.addEventListener("click", (e) => {
+      const btn = e.target.closest("[data-s]");
+      if (!btn) return;
+      season = btn.dataset.s;
+      render();
+    });
+
+    render();
+  </script>
+</body>
+</html>

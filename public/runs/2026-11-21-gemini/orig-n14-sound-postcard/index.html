@@ -1,0 +1,44 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>纸城声音明信片</title>
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body { background: #f3ecdf; color: #1d1916; font-family: "Noto Serif SC", system-ui, sans-serif; padding: 20px; display: grid; place-items: center; min-height: 100vh; }
+    .card { width: min(640px, 100%); background: #fffaf2; border: 1px solid #dfd3bf; border-radius: 16px; padding: 24px; display: grid; gap: 16px; box-shadow: 0 16px 36px rgba(50,34,16,.09); }
+    h1 { font-size: 22px; }
+    audio { width: 100%; }
+    .cues { display: grid; gap: 8px; }
+    .cue { border: 1px solid #e4d8c5; background: #f8f2e7; border-radius: 10px; padding: 10px 14px; font-size: 13.5px; display: flex; justify-content: space-between; gap: 12px; }
+    .cue.active { border-color: #9c3b32; background: #fbeee8; font-weight: 600; }
+    .time { color: #9c3b32; font-family: ui-monospace, monospace; }
+  </style>
+</head>
+<body>
+  <main class="card">
+    <div>
+      <h1>纸城声音明信片</h1>
+      <p style="font-size:13px;color:#62584d;margin-top:4px;">8 秒纯 Python 标准库合成 WAV（22050Hz / 16-bit 单声道 / seed=42），需点击播放，不自动出声。</p>
+    </div>
+    <audio id="player" controls preload="metadata" src="./postcard.wav"></audio>
+    <div class="cues" id="cues">
+      <div class="cue" data-s="0.5" data-e="1.3"><span>1. 门铃 — 两声轻门铃</span><span class="time">0.5s – 1.3s</span></div>
+      <div class="cue" data-s="2.0" data-e="4.0"><span>2. 脚步 — 四步脚步（2.0 / 2.5 / 3.0 / 3.5 秒）</span><span class="time">2.0s – 4.0s</span></div>
+      <div class="cue" data-s="5.0" data-e="7.0"><span>3. 开信 — 拆开纸信的沙沙声</span><span class="time">5.0s – 7.0s</span></div>
+    </div>
+  </main>
+  <script>
+    const player = document.getElementById("player");
+    const cues = [...document.querySelectorAll(".cue")];
+    player.addEventListener("timeupdate", () => {
+      const t = player.currentTime;
+      cues.forEach((c) => {
+        const s = Number(c.dataset.s), e = Number(c.dataset.e);
+        c.classList.toggle("active", t >= s && t <= e);
+      });
+    });
+  </script>
+</body>
+</html>

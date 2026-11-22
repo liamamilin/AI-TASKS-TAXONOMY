@@ -1,0 +1,12 @@
+{
+  "input": {
+    "item": "发热装置模型",
+    "category": "纸品",
+    "hazard": "是",
+    "note": "含发热部件"
+  },
+  "decision": {
+    "desk": "不接收：此演示只处理无危险手工物品",
+    "rule_id": "R1_HAZARD_REJECT"
+  }
+}

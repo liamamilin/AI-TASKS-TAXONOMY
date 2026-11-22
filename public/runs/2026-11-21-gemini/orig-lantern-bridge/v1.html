@@ -1,0 +1,149 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>摇晃的灯笼桥</title>
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    html, body {
+      width: 100%; height: 100%; overflow: hidden;
+      background: #cfe8f6; display: grid; place-items: center;
+    }
+    svg { width: min(100vw, 960px); height: auto; max-height: 100vh; display: block; }
+    @keyframes swayA {
+      0%, 100% { transform: rotate(-6deg); }
+      50%      { transform: rotate(6deg); }
+    }
+    @keyframes swayB {
+      0%, 100% { transform: rotate(5deg); }
+      50%      { transform: rotate(-5.5deg); }
+    }
+    @keyframes ripple {
+      0%, 100% { transform: translateX(-4px) scaleX(0.98); }
+      50%      { transform: translateX(4px) scaleX(1.03); }
+    }
+    .lantern-1 { transform-origin: 240px 218px; animation: swayA 3.4s ease-in-out infinite; }
+    .lantern-2 { transform-origin: 410px 188px; animation: swayB 3.9s ease-in-out infinite; }
+    .lantern-3 { transform-origin: 580px 218px; animation: swayA 3.2s ease-in-out infinite; }
+    .lantern-4 { transform-origin: 794px 192px; animation: swayB 3.6s ease-in-out infinite; }
+    .refl-1 { transform-origin: 280px 440px; animation: ripple 3.8s ease-in-out infinite; }
+    .refl-2 { transform-origin: 560px 448px; animation: ripple 4.3s ease-in-out infinite; }
+  </style>
+</head>
+<body>
+  <svg viewBox="0 0 960 540" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="石桥上三盏红灯笼与右侧屋檐一盏红灯笼，水面两团较淡倒影">
+    <defs>
+      <linearGradient id="daySky" x1="0" y1="0" x2="0" y2="1">
+        <stop offset="0%" stop-color="#8cc6e8"/>
+        <stop offset="68%" stop-color="#d7eef9"/>
+        <stop offset="100%" stop-color="#f2f6ee"/>
+      </linearGradient>
+      <linearGradient id="river" x1="0" y1="0" x2="0" y2="1">
+        <stop offset="0%" stop-color="#78b7d4"/>
+        <stop offset="55%" stop-color="#5a9bb9"/>
+        <stop offset="100%" stop-color="#4582a0"/>
+      </linearGradient>
+      <linearGradient id="stone" x1="0" y1="0" x2="0" y2="1">
+        <stop offset="0%" stop-color="#ddd5c7"/>
+        <stop offset="100%" stop-color="#b4aa9a"/>
+      </linearGradient>
+      <radialGradient id="redLantern" cx="42%" cy="38%" r="60%">
+        <stop offset="0%" stop-color="#ff6b57"/>
+        <stop offset="65%" stop-color="#c92d22"/>
+        <stop offset="100%" stop-color="#8c1912"/>
+      </radialGradient>
+    </defs>
+
+    <!-- Daytime sky & soft clouds -->
+    <rect width="960" height="358" fill="url(#daySky)"/>
+    <g fill="#ffffff" opacity="0.78">
+      <ellipse cx="170" cy="86" rx="56" ry="18"/>
+      <ellipse cx="206" cy="80" rx="34" ry="15"/>
+      <ellipse cx="520" cy="64" rx="64" ry="20"/>
+      <ellipse cx="556" cy="58" rx="36" ry="16"/>
+    </g>
+
+    <!-- Distant hills -->
+    <path d="M0 330 Q180 250 380 310 T760 286 T960 320 L960 360 L0 360 Z" fill="#a8c3b3" opacity="0.65"/>
+
+    <!-- Daytime river -->
+    <rect y="356" width="960" height="184" fill="url(#river)"/>
+    <g stroke="#d8f0fb" stroke-width="2" opacity="0.35" stroke-linecap="round">
+      <line x1="60" y1="396" x2="155" y2="396"/>
+      <line x1="690" y1="412" x2="810" y2="412"/>
+      <line x1="360" y1="494" x2="480" y2="494"/>
+    </g>
+
+    <!-- Two pale reflections on the river surface -->
+    <g class="refl-1" opacity="0.32">
+      <ellipse cx="290" cy="430" rx="46" ry="14" fill="#d9483b"/>
+      <ellipse cx="290" cy="448" rx="32" ry="9" fill="#e56758"/>
+      <ellipse cx="290" cy="462" rx="18" ry="5" fill="#f08f7d"/>
+    </g>
+    <g class="refl-2" opacity="0.28">
+      <ellipse cx="574" cy="436" rx="50" ry="14" fill="#d9483b"/>
+      <ellipse cx="574" cy="454" rx="34" ry="9" fill="#e56758"/>
+      <ellipse cx="574" cy="468" rx="20" ry="5" fill="#f08f7d"/>
+    </g>
+
+    <!-- Stone Arch Bridge -->
+    <path d="M60 364 Q410 175 760 364 L760 382 L610 382 C572 288 248 288 210 382 L60 382 Z" fill="url(#stone)" stroke="#8b8172" stroke-width="2.5"/>
+    <!-- Bridge railing & posts -->
+    <path d="M90 328 Q410 156 730 328" fill="none" stroke="#9e9485" stroke-width="6" stroke-linecap="round"/>
+    <g stroke="#8e8475" stroke-width="5" stroke-linecap="round">
+      <line x1="240" y1="218" x2="240" y2="274"/>
+      <line x1="410" y1="188" x2="410" y2="246"/>
+      <line x1="580" y1="218" x2="580" y2="274"/>
+    </g>
+
+    <!-- Right-side pavilion eave -->
+    <g>
+      <rect x="814" y="196" width="146" height="176" fill="#ebe3d5" stroke="#9c9282" stroke-width="2"/>
+      <rect x="836" y="228" width="44" height="58" fill="#5e4b3c" rx="2"/>
+      <path d="M766 196 Q824 186 858 140 L960 140 L960 202 L772 202 Z" fill="#444c54" stroke="#2c3238" stroke-width="2.5" stroke-linejoin="round"/>
+    </g>
+
+    <!-- Reusable lantern definition via inline groups (4 lanterns total: 3 on bridge + 1 under right eave) -->
+    <!-- Lantern 1 (left on bridge) -->
+    <g class="lantern-1">
+      <line x1="240" y1="218" x2="240" y2="236" stroke="#4a392b" stroke-width="2.5"/>
+      <rect x="232" y="236" width="16" height="5" rx="2" fill="#d4a23c"/>
+      <ellipse cx="240" cy="259" rx="18" ry="22" fill="url(#redLantern)" stroke="#7a1510" stroke-width="1.8"/>
+      <path d="M232 239 Q228 259 232 279 M248 239 Q252 259 248 279" fill="none" stroke="#8f1e16" stroke-width="1.2"/>
+      <rect x="233" y="279" width="14" height="5" rx="2" fill="#d4a23c"/>
+      <line x1="240" y1="284" x2="240" y2="300" stroke="#c92d22" stroke-width="3" stroke-linecap="round"/>
+    </g>
+
+    <!-- Lantern 2 (middle on bridge) -->
+    <g class="lantern-2">
+      <line x1="410" y1="188" x2="410" y2="206" stroke="#4a392b" stroke-width="2.5"/>
+      <rect x="402" y="206" width="16" height="5" rx="2" fill="#d4a23c"/>
+      <ellipse cx="410" cy="229" rx="18" ry="22" fill="url(#redLantern)" stroke="#7a1510" stroke-width="1.8"/>
+      <path d="M402 209 Q398 229 402 249 M418 209 Q422 229 418 249" fill="none" stroke="#8f1e16" stroke-width="1.2"/>
+      <rect x="403" y="249" width="14" height="5" rx="2" fill="#d4a23c"/>
+      <line x1="410" y1="254" x2="410" y2="270" stroke="#c92d22" stroke-width="3" stroke-linecap="round"/>
+    </g>
+
+    <!-- Lantern 3 (right on bridge) -->
+    <g class="lantern-3">
+      <line x1="580" y1="218" x2="580" y2="236" stroke="#4a392b" stroke-width="2.5"/>
+      <rect x="572" y="236" width="16" height="5" rx="2" fill="#d4a23c"/>
+      <ellipse cx="580" cy="259" rx="18" ry="22" fill="url(#redLantern)" stroke="#7a1510" stroke-width="1.8"/>
+      <path d="M572 239 Q568 259 572 279 M588 239 Q592 259 588 279" fill="none" stroke="#8f1e16" stroke-width="1.2"/>
+      <rect x="573" y="279" width="14" height="5" rx="2" fill="#d4a23c"/>
+      <line x1="580" y1="284" x2="580" y2="300" stroke="#c92d22" stroke-width="3" stroke-linecap="round"/>
+    </g>
+
+    <!-- Lantern 4 (hanging from right eave) -->
+    <g class="lantern-4">
+      <line x1="794" y1="192" x2="794" y2="214" stroke="#4a392b" stroke-width="2.5"/>
+      <rect x="786" y="214" width="16" height="5" rx="2" fill="#d4a23c"/>
+      <ellipse cx="794" cy="237" rx="18" ry="22" fill="url(#redLantern)" stroke="#7a1510" stroke-width="1.8"/>
+      <path d="M786 217 Q782 237 786 257 M802 217 Q806 237 802 257" fill="none" stroke="#8f1e16" stroke-width="1.2"/>
+      <rect x="787" y="257" width="14" height="5" rx="2" fill="#d4a23c"/>
+      <line x1="794" y1="262" x2="794" y2="278" stroke="#c92d22" stroke-width="3" stroke-linecap="round"/>
+    </g>
+  </svg>
+</body>
+</html>

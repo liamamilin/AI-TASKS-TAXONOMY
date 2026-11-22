@@ -1,0 +1,45 @@
+[
+  {
+    "line": 4,
+    "id": "A01",
+    "field": "id",
+    "original": "A01",
+    "reason": "重复 id，替代源行 2",
+    "replacedLine": 2
+  },
+  {
+    "line": 5,
+    "id": "A03",
+    "field": "date",
+    "original": "04/05/26",
+    "reason": "日期格式不合规"
+  },
+  {
+    "line": 5,
+    "id": "A03",
+    "field": "count",
+    "original": "",
+    "reason": "数量缺失"
+  },
+  {
+    "line": 6,
+    "id": "A04",
+    "field": "date",
+    "original": "2026-02-30",
+    "reason": "无效日历日期"
+  },
+  {
+    "line": 6,
+    "id": "A04",
+    "field": "zone",
+    "original": "北门",
+    "reason": "未知区域，已标为 unknown"
+  },
+  {
+    "line": 6,
+    "id": "A04",
+    "field": "count",
+    "original": "-1",
+    "reason": "负整数不合法"
+  }
+]

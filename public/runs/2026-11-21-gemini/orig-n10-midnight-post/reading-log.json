@@ -1,0 +1,30 @@
+{
+  "title": "午夜邮局",
+  "finalState": {
+    "node": "E2",
+    "stamps": 0
+  },
+  "steps": [
+    {
+      "from": "A",
+      "choice": "先去柜台",
+      "to": "B",
+      "stampsBefore": 1,
+      "stampsAfter": 1
+    },
+    {
+      "from": "B",
+      "choice": "把邮票留着",
+      "to": "D",
+      "stampsBefore": 1,
+      "stampsAfter": 1
+    },
+    {
+      "from": "D",
+      "choice": "寄给明天",
+      "to": "E2",
+      "stampsBefore": 1,
+      "stampsAfter": 0
+    }
+  ]
+}

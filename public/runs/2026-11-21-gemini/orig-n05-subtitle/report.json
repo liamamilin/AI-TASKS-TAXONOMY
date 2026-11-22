@@ -1,0 +1,17 @@
+{
+  "delta_ms": -700,
+  "dropped": [
+    {
+      "origIndex": 1,
+      "text": "片头",
+      "reason": "修正后区间 [0, 0] 无效"
+    }
+  ],
+  "overlaps": [
+    {
+      "firstOrig": 2,
+      "secondOrig": 3,
+      "overlapMs": 200
+    }
+  ]
+}

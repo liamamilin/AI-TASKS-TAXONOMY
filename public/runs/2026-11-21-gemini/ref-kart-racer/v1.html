@@ -1,0 +1,165 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Three.js Kart Racer</title>
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    html, body { width: 100%; height: 100%; overflow: hidden; background: #87ceeb; font-family: system-ui, sans-serif; }
+    .hud {
+      position: fixed; left: 14px; top: 12px; display: flex; gap: 12px; align-items: center;
+      background: rgba(16, 22, 34, 0.82); color: #fff; padding: 8px 14px; border-radius: 999px; font-size: 13px;
+    }
+    .hud button {
+      background: #e6492d; color: #fff; border: 0; border-radius: 999px; padding: 4px 12px; cursor: pointer; font: 600 12.5px inherit;
+    }
+    .lap { color: #ffd166; font-weight: 700; }
+  </style>
+</head>
+<body>
+  <div class="hud">
+    <span class="lap" id="lap">Lap 1 / 3</span>
+    <span id="spd">0 km/h</span>
+    <span>WASD / Arrows to Drive</span>
+    <button id="restart" type="button">Restart</button>
+  </div>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+  <script>
+    const scene = new THREE.Scene();
+    scene.background = new THREE.Color(0x9bd6f2);
+    scene.fog = new THREE.Fog(0x9bd6f2, 60, 190);
+
+    const camera = new THREE.PerspectiveCamera(60, innerWidth / innerHeight, 0.1, 300);
+    const renderer = new THREE.WebGLRenderer({ antialias: true });
+    renderer.setSize(innerWidth, innerHeight);
+    renderer.setPixelRatio(Math.min(devicePixelRatio || 1, 2));
+    document.body.appendChild(renderer.domElement);
+
+    scene.add(new THREE.AmbientLight(0xffffff, 0.72));
+    const sun = new THREE.DirectionalLight(0xfff4d6, 0.9);
+    sun.position.set(35, 55, 25);
+    scene.add(sun);
+
+    // Grass field
+    const ground = new THREE.Mesh(
+      new THREE.PlaneGeometry(260, 260),
+      new THREE.MeshLambertMaterial({ color: 0x58a649 })
+    );
+    ground.rotation.x = -Math.PI / 2;
+    scene.add(ground);
+
+    // Oval Circuit Track (outer radius 46, inner radius 32)
+    const R_MID = 39, TRACK_W = 13;
+    const road = new THREE.Mesh(
+      new THREE.RingGeometry(R_MID - TRACK_W / 2, R_MID + TRACK_W / 2, 72),
+      new THREE.MeshLambertMaterial({ color: 0x3a3e47, side: THREE.DoubleSide })
+    );
+    road.rotation.x = -Math.PI / 2;
+    road.position.y = 0.04;
+    scene.add(road);
+
+    // Red/white curbs & trees
+    for (let i = 0; i < 48; i++) {
+      const a = (i / 48) * Math.PI * 2;
+      const curbMat = new THREE.MeshLambertMaterial({ color: i % 2 ? 0xd93829 : 0xffffff });
+      for (const r of [R_MID - TRACK_W / 2 - 0.6, R_MID + TRACK_W / 2 + 0.6]) {
+        const c = new THREE.Mesh(new THREE.BoxGeometry(1.4, 0.3, 2.4), curbMat);
+        c.position.set(Math.cos(a) * r, 0.15, Math.sin(a) * r);
+        c.rotation.y = -a;
+        scene.add(c);
+      }
+      if (i % 3 === 0) {
+        const tr = R_MID + TRACK_W / 2 + 9 + (i % 4) * 3;
+        const trunk = new THREE.Mesh(new THREE.CylinderGeometry(0.4, 0.5, 2.4, 6), new THREE.MeshLambertMaterial({ color: 0x6e472b }));
+        trunk.position.set(Math.cos(a) * tr, 1.2, Math.sin(a) * tr);
+        const top = new THREE.Mesh(new THREE.ConeGeometry(2.2, 5, 7), new THREE.MeshLambertMaterial({ color: 0x2d7335 }));
+        top.position.set(Math.cos(a) * tr, 4.2, Math.sin(a) * tr);
+        scene.add(trunk, top);
+      }
+    }
+
+    // Start/Finish arch
+    const arch = new THREE.Mesh(new THREE.BoxGeometry(TRACK_W + 2, 0.9, 1.2), new THREE.MeshLambertMaterial({ color: 0xffd166 }));
+    arch.position.set(R_MID, 5.2, 0);
+    scene.add(arch);
+
+    // Kart mesh
+    const kart = new THREE.Group();
+    const chassis = new THREE.Mesh(new THREE.BoxGeometry(1.6, 0.6, 2.8), new THREE.MeshStandardMaterial({ color: 0xe63946 }));
+    chassis.position.y = 0.55;
+    const seat = new THREE.Mesh(new THREE.BoxGeometry(1.0, 0.7, 1.0), new THREE.MeshStandardMaterial({ color: 0x1d3557 }));
+    seat.position.set(0, 1.05, 0.2);
+    kart.add(chassis, seat);
+    for (const [wx, wz] of [[-0.9, -0.9], [0.9, -0.9], [-0.9, 0.9], [0.9, 0.9]]) {
+      const w = new THREE.Mesh(new THREE.CylinderGeometry(0.36, 0.36, 0.32, 12), new THREE.MeshLambertMaterial({ color: 0x1c1e22 }));
+      w.rotation.z = Math.PI / 2; w.position.set(wx, 0.36, wz);
+      kart.add(w);
+    }
+    scene.add(kart);
+
+    const lapEl = document.getElementById("lap");
+    const spdEl = document.getElementById("spd");
+    const keys = {};
+    window.addEventListener("keydown", (e) => { keys[e.code] = true; });
+    window.addEventListener("keyup", (e) => { keys[e.code] = false; });
+
+    let state;
+    function reset() {
+      state = { x: R_MID, z: 0, angle: 0, speed: 0, lap: 1, passedHalf: false };
+      lapEl.textContent = "Lap 1 / 3";
+    }
+    document.getElementById("restart").addEventListener("click", reset);
+    reset();
+
+    window.addEventListener("resize", () => {
+      camera.aspect = innerWidth / innerHeight; camera.updateProjectionMatrix();
+      renderer.setSize(innerWidth, innerHeight);
+    });
+
+    let last = performance.now();
+    function animate(now) {
+      requestAnimationFrame(animate);
+      const dt = Math.min(0.05, (now - last) / 1000);
+      last = now;
+
+      const accel = (keys["KeyW"] || keys["ArrowUp"]) ? 28 : ((keys["KeyS"] || keys["ArrowDown"]) ? -22 : 0);
+      state.speed += accel * dt;
+      state.speed *= Math.pow(0.97, dt * 60);
+      state.speed = Math.max(-10, Math.min(34, state.speed));
+
+      const steer = (keys["KeyA"] || keys["ArrowLeft"] ? 1 : 0) - (keys["KeyD"] || keys["ArrowRight"] ? 1 : 0);
+      if (Math.abs(state.speed) > 0.4) state.angle += steer * 2.1 * dt * (state.speed >= 0 ? 1 : -1);
+
+      state.x -= Math.sin(state.angle) * state.speed * dt;
+      state.z -= Math.cos(state.angle) * state.speed * dt;
+
+      // Track boundary soft clamp so kart never falls out of the world
+      const dist = Math.hypot(state.x, state.z);
+      if (dist > 64 || dist < 16) state.speed *= 0.9;
+
+      if (state.x < -R_MID * 0.6) state.passedHalf = true;
+      if (state.passedHalf && state.x > R_MID * 0.6 && Math.abs(state.z) < 5) {
+        state.passedHalf = false;
+        state.lap += 1;
+        lapEl.textContent = state.lap > 3 ? "Finished! 3/3 Laps" : `Lap ${state.lap} / 3`;
+      }
+
+      kart.position.set(state.x, 0, state.z);
+      kart.rotation.y = state.angle;
+
+      const camDist = 9.5;
+      camera.position.lerp(new THREE.Vector3(
+        state.x + Math.sin(state.angle) * camDist,
+        4.8,
+        state.z + Math.cos(state.angle) * camDist
+      ), 0.12);
+      camera.lookAt(state.x, 1.2, state.z);
+
+      spdEl.textContent = `${Math.round(Math.abs(state.speed) * 4)} km/h`;
+      renderer.render(scene, camera);
+    }
+    animate(performance.now());
+  </script>
+</body>
+</html>

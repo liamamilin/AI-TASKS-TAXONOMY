@@ -1,0 +1,152 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>午夜邮局</title>
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      min-height: 100vh; background: #161820; color: #f1eadc;
+      font-family: "Noto Serif SC", "Songti SC", serif;
+      display: grid; place-items: center; padding: 20px; line-height: 1.85;
+    }
+    .book {
+      width: min(680px, 100%); background: #21242f; border: 1px solid #383e52;
+      border-radius: 16px; padding: 28px; display: grid; gap: 18px;
+      box-shadow: 0 22px 48px rgba(0, 0, 0, 0.45);
+    }
+    header { display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid #383e52; padding-bottom: 12px; }
+    h1 { font-size: 24px; letter-spacing: 0.08em; }
+    .stamp { background: #9c3b32; color: #fff6ea; padding: 4px 12px; border-radius: 999px; font-size: 13px; }
+    .node-label { font-size: 13px; color: #b7ad9c; letter-spacing: 0.1em; }
+    .prose { font-size: 16px; }
+    .choices { display: grid; gap: 10px; }
+    button.choice {
+      text-align: left; padding: 12px 16px; border-radius: 10px; cursor: pointer;
+      border: 1px solid #4d5670; background: #2a2f3e; color: #f5efe3; font: inherit;
+    }
+    button.choice:hover:not(:disabled) { border-color: #e09f5a; background: #33394c; }
+    button.choice:disabled { opacity: 0.48; cursor: not-allowed; }
+    .reason { display: block; font-size: 12px; color: #e28e84; margin-top: 4px; }
+    .bar { display: flex; flex-wrap: wrap; gap: 8px; padding-top: 10px; border-top: 1px dashed #383e52; }
+    .bar button { border-radius: 999px; padding: 6px 14px; border: 1px solid #4d5670; background: transparent; color: #d8cfc0; cursor: pointer; font: 13px inherit; }
+  </style>
+</head>
+<body>
+  <main class="book">
+    <header>
+      <h1>午夜邮局</h1>
+      <span class="stamp" id="stamps">邮票：1 枚</span>
+    </header>
+    <div>
+      <div class="node-label" id="node-label"></div>
+      <p class="prose" id="prose" style="margin-top:8px;"></p>
+    </div>
+    <div class="choices" id="choices"></div>
+    <div class="bar">
+      <button type="button" id="back">后退一步</button>
+      <button type="button" id="restart">重新阅读</button>
+      <button type="button" id="dl">下载 reading-log.json</button>
+    </div>
+  </main>
+  <script>
+    const STORY = {
+      title: "午夜邮局",
+      initial: { node: "A", stamps: 1 },
+      nodes: {
+        A: {
+          label: "A · 门厅",
+          text: "海雾漫过青石阶，午夜邮局的铜铃轻轻作响。纸鸥邮差正梳理翼尖的墨迹，柜台内亮着一盏琥珀色台灯，远处窗外则是守灯人缓缓转动的银白光束。你攥紧口袋里唯一一枚淡蓝色邮票，静静思索今晚要先走向何处。",
+          choices: [{ text: "先去柜台", to: "B" }, { text: "先看灯塔", to: "C" }]
+        },
+        B: {
+          label: "B · 柜台",
+          text: "纸鸥邮差推过一只红木托盘，里面整齐码着未封口的薄纸信封。它轻声说，午夜前寄出的第一封信需要贴上邮票，盖过浪花邮戳便无法撤回；若是暂时不寄，你也可以先把这枚珍贵的邮票留在衣袋里，直接去分信台看看。",
+          choices: [{ text: "寄出第一封信", to: "D", spend: 1 }, { text: "把邮票留着", to: "D", spend: 0 }]
+        },
+        C: {
+          label: "C · 灯塔",
+          text: "沿着螺旋石梯走上露台，守灯人正擦拭厚重的玻璃透镜。夜风咸湿而安静，远处海面浮着细碎星光。守灯人递来一杯温热的淡茶，问你是打算立刻回邮局柜台办理寄信，还是索性留在这里一起守候黎明升起。",
+          choices: [{ text: "回柜台", to: "B" }, { text: "陪守灯人等天亮", to: "E1" }]
+        },
+        D: {
+          label: "D · 分信台",
+          text: "分信台摆着两只旧木格，左侧木牌写着寄往明天，右侧木牌则朝向敞开的海风长窗。纸鸥邮差提醒你，只有手中还留着邮票的读者，才能把信投入寄往明天的格口；若邮票已经用完，便只能将信纸展开读给夜海听。",
+          choices: [{ text: "寄给明天", to: "E2", requires_stamps: 1, spend: 1 }, { text: "把信读给海风", to: "E3" }]
+        },
+        E1: {
+          label: "E1 · 结局：守候",
+          text: "你留在露台陪守灯人听潮水涨落，直到东方天际浮出柔和的鱼肚白。口袋里那枚邮票依然完好无损，纸鸥邮差在晨雾中掠过窗檐向你们致意。有些心事不必急着装进信封，安静守望一整夜，本身便是给自己的回信。",
+          choices: []
+        },
+        E2: {
+          label: "E2 · 结局：送达",
+          text: "你郑重贴上保留至今的邮票，将信轻轻放入寄往明天的木格。纸鸥邮差衔起信封展翅飞入渐亮的云层，守灯人也在远方熄灭夜灯。你知道这封信会在明日清晨准时落到该读它的人手里，而此刻的夜色已格外轻盈。",
+          choices: []
+        },
+        E3: {
+          label: "E3 · 结局：放下",
+          text: "你站在敞开的窗前，对着微凉的海风轻声念完信纸上的每一行字。话音随浪声散入无边夜空，纸鸥邮差安静垂首聆听，守灯人的光束在海面划出温柔弧线。不必等待回音，说出心事的那一刻，你便与旧日轻轻告别。",
+          choices: []
+        }
+      }
+    };
+
+    let stack = [{ node: "A", stamps: 1 }];
+    let log = [];
+
+    function current() { return stack[stack.length - 1]; }
+
+    function render() {
+      const cur = current();
+      const nd = STORY.nodes[cur.node];
+      document.getElementById("stamps").textContent = `邮票：${cur.stamps} 枚`;
+      document.getElementById("node-label").textContent = nd.label;
+      document.getElementById("prose").textContent = nd.text;
+      const box = document.getElementById("choices");
+      box.innerHTML = "";
+      nd.choices.forEach((ch) => {
+        const btn = document.createElement("button");
+        btn.type = "button"; btn.className = "choice";
+        const lack = ch.requires_stamps && cur.stamps < ch.requires_stamps;
+        btn.disabled = Boolean(lack);
+        btn.textContent = ch.text;
+        if (lack) {
+          const r = document.createElement("span");
+          r.className = "reason";
+          r.textContent = "（不可选：当前剩余 0 枚邮票，此选项需要 1 枚邮票）";
+          btn.appendChild(r);
+        }
+        btn.addEventListener("click", () => {
+          const nextStamps = cur.stamps - (ch.spend || 0);
+          log.push({ from: cur.node, choice: ch.text, to: ch.to, stampsBefore: cur.stamps, stampsAfter: nextStamps });
+          stack.push({ node: ch.to, stamps: nextStamps });
+          render();
+        });
+        box.appendChild(btn);
+      });
+      document.getElementById("back").disabled = stack.length <= 1;
+    }
+
+    document.getElementById("back").addEventListener("click", () => {
+      if (stack.length <= 1) return;
+      stack.pop();
+      log.pop();
+      render();
+    });
+    document.getElementById("restart").addEventListener("click", () => {
+      stack = [{ node: "A", stamps: 1 }];
+      log = [];
+      render();
+    });
+    document.getElementById("dl").addEventListener("click", () => {
+      const payload = { title: STORY.title, finalState: current(), steps: log };
+      const a = document.createElement("a");
+      a.href = URL.createObjectURL(new Blob([JSON.stringify(payload, null, 2)], { type: "application/json" }));
+      a.download = "reading-log.json"; a.click(); URL.revokeObjectURL(a.href);
+    });
+    render();
+  </script>
+</body>
+</html>

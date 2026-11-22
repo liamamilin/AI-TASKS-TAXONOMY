@@ -1,0 +1,211 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>江南雨巷庭院</title>
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    html, body {
+      width: 100%; height: 100%; overflow: hidden;
+      background: #1a212b; color: #f4eee1;
+      font-family: "Noto Serif SC", system-ui, sans-serif;
+    }
+    canvas { display: block; width: 100%; height: 100%; cursor: grab; }
+    canvas:active { cursor: grabbing; }
+    .hud {
+      position: fixed; left: 16px; top: 14px;
+      display: flex; gap: 8px; flex-wrap: wrap; align-items: center;
+      background: rgba(20, 26, 35, 0.78); border: 1px solid rgba(244,238,225,0.18);
+      border-radius: 999px; padding: 7px 14px; font-size: 13px;
+      backdrop-filter: blur(8px);
+    }
+    .hud button {
+      background: #2c3748; color: #f4eee1; border: 1px solid rgba(244,238,225,0.22);
+      border-radius: 999px; padding: 4px 12px; cursor: pointer; font: inherit;
+    }
+    .hud button.on { background: #b84b39; border-color: #b84b39; }
+  </style>
+</head>
+<body>
+  <canvas id="c"></canvas>
+  <div class="hud">
+    <button id="mode" type="button" class="on">夜雨点灯</button>
+    <button id="rain" type="button" class="on">细雨：开</button>
+    <span>拖动可旋转视角</span>
+  </div>
+  <script>
+    const canvas = document.getElementById("c");
+    const ctx = canvas.getContext("2d");
+    const modeBtn = document.getElementById("mode");
+    const rainBtn = document.getElementById("rain");
+
+    let night = true;
+    let raining = true;
+    let yaw = 0.78; // isometric angle
+    let dragging = false, lastX = 0;
+
+    modeBtn.addEventListener("click", () => {
+      night = !night;
+      modeBtn.classList.toggle("on", night);
+      modeBtn.textContent = night ? "夜雨点灯" : "白昼微晴";
+    });
+    rainBtn.addEventListener("click", () => {
+      raining = !raining;
+      rainBtn.classList.toggle("on", raining);
+      rainBtn.textContent = raining ? "细雨：开" : "细雨：关";
+    });
+    canvas.addEventListener("pointerdown", (e) => { dragging = true; lastX = e.clientX; });
+    window.addEventListener("pointerup", () => { dragging = false; });
+    window.addEventListener("pointermove", (e) => {
+      if (!dragging) return;
+      yaw += (e.clientX - lastX) * 0.008;
+      lastX = e.clientX;
+    });
+
+    function resize() {
+      const dpr = Math.min(devicePixelRatio || 1, 2);
+      canvas.width = Math.floor(innerWidth * dpr);
+      canvas.height = Math.floor(innerHeight * dpr);
+      ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+    }
+    window.addEventListener("resize", resize);
+    resize();
+
+    function project(x, y, z, cx, cy, scale) {
+      const rx = x * Math.cos(yaw) - z * Math.sin(yaw);
+      const rz = x * Math.sin(yaw) + z * Math.cos(yaw);
+      return {
+        x: cx + rx * scale,
+        y: cy + (rz * 0.52 - y * 0.86) * scale,
+        depth: rz,
+      };
+    }
+
+    function poly(pts, fill, stroke) {
+      ctx.beginPath();
+      pts.forEach((p, i) => (i === 0 ? ctx.moveTo(p.x, p.y) : ctx.lineTo(p.x, p.y)));
+      ctx.closePath();
+      ctx.fillStyle = fill;
+      ctx.fill();
+      if (stroke) { ctx.strokeStyle = stroke; ctx.lineWidth = 1; ctx.stroke(); }
+    }
+
+    function drawBox(cx, cy, scale, x0, y0, z0, dx, dy, dz, topCol, leftCol, rightCol) {
+      const p = (x, y, z) => project(x, y, z, cx, cy, scale);
+      const faces = [
+        { pts: [p(x0,y0+dy,z0), p(x0+dx,y0+dy,z0), p(x0+dx,y0+dy,z0+dz), p(x0,y0+dy,z0+dz)], col: topCol },
+        { pts: [p(x0,y0,z0+dz), p(x0+dx,y0,z0+dz), p(x0+dx,y0+dy,z0+dz), p(x0,y0+dy,z0+dz)], col: leftCol },
+        { pts: [p(x0+dx,y0,z0), p(x0+dx,y0,z0+dz), p(x0+dx,y0+dy,z0+dz), p(x0+dx,y0+dy,z0)], col: rightCol },
+        { pts: [p(x0,y0,z0), p(x0,y0,z0+dz), p(x0,y0+dy,z0+dz), p(x0,y0+dy,z0)], col: rightCol },
+        { pts: [p(x0,y0,z0), p(x0+dx,y0,z0), p(x0+dx,y0+dy,z0), p(x0,y0+dy,z0)], col: leftCol },
+      ];
+      faces.forEach((f) => { f.d = f.pts.reduce((s, v) => s + v.depth, 0) / 4; });
+      faces.sort((a, b) => a.d - b.d);
+      return faces;
+    }
+
+    const ripples = Array.from({ length: 14 }, (_, i) => ({
+      x: -1.4 + ((i * 0.73) % 2.8),
+      z: -1.2 + ((i * 0.59) % 2.4),
+      phase: (i * 0.31) % 1,
+    }));
+    const drops = Array.from({ length: 120 }, (_, i) => ({
+      x: (i * 83) % 1000, y: (i * 57) % 600, len: 10 + (i % 9), spd: 320 + (i % 5) * 45,
+    }));
+
+    let last = performance.now();
+    function frame(now) {
+      const dt = Math.min(0.05, (now - last) / 1000);
+      last = now;
+      const w = innerWidth, h = innerHeight;
+      const cx = w / 2, cy = h * 0.58;
+      const scale = Math.min(w, h) * 0.082;
+
+      const bg = ctx.createLinearGradient(0, 0, 0, h);
+      if (night) { bg.addColorStop(0, "#101723"); bg.addColorStop(1, "#1f2a38"); }
+      else { bg.addColorStop(0, "#bcd4e2"); bg.addColorStop(1, "#e7ede8"); }
+      ctx.fillStyle = bg;
+      ctx.fillRect(0, 0, w, h);
+
+      const wallTop = night ? "#8d8a84" : "#ece6da";
+      const wallL = night ? "#b8b1a3" : "#f3ede2";
+      const wallR = night ? "#7a7670" : "#d3cab9";
+      const roofT = night ? "#2b333f" : "#424c58";
+      const roofL = night ? "#1f252f" : "#343d48";
+      const stoneT = night ? "#394452" : "#9aa3ab";
+
+      const allFaces = [
+        // Courtyard stone base
+        ...drawBox(cx, cy, scale, -3.5, -0.45, -3.5, 7, 0.45, 7, stoneT, "#262d36", "#1d2229"),
+        // Pond recess
+        ...drawBox(cx, cy, scale, -1.7, -0.02, -1.5, 3.4, 0.06, 3.0, night ? "#1d3a4c" : "#629cb8", "#183142", "#142938"),
+        // North main hall
+        ...drawBox(cx, cy, scale, -3.2, 0, -3.3, 6.4, 1.8, 1.5, wallTop, wallL, wallR),
+        ...drawBox(cx, cy, scale, -3.5, 1.8, -3.6, 7.0, 0.42, 2.1, roofT, roofL, "#181d25"),
+        // West corridor
+        ...drawBox(cx, cy, scale, -3.3, 0, -1.8, 1.3, 1.35, 4.8, wallTop, wallL, wallR),
+        ...drawBox(cx, cy, scale, -3.5, 1.35, -2.0, 1.7, 0.3, 5.2, roofT, roofL, "#181d25"),
+        // East garden wall with moon gate pillar feel
+        ...drawBox(cx, cy, scale, 2.5, 0, -1.8, 0.7, 1.25, 4.8, wallTop, wallL, wallR),
+        ...drawBox(cx, cy, scale, 2.4, 1.25, -1.9, 0.9, 0.2, 5.0, roofT, roofL, "#181d25"),
+        // Stone bridge stepping across pond
+        ...drawBox(cx, cy, scale, -0.45, 0.02, -1.5, 0.9, 0.16, 3.0, night ? "#6d747d" : "#ccc5b8", "#4d535c", "#3e434b"),
+      ];
+
+      allFaces.sort((a, b) => a.d - b.d);
+      for (const f of allFaces) poly(f.pts, f.col, "rgba(0,0,0,0.14)");
+
+      // Water ripples
+      for (const r of ripples) {
+        r.phase = (r.phase + dt * (raining ? 0.55 : 0.18)) % 1;
+        const p = project(r.x, 0.05, r.z, cx, cy, scale);
+        ctx.strokeStyle = night
+          ? `rgba(170, 215, 240, ${(1 - r.phase) * 0.42})`
+          : `rgba(255, 255, 255, ${(1 - r.phase) * 0.5})`;
+        ctx.lineWidth = 1.2;
+        ctx.beginPath();
+        ctx.ellipse(p.x, p.y, r.phase * 18, r.phase * 9, 0, 0, Math.PI * 2);
+        ctx.stroke();
+      }
+
+      // Warm lanterns hanging under the eaves
+      const lanterns = [
+        [-1.8, 1.55, -1.75],
+        [1.8, 1.55, -1.75],
+        [-1.95, 1.15, 1.6],
+      ];
+      for (const [lx, ly, lz] of lanterns) {
+        const p = project(lx, ly, lz, cx, cy, scale);
+        if (night) {
+          const glow = ctx.createRadialGradient(p.x, p.y, 2, p.x, p.y, 38);
+          glow.addColorStop(0, "rgba(255, 168, 84, 0.85)");
+          glow.addColorStop(1, "rgba(255, 120, 50, 0)");
+          ctx.fillStyle = glow;
+          ctx.beginPath(); ctx.arc(p.x, p.y, 38, 0, Math.PI * 2); ctx.fill();
+        }
+        ctx.fillStyle = night ? "#ff7744" : "#c93b2b";
+        ctx.beginPath(); ctx.ellipse(p.x, p.y, 5, 7, 0, 0, Math.PI * 2); ctx.fill();
+      }
+
+      // Rain streaks
+      if (raining) {
+        ctx.strokeStyle = night ? "rgba(185, 215, 240, 0.28)" : "rgba(255, 255, 255, 0.36)";
+        ctx.lineWidth = 1;
+        ctx.beginPath();
+        for (const d of drops) {
+          d.y += d.spd * dt;
+          d.x -= d.spd * dt * 0.14;
+          if (d.y > h) { d.y = -20; d.x = Math.random() * (w + 140); }
+          ctx.moveTo(d.x, d.y);
+          ctx.lineTo(d.x - d.len * 0.14, d.y + d.len);
+        }
+        ctx.stroke();
+      }
+
+      requestAnimationFrame(frame);
+    }
+    requestAnimationFrame(frame);
+  </script>
+</body>
+</html>

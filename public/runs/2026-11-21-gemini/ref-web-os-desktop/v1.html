@@ -1,0 +1,232 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>AetherOS — Single-File Web Desktop</title>
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    html, body {
+      width: 100%; height: 100%; overflow: hidden; user-select: none;
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", system-ui, sans-serif;
+      background: radial-gradient(circle at 20% 20%, #3b5998 0%, #1c2440 48%, #0f1324 100%);
+      color: #f4f6fb;
+    }
+    .menubar {
+      height: 28px; padding: 0 14px; display: flex; align-items: center; justify-content: space-between;
+      background: rgba(18, 22, 34, 0.72); backdrop-filter: blur(14px);
+      border-bottom: 1px solid rgba(255,255,255,0.12); font-size: 12.5px;
+    }
+    .menubar .left { display: flex; gap: 14px; align-items: center; font-weight: 600; }
+    .desktop { position: relative; width: 100%; height: calc(100% - 28px); }
+    .win {
+      position: absolute; min-width: 280px; min-height: 200px;
+      background: rgba(248, 250, 254, 0.94); color: #1b202b;
+      border-radius: 12px; box-shadow: 0 20px 50px rgba(0, 0, 0, 0.42);
+      border: 1px solid rgba(255, 255, 255, 0.45);
+      display: flex; flex-direction: column; overflow: hidden;
+    }
+    .win.hidden { display: none; }
+    .titlebar {
+      height: 34px; padding: 0 12px; background: #e8ecf4;
+      border-bottom: 1px solid #d5dce8; display: flex; align-items: center; gap: 8px;
+      cursor: move; font-size: 13px; font-weight: 600;
+    }
+    .dots { display: flex; gap: 6px; }
+    .dot { width: 12px; height: 12px; border-radius: 50%; border: 0; cursor: pointer; }
+    .dot.close { background: #ff5f57; }
+    .dot.min { background: #febc2e; }
+    .dot.max { background: #28c840; }
+    .win-body { flex: 1; padding: 12px; display: flex; flex-direction: column; gap: 10px; overflow: auto; user-select: text; }
+    textarea.notes {
+      flex: 1; width: 100%; border: 1px solid #d5dce8; border-radius: 8px; padding: 10px;
+      font: 14px/1.6 ui-monospace, monospace; resize: none; background: #fff; color: #1b202b;
+    }
+    .files { display: grid; grid-template-columns: repeat(auto-fill, minmax(96px, 1fr)); gap: 10px; }
+    .file-item {
+      padding: 10px 6px; border-radius: 8px; text-align: center; cursor: pointer;
+      border: 1px solid transparent; font-size: 12px;
+    }
+    .file-item:hover { background: #e4ebf7; border-color: #c2d2ec; }
+    .file-icon { font-size: 26px; display: block; margin-bottom: 4px; }
+    .paint-bar { display: flex; gap: 8px; align-items: center; flex-wrap: wrap; font-size: 12px; }
+    canvas#paintCanvas { border: 1px solid #cfd7e6; border-radius: 8px; background: #ffffff; cursor: crosshair; display: block; }
+    .calc-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 6px; }
+    .calc-disp {
+      background: #1b202b; color: #fff; padding: 10px 12px; border-radius: 8px;
+      text-align: right; font: 700 22px ui-monospace, monospace;
+    }
+    .calc-grid button, .btn {
+      border: 1px solid #cbd4e3; background: #eef2f9; color: #1b202b;
+      border-radius: 8px; padding: 8px; cursor: pointer; font: 600 13px inherit;
+    }
+    .calc-grid button.op { background: #3b6fd8; color: #fff; border-color: #3b6fd8; }
+    .dock {
+      position: fixed; left: 50%; bottom: 14px; transform: translateX(-50%);
+      display: flex; gap: 10px; padding: 8px 14px;
+      background: rgba(255, 255, 255, 0.18); backdrop-filter: blur(18px);
+      border: 1px solid rgba(255, 255, 255, 0.3); border-radius: 18px; z-index: 999;
+    }
+    .dock button {
+      border: 0; background: rgba(255, 255, 255, 0.9); color: #1b202b;
+      padding: 8px 14px; border-radius: 12px; cursor: pointer; font-weight: 600; font-size: 13px;
+      transition: transform 0.14s ease;
+    }
+    .dock button:hover { transform: translateY(-4px); }
+  </style>
+</head>
+<body>
+  <header class="menubar">
+    <div class="left"><span> AetherOS</span><span>File</span><span>Edit</span><span>View</span><span>Window</span></div>
+    <span id="clock">10:10</span>
+  </header>
+  <main class="desktop" id="desktop">
+    <section class="win" id="win-notes" style="left:36px;top:32px;width:360px;height:270px;z-index:2;">
+      <div class="titlebar">
+        <div class="dots"><button class="dot close" data-close="win-notes" aria-label="Close"></button><span class="dot min"></span><span class="dot max"></span></div>
+        <span>Notes — Text Editor</span>
+      </div>
+      <div class="win-body">
+        <textarea class="notes" id="notes-area">Welcome to AetherOS!
+Type anything here — your text stays preserved while you drag windows, browse files, or paint.</textarea>
+      </div>
+    </section>
+
+    <section class="win" id="win-files" style="left:420px;top:40px;width:340px;height:250px;z-index:3;">
+      <div class="titlebar">
+        <div class="dots"><button class="dot close" data-close="win-files" aria-label="Close"></button><span class="dot min"></span><span class="dot max"></span></div>
+        <span>Finder — File Manager</span>
+      </div>
+      <div class="win-body">
+        <div class="files" id="file-list"></div>
+        <div id="file-preview" style="font-size:12px;color:#556075;">Click a file to inspect its contents.</div>
+      </div>
+    </section>
+
+    <section class="win hidden" id="win-paint" style="left:140px;top:76px;width:440px;height:330px;z-index:4;">
+      <div class="titlebar">
+        <div class="dots"><button class="dot close" data-close="win-paint" aria-label="Close"></button><span class="dot min"></span><span class="dot max"></span></div>
+        <span>Studio Paint</span>
+      </div>
+      <div class="win-body">
+        <div class="paint-bar">
+          <label>Color <input type="color" id="p-color" value="#2b5fd9"></label>
+          <label>Size <input type="range" id="p-size" min="2" max="20" value="5"></label>
+          <button class="btn" id="p-clear" type="button">Clear</button>
+        </div>
+        <canvas id="paintCanvas" width="400" height="220"></canvas>
+      </div>
+    </section>
+
+    <section class="win hidden" id="win-calc" style="left:520px;top:92px;width:280px;height:310px;z-index:5;">
+      <div class="titlebar">
+        <div class="dots"><button class="dot close" data-close="win-calc" aria-label="Close"></button><span class="dot min"></span><span class="dot max"></span></div>
+        <span>Calculator</span>
+      </div>
+      <div class="win-body">
+        <div class="calc-disp" id="calc-disp">0</div>
+        <div class="calc-grid" id="calc-grid"></div>
+      </div>
+    </section>
+  </main>
+
+  <nav class="dock" aria-label="Dock">
+    <button type="button" data-open="win-notes">📝 Notes</button>
+    <button type="button" data-open="win-files">📁 Finder</button>
+    <button type="button" data-open="win-paint">🎨 Paint</button>
+    <button type="button" data-open="win-calc">🧮 Calc</button>
+  </nav>
+
+  <script>
+    let topZ = 10;
+    function focusWin(el) { el.classList.remove("hidden"); el.style.zIndex = String(++topZ); }
+
+    document.querySelectorAll("[data-open]").forEach((btn) => {
+      btn.addEventListener("click", () => focusWin(document.getElementById(btn.dataset.open)));
+    });
+    document.querySelectorAll("[data-close]").forEach((btn) => {
+      btn.addEventListener("click", () => document.getElementById(btn.dataset.close).classList.add("hidden"));
+    });
+
+    // Window dragging
+    document.querySelectorAll(".win").forEach((win) => {
+      win.addEventListener("pointerdown", () => focusWin(win));
+      const bar = win.querySelector(".titlebar");
+      let dx = 0, dy = 0, dragging = false;
+      bar.addEventListener("pointerdown", (e) => {
+        if (e.target.closest("button")) return;
+        dragging = true;
+        dx = e.clientX - win.offsetLeft;
+        dy = e.clientY - win.offsetTop;
+        bar.setPointerCapture(e.pointerId);
+      });
+      bar.addEventListener("pointermove", (e) => {
+        if (!dragging) return;
+        win.style.left = Math.max(0, e.clientX - dx) + "px";
+        win.style.top = Math.max(0, e.clientY - dy) + "px";
+      });
+      bar.addEventListener("pointerup", () => { dragging = false; });
+    });
+
+    // Virtual File System
+    const files = [
+      { name: "readme.txt", icon: "📄", content: "AetherOS v1.0 — single-file browser desktop." },
+      { name: "roadmap.md", icon: "📋", content: "1. Notes  2. Finder  3. Studio Paint  4. Calculator" },
+      { name: "sketch.png", icon: "🖼️", content: "Open Studio Paint from the Dock to draw live." },
+      { name: "budget.csv", icon: "📊", content: "Item,Cost\\nHosting,0\\nSingle-File,Free" },
+    ];
+    const fileList = document.getElementById("file-list");
+    const filePreview = document.getElementById("file-preview");
+    files.forEach((f) => {
+      const div = document.createElement("div");
+      div.className = "file-item";
+      div.innerHTML = `<span class="file-icon">${f.icon}</span>${f.name}`;
+      div.addEventListener("click", () => { filePreview.textContent = `${f.name}: ${f.content}`; });
+      fileList.appendChild(div);
+    });
+
+    // Paint Canvas
+    const pCanvas = document.getElementById("paintCanvas");
+    const pCtx = pCanvas.getContext("2d");
+    const pColor = document.getElementById("p-color");
+    const pSize = document.getElementById("p-size");
+    let painting = false;
+    function pPos(e) { const r = pCanvas.getBoundingClientRect(); return [(e.clientX - r.left) * (pCanvas.width / r.width), (e.clientY - r.top) * (pCanvas.height / r.height)]; }
+    pCanvas.addEventListener("pointerdown", (e) => { painting = true; const [x, y] = pPos(e); pCtx.beginPath(); pCtx.moveTo(x, y); });
+    window.addEventListener("pointerup", () => { painting = false; });
+    pCanvas.addEventListener("pointermove", (e) => {
+      if (!painting) return;
+      const [x, y] = pPos(e);
+      pCtx.strokeStyle = pColor.value; pCtx.lineWidth = Number(pSize.value); pCtx.lineCap = "round";
+      pCtx.lineTo(x, y); pCtx.stroke();
+    });
+    document.getElementById("p-clear").addEventListener("click", () => pCtx.clearRect(0, 0, pCanvas.width, pCanvas.height));
+
+    // Calculator
+    const disp = document.getElementById("calc-disp");
+    const cGrid = document.getElementById("calc-grid");
+    let expr = "";
+    ["7","8","9","/","4","5","6","*","1","2","3","-","0",".","C","+","="].forEach((k) => {
+      const b = document.createElement("button");
+      b.type = "button"; b.textContent = k;
+      if ("/*-+=".includes(k)) b.className = "op";
+      if (k === "=") b.style.gridColumn = "span 4";
+      b.addEventListener("click", () => {
+        if (k === "C") { expr = ""; disp.textContent = "0"; return; }
+        if (k === "=") {
+          try { expr = String(Function(`"use strict"; return (${expr || 0})`)()); } catch { expr = "Err"; }
+          disp.textContent = expr; return;
+        }
+        expr += k; disp.textContent = expr;
+      });
+      cGrid.appendChild(b);
+    });
+
+    function tickClock() {
+      const d = new Date();
+      document.getElementById("clock").textContent = d.toTimeString().slice(0, 5);
+    }
+    tickClock(); setInterval(tickClock, 15000);
+  </script>
+</body>
+</html>

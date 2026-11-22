@@ -1,0 +1,98 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>雨天集市 · 两页 A5 信息册</title>
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      background: #ece6db; color: #1d1916;
+      font-family: "Noto Serif SC", "Songti SC", Georgia, serif;
+      padding: 20px; line-height: 1.65;
+    }
+    .toolbar { max-width: 148mm; margin: 0 auto 14px; display: flex; justify-content: space-between; align-items: center; }
+    .toolbar button { border-radius: 999px; padding: 7px 14px; border: 1px solid #1d1916; background: #1d1916; color: #fff; cursor: pointer; font: inherit; font-size: 13px; }
+    .page {
+      width: 148mm; min-height: 210mm; margin: 0 auto 18px;
+      background: #ffffff; border: 1px solid #d7cbb8; padding: 12mm 11mm;
+      display: flex; flex-direction: column; justify-content: space-between;
+      box-shadow: 0 12px 28px rgba(40, 28, 16, 0.12);
+    }
+    .kicker { font-size: 11px; letter-spacing: 0.14em; color: #9c3b32; border-bottom: 1px solid #1d1916; padding-bottom: 4px; margin-bottom: 10px; display: flex; justify-content: space-between; }
+    h1 { font-size: 24px; margin-bottom: 6px; }
+    h2 { font-size: 14px; margin: 14px 0 6px; border-left: 3px solid #9c3b32; padding-left: 8px; }
+    .meta { font-size: 12.5px; color: #463f37; display: grid; gap: 4px; background: #f8f5ef; padding: 10px 12px; border: 1px solid #e4dbcd; }
+    .station, .step { border-bottom: 1px dashed #d6cab8; padding: 8px 0; font-size: 12.5px; }
+    .station:last-child, .step:last-child { border-bottom: 0; }
+    .station strong, .step strong { font-size: 13.5px; }
+    .rain-box { margin-top: 12px; padding: 9px 11px; border: 1px solid #9c3b32; font-size: 12.5px; }
+    footer { font-size: 11px; color: #6c6257; border-top: 1px solid #e4dbcd; padding-top: 6px; display: flex; justify-content: space-between; }
+    @page { size: A5 portrait; margin: 10mm; }
+    @media print {
+      body { background: #fff; padding: 0; }
+      .toolbar { display: none; }
+      .page { width: auto; min-height: auto; height: 190mm; margin: 0; border: 0; box-shadow: none; padding: 0; break-after: page; page-break-after: always; }
+      .page:last-of-type { break-after: auto; page-break-after: auto; }
+    }
+  </style>
+</head>
+<body>
+  <div class="toolbar">
+    <span style="font-size:13px;color:#5f564b;">A5 竖版双页打印预览（148×210mm）</span>
+    <button type="button" onclick="window.print()">打印 / 导出 PDF</button>
+  </div>
+
+  <!-- Page 1: Public Guide -->
+  <section class="page">
+    <div>
+      <div class="kicker"><span>虚构活动示例 · 第 1 页 / 公众导览</span><span>2026年4月12日</span></div>
+      <h1>雨天集市</h1>
+      <div class="meta">
+        <div><strong>公众开放时间：</strong>13:00–17:00</div>
+        <div><strong>活动地点：</strong>纸船厅（虚构地点）</div>
+        <div><strong>入场方式：</strong>免费，不需预约</div>
+      </div>
+      <h2>场内站点</h2>
+      <div class="station">
+        <div><strong>修伞角</strong> · 13:00–15:00</div>
+        <div>仅演示，不接收真实维修。</div>
+      </div>
+      <div class="station">
+        <div><strong>纸花桌</strong> · 14:00–16:30</div>
+        <div>材料共 30 份，先到先取。</div>
+      </div>
+      <div class="station">
+        <div><strong>安静交换架</strong> · 13:00–17:00</div>
+        <div>不收食品。</div>
+      </div>
+      <div class="rain-box">
+        <strong>雨天预案：</strong>全程室内照常；不要在门外排队。
+      </div>
+    </div>
+    <footer><span>虚构活动示例</span><span>公众导览 · 1 / 2</span></footer>
+  </section>
+
+  <!-- Page 2: Vendor Worksheet -->
+  <section class="page">
+    <div>
+      <div class="kicker"><span>虚构活动示例 · 第 2 页 / 摊主工作单</span><span>纸船厅（虚构地点）</span></div>
+      <h1>摊主时段工作单</h1>
+      <p style="font-size:12.5px;color:#554c43;margin-bottom:10px;">日期：2026年4月12日 · 请按下列四个节点执行，保持场内通道畅通。</p>
+      <h2>执行时刻表</h2>
+      <div class="step"><strong>12:20</strong> — 摊主入场布置</div>
+      <div class="step"><strong>12:50</strong> — 通道检查，保持 1.2 米</div>
+      <div class="step"><strong>17:00</strong> — 停止交换</div>
+      <div class="step"><strong>17:20</strong> — 清点并离场</div>
+      <h2>站点核对提醒</h2>
+      <div class="meta">
+        <div>• 修伞角（13:00–15:00）：仅演示，不接收真实维修</div>
+        <div>• 纸花桌（14:00–16:30）：材料共 30 份，先到先取</div>
+        <div>• 安静交换架（13:00–17:00）：不收食品</div>
+        <div>• 雨天安排：全程室内照常；不要在门外排队</div>
+      </div>
+    </div>
+    <footer><span>虚构活动示例</span><span>摊主工作单 · 2 / 2</span></footer>
+  </section>
+</body>
+</html>

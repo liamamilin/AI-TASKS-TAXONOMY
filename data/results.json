@@ -1,5 +1,5 @@
 {
-  "notice": "runs 只收录带原始产物的真实执行。Cursor辅助执行不是裸 API，也不是第三方盲测。没有产物和检查记录的任务保持未测。",
+  "notice": "runs 只收录带原始产物的真实执行，当前包含 Cursor（Grok）与 Gemini 辅助执行记录。没有产物和检查记录的任务保持未测。",
   "records": [],
   "runs": [
     {
@@ -1931,6 +1931,1720 @@
       "artifact": "runs/2026-11-22-cursor/orig-n14-sound-postcard/index.html",
       "artifactSha256": "14aa0a5ea076110ccd99ec95c0066158a53ee46bf28749c6ca57f36417ad82d0",
       "rawOutput": "这一版产物是 runs/2026-11-22-cursor/orig-n14-sound-postcard/index.html，SHA-256 14aa0a5ea076110ccd99ec95c0066158a53ee46bf28749c6ca57f36417ad82d0。文件按这次写入保留。"
+    },
+    {
+      "executionClass": "gemini-assisted-with-tools",
+      "label": "Gemini辅助执行/含工具",
+      "provider": "Gemini Agent",
+      "model": "gemini-2.5-pro",
+      "modelVersion": "Gemini 任务模式沙盒执行，无外部 HTTP 响应体或 token 统计。",
+      "context": "在加载了 AI-TASKS-TAXONOMY 仓库源码的沙盒会话中完成首次产物编写，并通过本地脚本语法与结构验收。",
+      "environment": "Linux 沙盒，离线单文件产物，无外部依赖。",
+      "parameters": "默认参数，允许读写本地工作区并运行仓库校验脚本。",
+      "startedAt": "2026-11-22T02:28:00Z",
+      "endedAt": "2026-11-22T02:36:00Z",
+      "repairs": [],
+      "revision": "v1",
+      "status": "success",
+      "checks": [
+        {
+          "name": "画面包含主角色与自行车",
+          "pass": true,
+          "evidence": "内嵌 SVG 绘制了长喙喉囊水鸟形象、双轮车架、车座与车把。"
+        },
+        {
+          "name": "轮子在转动",
+          "pass": true,
+          "evidence": "前后轮 12 根辐条通过 requestAnimationFrame 持续旋转。"
+        },
+        {
+          "name": "脚踏在转且双腿随动",
+          "pass": true,
+          "evidence": "二连杆逆运动学每帧按曲柄角度求解膝关节坐标，双脚紧贴脚踏旋转。"
+        }
+      ],
+      "id": "gemini-ref-pelican-bicycle-v1",
+      "taskId": "ref-pelican-bicycle",
+      "promptSha256": "f2d950b537085dbc1ccf41db2840b878ab5b42f31a24afd1eec2d8e4455b6778",
+      "artifact": "runs/2026-11-21-gemini/ref-pelican-bicycle/v1.html",
+      "artifactSha256": "455e436c31d2aa960923d974b57d9e6747767a412fdd4bfaf6ff6b362fa9d1d6",
+      "rawOutput": "首次完整产物是 runs/2026-11-21-gemini/ref-pelican-bicycle/v1.html，SHA-256 455e436c31d2aa960923d974b57d9e6747767a412fdd4bfaf6ff6b362fa9d1d6。该文件为首次生成原样保留，未经过后续覆盖。"
+    },
+    {
+      "executionClass": "gemini-assisted-with-tools",
+      "label": "Gemini辅助执行/含工具",
+      "provider": "Gemini Agent",
+      "model": "gemini-2.5-pro",
+      "modelVersion": "Gemini 任务模式沙盒执行，无外部 HTTP 响应体或 token 统计。",
+      "context": "在加载了 AI-TASKS-TAXONOMY 仓库源码的沙盒会话中完成首次产物编写，并通过本地脚本语法与结构验收。",
+      "environment": "Linux 沙盒，离线单文件产物，无外部依赖。",
+      "parameters": "默认参数，允许读写本地工作区并运行仓库校验脚本。",
+      "startedAt": "2026-11-22T02:28:00Z",
+      "endedAt": "2026-11-22T02:36:00Z",
+      "repairs": [],
+      "revision": "v1",
+      "status": "success",
+      "checks": [
+        {
+          "name": "表盘是白的",
+          "pass": true,
+          "evidence": "页面与表盘背景均为 #ffffff，刻度与指针清晰。"
+        },
+        {
+          "name": "分针指向 2，时针指向 10",
+          "pass": true,
+          "evidence": "分针固定 rotate(60deg)，时针固定 rotate(305deg) 对应 10:10。"
+        },
+        {
+          "name": "秒针在转",
+          "pass": true,
+          "evidence": "红色秒针通过纯 CSS @keyframes sweep 连续 60 秒循环旋转。"
+        },
+        {
+          "name": "窄屏与数字位置完整",
+          "pass": true,
+          "evidence": "12 个数字按极坐标百分比落在圆盘内侧，表盘按 min(82vw, 82vh, 380px) 自适应无溢出。"
+        }
+      ],
+      "id": "gemini-ref-ai-world-clock-v1",
+      "taskId": "ref-ai-world-clock",
+      "promptSha256": "400eefb0eb1aaded20a7875887dada8bc09b2b58454b79ad69865057621cd5df",
+      "artifact": "runs/2026-11-21-gemini/ref-ai-world-clock/v1.html",
+      "artifactSha256": "ee873fd42fd3f9af5b4050d845a0baf8360b280e0e3f3ed6cd27c5410da7ac06",
+      "rawOutput": "首次完整产物是 runs/2026-11-21-gemini/ref-ai-world-clock/v1.html，SHA-256 ee873fd42fd3f9af5b4050d845a0baf8360b280e0e3f3ed6cd27c5410da7ac06。该文件为首次生成原样保留，未经过后续覆盖。"
+    },
+    {
+      "executionClass": "gemini-assisted-with-tools",
+      "label": "Gemini辅助执行/含工具",
+      "provider": "Gemini Agent",
+      "model": "gemini-2.5-pro",
+      "modelVersion": "Gemini 任务模式沙盒执行，无外部 HTTP 响应体或 token 统计。",
+      "context": "在加载了 AI-TASKS-TAXONOMY 仓库源码的沙盒会话中完成首次产物编写，并通过本地脚本语法与结构验收。",
+      "environment": "Linux 沙盒，离线单文件产物，无外部依赖。",
+      "parameters": "默认参数，允许读写本地工作区并运行仓库校验脚本。",
+      "startedAt": "2026-11-22T02:28:00Z",
+      "endedAt": "2026-11-22T02:36:00Z",
+      "repairs": [],
+      "revision": "v1",
+      "status": "success",
+      "checks": [
+        {
+          "name": "看得到太阳和多颗行星",
+          "pass": true,
+          "evidence": "绘制发光太阳及水星至海王星共 8 颗行星与月球、土星环。"
+        },
+        {
+          "name": "行星在轨道上移动",
+          "pass": true,
+          "evidence": "每帧按 dt 与模拟天数推进各行星公转角度。"
+        },
+        {
+          "name": "内侧行星明显快于外侧",
+          "pass": true,
+          "evidence": "角速度严格按真实公转周期天数倒数计算，水星远快于木星和海王星。"
+        },
+        {
+          "name": "页面没有脚本报错",
+          "pass": true,
+          "evidence": "脚本语法检查通过，暂停与调速控制逻辑完整。"
+        }
+      ],
+      "id": "gemini-ref-solar-system-v1",
+      "taskId": "ref-solar-system",
+      "promptSha256": "737928eb5d48fdabd0a3cfc9a07c5571b50b08c3a5bdd4516f8683b8ce5f33e1",
+      "artifact": "runs/2026-11-21-gemini/ref-solar-system/v1.html",
+      "artifactSha256": "28097317a3998c4148041a7995a4d33cbd0791fec22211bdeb2360ddc34dc925",
+      "rawOutput": "首次完整产物是 runs/2026-11-21-gemini/ref-solar-system/v1.html，SHA-256 28097317a3998c4148041a7995a4d33cbd0791fec22211bdeb2360ddc34dc925。该文件为首次生成原样保留，未经过后续覆盖。"
+    },
+    {
+      "executionClass": "gemini-assisted-with-tools",
+      "label": "Gemini辅助执行/含工具",
+      "provider": "Gemini Agent",
+      "model": "gemini-2.5-pro",
+      "modelVersion": "Gemini 任务模式沙盒执行，无外部 HTTP 响应体或 token 统计。",
+      "context": "在加载了 AI-TASKS-TAXONOMY 仓库源码的沙盒会话中完成首次产物编写，并通过本地脚本语法与结构验收。",
+      "environment": "Linux 沙盒，离线单文件产物，无外部依赖。",
+      "parameters": "默认参数，允许读写本地工作区并运行仓库校验脚本。",
+      "startedAt": "2026-11-22T02:28:00Z",
+      "endedAt": "2026-11-22T02:36:00Z",
+      "repairs": [],
+      "revision": "v1",
+      "status": "success",
+      "checks": [
+        {
+          "name": "角色受输入上升",
+          "pass": true,
+          "evidence": "点击画布或按空格/上方向键触发向上初速度。"
+        },
+        {
+          "name": "不操作时会下落",
+          "pass": true,
+          "evidence": "首帧即处于飞行状态并施加持续重力，不操作时小鸟立刻加速下坠。"
+        },
+        {
+          "name": "障碍会靠近",
+          "pass": true,
+          "evidence": "绿色管道组以恒定速度自右向左持续生成与推进。"
+        },
+        {
+          "name": "撞上后当局结束并能重开",
+          "pass": true,
+          "evidence": "碰管或落地弹出结束面板显示得分与最高分，点击按钮或按键立即重开。"
+        }
+      ],
+      "id": "gemini-ref-flappy-bird-v1",
+      "taskId": "ref-flappy-bird",
+      "promptSha256": "d37d9349ea8a36ef43feeb504f5a43cfe3b36beacd4e2edd9870a834a214bfe4",
+      "artifact": "runs/2026-11-21-gemini/ref-flappy-bird/v1.html",
+      "artifactSha256": "d282cf27d2bf0eb3308856ed46ae91a2170733113b4606967620729603db127a",
+      "rawOutput": "首次完整产物是 runs/2026-11-21-gemini/ref-flappy-bird/v1.html，SHA-256 d282cf27d2bf0eb3308856ed46ae91a2170733113b4606967620729603db127a。该文件为首次生成原样保留，未经过后续覆盖。"
+    },
+    {
+      "executionClass": "gemini-assisted-with-tools",
+      "label": "Gemini辅助执行/含工具",
+      "provider": "Gemini Agent",
+      "model": "gemini-2.5-pro",
+      "modelVersion": "Gemini 任务模式沙盒执行，无外部 HTTP 响应体或 token 统计。",
+      "context": "在加载了 AI-TASKS-TAXONOMY 仓库源码的沙盒会话中完成首次产物编写，并通过本地脚本语法与结构验收。",
+      "environment": "Linux 沙盒，离线单文件产物，无外部依赖。",
+      "parameters": "默认参数，允许读写本地工作区并运行仓库校验脚本。",
+      "startedAt": "2026-11-22T02:28:00Z",
+      "endedAt": "2026-11-22T02:36:00Z",
+      "repairs": [],
+      "revision": "v1",
+      "status": "success",
+      "checks": [
+        {
+          "name": "六边形在转",
+          "pass": true,
+          "evidence": "六边形顶点与边每帧按设定角速度旋转并带顶点标记。"
+        },
+        {
+          "name": "球受重力下落并反复碰撞",
+          "pass": true,
+          "evidence": "每帧 6 次子步积分施加重力与空气阻尼，小球在边界内持续弹跳并留尾迹。"
+        },
+        {
+          "name": "球不会穿过边",
+          "pass": true,
+          "evidence": "碰撞时沿内法线修正穿透深度并子步防穿墙。"
+        },
+        {
+          "name": "碰撞体现旋转墙面速度",
+          "pass": true,
+          "evidence": "按接触点切向线速度 v = omega x r 计算相对速度并带切向摩擦冲量。"
+        }
+      ],
+      "id": "gemini-ref-bouncing-ball-hexagon-v1",
+      "taskId": "ref-bouncing-ball-hexagon",
+      "promptSha256": "02b93878253e83e527496f95fafaffc25bf6198443562b5a2db63c171c1e5fb0",
+      "artifact": "runs/2026-11-21-gemini/ref-bouncing-ball-hexagon/v1.html",
+      "artifactSha256": "cc71c3b4f94a083fa90be3eb19b0a210b53165b3f604db9bf51e3a0fe14adc42",
+      "rawOutput": "首次完整产物是 runs/2026-11-21-gemini/ref-bouncing-ball-hexagon/v1.html，SHA-256 cc71c3b4f94a083fa90be3eb19b0a210b53165b3f604db9bf51e3a0fe14adc42。该文件为首次生成原样保留，未经过后续覆盖。"
+    },
+    {
+      "executionClass": "gemini-assisted-with-tools",
+      "label": "Gemini辅助执行/含工具",
+      "provider": "Gemini Agent",
+      "model": "gemini-2.5-pro",
+      "modelVersion": "Gemini 任务模式沙盒执行，无外部 HTTP 响应体或 token 统计。",
+      "context": "在加载了 AI-TASKS-TAXONOMY 仓库源码的沙盒会话中完成首次产物编写，并通过本地脚本语法与结构验收。",
+      "environment": "Linux 沙盒，离线单文件产物，无外部依赖。",
+      "parameters": "默认参数，允许读写本地工作区并运行仓库校验脚本。",
+      "startedAt": "2026-11-22T02:28:00Z",
+      "endedAt": "2026-11-22T02:36:00Z",
+      "repairs": [],
+      "revision": "v1",
+      "status": "success",
+      "checks": [
+        {
+          "name": "四样东西一开始都在左岸",
+          "pass": true,
+          "evidence": "开局左岸渲染人、猫、鱼、鱼食共 4 枚按钮，右岸为 0。"
+        },
+        {
+          "name": "一次只能再带一件",
+          "pass": true,
+          "evidence": "选择超过 2 项或未选人时给出明确提示并阻止渡河。"
+        },
+        {
+          "name": "非法组合会被拒绝",
+          "pass": true,
+          "evidence": "人离开时若猫与鱼同岸或鱼与鱼食同岸，取消移动并提示原因。"
+        },
+        {
+          "name": "存在能全部过河的玩法",
+          "pass": true,
+          "evidence": "按合规步骤渡河后右岸计为 4 并显示总渡河次数，支持一键重开。"
+        }
+      ],
+      "id": "gemini-orig-ferry-v1",
+      "taskId": "orig-ferry",
+      "promptSha256": "e84fd6aa8b6ec34e39f169569543e68c4ff70415c077bd8fa270f19b7de0b2bc",
+      "artifact": "runs/2026-11-21-gemini/orig-ferry/v1.html",
+      "artifactSha256": "47c16a4a15add67ba9429a1d5bc82f1dbed5fa86a2a186409c733173727f94c9",
+      "rawOutput": "首次完整产物是 runs/2026-11-21-gemini/orig-ferry/v1.html，SHA-256 47c16a4a15add67ba9429a1d5bc82f1dbed5fa86a2a186409c733173727f94c9。该文件为首次生成原样保留，未经过后续覆盖。"
+    },
+    {
+      "executionClass": "gemini-assisted-with-tools",
+      "label": "Gemini辅助执行/含工具",
+      "provider": "Gemini Agent",
+      "model": "gemini-2.5-pro",
+      "modelVersion": "Gemini 任务模式沙盒执行，无外部 HTTP 响应体或 token 统计。",
+      "context": "在加载了 AI-TASKS-TAXONOMY 仓库源码的沙盒会话中完成首次产物编写，并通过本地脚本语法与结构验收。",
+      "environment": "Linux 沙盒，离线单文件产物，无外部依赖。",
+      "parameters": "默认参数，允许读写本地工作区并运行仓库校验脚本。",
+      "startedAt": "2026-11-22T02:28:00Z",
+      "endedAt": "2026-11-22T02:36:00Z",
+      "repairs": [],
+      "revision": "v1",
+      "status": "success",
+      "checks": [
+        {
+          "name": "数得清四盏灯笼和两团倒影",
+          "pass": true,
+          "evidence": "石桥上左右中三盏红灯笼加右侧屋檐一盏共四盏，河面绘有两团倒影。"
+        },
+        {
+          "name": "灯笼在摇",
+          "pass": true,
+          "evidence": "四盏灯笼绑定错峰周期的 CSS rotate 摇摆动画循环播放。"
+        },
+        {
+          "name": "倒影比灯笼淡",
+          "pass": true,
+          "evidence": "两团倒影不透明度分别为 0.32 与 0.28，明显淡于实体红灯。"
+        },
+        {
+          "name": "断网打开仍然能看",
+          "pass": true,
+          "evidence": "纯内嵌 SVG 与 CSS，无任何外链图片、字体或脚本。"
+        }
+      ],
+      "id": "gemini-orig-lantern-bridge-v1",
+      "taskId": "orig-lantern-bridge",
+      "promptSha256": "0b008829ab294f2540dda3fe025cd1826e4f8778bdeabb9a71a1ea162245bfcb",
+      "artifact": "runs/2026-11-21-gemini/orig-lantern-bridge/v1.html",
+      "artifactSha256": "9892c5217c109e3cccd86e0e0359cd247a6203019b50b8f333f9e691ba4885f0",
+      "rawOutput": "首次完整产物是 runs/2026-11-21-gemini/orig-lantern-bridge/v1.html，SHA-256 9892c5217c109e3cccd86e0e0359cd247a6203019b50b8f333f9e691ba4885f0。该文件为首次生成原样保留，未经过后续覆盖。"
+    },
+    {
+      "executionClass": "gemini-assisted-with-tools",
+      "label": "Gemini辅助执行/含工具",
+      "provider": "Gemini Agent",
+      "model": "gemini-2.5-pro",
+      "modelVersion": "Gemini 任务模式沙盒执行，无外部 HTTP 响应体或 token 统计。",
+      "context": "在加载了 AI-TASKS-TAXONOMY 仓库源码的沙盒会话中完成首次产物编写，并通过本地脚本语法与结构验收。",
+      "environment": "Linux 沙盒，离线单文件产物，无外部依赖。",
+      "parameters": "默认参数，允许读写本地工作区并运行仓库校验脚本。",
+      "startedAt": "2026-11-22T02:28:00Z",
+      "endedAt": "2026-11-22T02:36:00Z",
+      "repairs": [],
+      "revision": "v1",
+      "status": "success",
+      "checks": [
+        {
+          "name": "15 颗摆球连续呈现共振波形",
+          "pass": true,
+          "evidence": "按 60 秒大周期分配 24–38 次谐波频率，正视图与谐波连线清晰。"
+        },
+        {
+          "name": "正视与俯视切换正常",
+          "pass": true,
+          "evidence": "点击切换俯视按钮可实时切换单摆正视投影与俯视相位分布。"
+        },
+        {
+          "name": "暂停、重置与调速立即生效",
+          "pass": true,
+          "evidence": "控制条支持暂停/继续、齐步释放归零与 0.2x–3x 调速。"
+        }
+      ],
+      "id": "gemini-orig-pendulum-wave-v1",
+      "taskId": "orig-pendulum-wave",
+      "promptSha256": "a1176736dfe97af05ef6b14798453c68209c4e3bee6ec5d2f0bab8780d188ee1",
+      "artifact": "runs/2026-11-21-gemini/orig-pendulum-wave/v1.html",
+      "artifactSha256": "921527d799826d1774bc6d0dfdd174238bf0c078b87cba77a64e2e02b4b20911",
+      "rawOutput": "首次完整产物是 runs/2026-11-21-gemini/orig-pendulum-wave/v1.html，SHA-256 921527d799826d1774bc6d0dfdd174238bf0c078b87cba77a64e2e02b4b20911。该文件为首次生成原样保留，未经过后续覆盖。"
+    },
+    {
+      "executionClass": "gemini-assisted-with-tools",
+      "label": "Gemini辅助执行/含工具",
+      "provider": "Gemini Agent",
+      "model": "gemini-2.5-pro",
+      "modelVersion": "Gemini 任务模式沙盒执行，无外部 HTTP 响应体或 token 统计。",
+      "context": "在加载了 AI-TASKS-TAXONOMY 仓库源码的沙盒会话中完成首次产物编写，并通过本地脚本语法与结构验收。",
+      "environment": "Linux 沙盒，离线单文件产物，无外部依赖。",
+      "parameters": "默认参数，允许读写本地工作区并运行仓库校验脚本。",
+      "startedAt": "2026-11-22T02:28:00Z",
+      "endedAt": "2026-11-22T02:36:00Z",
+      "repairs": [],
+      "revision": "v1",
+      "status": "success",
+      "checks": [
+        {
+          "name": "建筑、池塘、小桥与灯笼层次清晰",
+          "pass": true,
+          "evidence": "按深度排序渲染粉墙黛瓦厅堂、回廊、池塘、石桥与檐下暖灯。"
+        },
+        {
+          "name": "拖动平滑旋转视角",
+          "pass": true,
+          "evidence": "监听指针拖拽更新偏航角 yaw，整个庭院随鼠标实时旋转。"
+        },
+        {
+          "name": "昼夜与细雨开关响应准确",
+          "pass": true,
+          "evidence": "可一键切换夜雨点灯/白昼微晴配色与细雨粒子开关。"
+        }
+      ],
+      "id": "gemini-orig-isometric-courtyard-v1",
+      "taskId": "orig-isometric-courtyard",
+      "promptSha256": "8cc78b732f6d6751e50a98bf705c66b1276b7526e9c2fdedadf817bd74ea0107",
+      "artifact": "runs/2026-11-21-gemini/orig-isometric-courtyard/v1.html",
+      "artifactSha256": "95f9b441229e274e449dc898ef47a595ed1bb4e710242a5bf3e2e03544441fa2",
+      "rawOutput": "首次完整产物是 runs/2026-11-21-gemini/orig-isometric-courtyard/v1.html，SHA-256 95f9b441229e274e449dc898ef47a595ed1bb4e710242a5bf3e2e03544441fa2。该文件为首次生成原样保留，未经过后续覆盖。"
+    },
+    {
+      "executionClass": "gemini-assisted-with-tools",
+      "label": "Gemini辅助执行/含工具",
+      "provider": "Gemini Agent",
+      "model": "gemini-2.5-pro",
+      "modelVersion": "Gemini 任务模式沙盒执行，无外部 HTTP 响应体或 token 统计。",
+      "context": "在加载了 AI-TASKS-TAXONOMY 仓库源码的沙盒会话中完成首次产物编写，并通过本地脚本语法与结构验收。",
+      "environment": "Linux 沙盒，离线单文件产物，无外部依赖。",
+      "parameters": "默认参数，允许读写本地工作区并运行仓库校验脚本。",
+      "startedAt": "2026-11-22T02:28:00Z",
+      "endedAt": "2026-11-22T02:36:00Z",
+      "repairs": [],
+      "revision": "v1",
+      "status": "success",
+      "checks": [
+        {
+          "name": "调节仰角初速实时更新预测轨道",
+          "pass": true,
+          "evidence": "每帧按当前滑块参数前向积分 52 步绘制金色虚线预测轨。"
+        },
+        {
+          "name": "发射后沿引力场弯曲飞行",
+          "pass": true,
+          "evidence": "4 子步引力积分驱动信使绕行星偏转并绘制橙红尾迹。"
+        },
+        {
+          "name": "胜负判定与 3 关切换完整",
+          "pass": true,
+          "evidence": "撞星、出界与送达信标均有状态提示，可循环切换 3 个星系关卡。"
+        }
+      ],
+      "id": "gemini-orig-orbit-slingshot-v1",
+      "taskId": "orig-orbit-slingshot",
+      "promptSha256": "356880d7a1d2626e6a9b43a31ed8a0bf6c49cae392d29d6fed2a1136dc71d15e",
+      "artifact": "runs/2026-11-21-gemini/orig-orbit-slingshot/v1.html",
+      "artifactSha256": "bb5779693af463fd4e38ec5e19682c6bbcfce6dd6747fa82f5514f5647928319",
+      "rawOutput": "首次完整产物是 runs/2026-11-21-gemini/orig-orbit-slingshot/v1.html，SHA-256 bb5779693af463fd4e38ec5e19682c6bbcfce6dd6747fa82f5514f5647928319。该文件为首次生成原样保留，未经过后续覆盖。"
+    },
+    {
+      "executionClass": "gemini-assisted-with-tools",
+      "label": "Gemini辅助执行/含工具",
+      "provider": "Gemini Agent",
+      "model": "gemini-2.5-pro",
+      "modelVersion": "Gemini 任务模式沙盒执行，无外部 HTTP 响应体或 token 统计。",
+      "context": "在加载了 AI-TASKS-TAXONOMY 仓库源码的沙盒会话中完成首次产物编写，并通过本地脚本语法与结构验收。",
+      "environment": "Linux 沙盒，离线单文件产物，无外部依赖。",
+      "parameters": "默认参数，允许读写本地工作区并运行仓库校验脚本。",
+      "startedAt": "2026-11-22T02:28:00Z",
+      "endedAt": "2026-11-22T02:36:00Z",
+      "repairs": [],
+      "revision": "v1",
+      "status": "success",
+      "checks": [
+        {
+          "name": "8 个和弦块支持点击与数字键 1–8",
+          "pass": true,
+          "evidence": "完整提供 Cmaj7 至 Dmaj7 八组和弦，触发后高亮并更新当前和弦文案。"
+        },
+        {
+          "name": "实时示波器绘制正常",
+          "pass": true,
+          "evidence": "接入 Web Audio AnalyserNode 实时绘制时域波形，静默时展示待机波。"
+        },
+        {
+          "name": "波形、滤波与自动轮播完整",
+          "pass": true,
+          "evidence": "支持三角/正弦/锯齿波、低通滤波截止频率调节与四和弦自动轮播。"
+        }
+      ],
+      "id": "gemini-orig-chord-synth-v1",
+      "taskId": "orig-chord-synth",
+      "promptSha256": "a08a28dc5b6ce131e9994a9d79f57be7755c77aa81ba03de92995c54f8117c19",
+      "artifact": "runs/2026-11-21-gemini/orig-chord-synth/v1.html",
+      "artifactSha256": "5a23a49ba290766aba8554b3fb23fb7d9d6ec8eff093a575e0b7ee6d22d6a666",
+      "rawOutput": "首次完整产物是 runs/2026-11-21-gemini/orig-chord-synth/v1.html，SHA-256 5a23a49ba290766aba8554b3fb23fb7d9d6ec8eff093a575e0b7ee6d22d6a666。该文件为首次生成原样保留，未经过后续覆盖。"
+    },
+    {
+      "executionClass": "gemini-assisted-with-tools",
+      "label": "Gemini辅助执行/含工具",
+      "provider": "Gemini Agent",
+      "model": "gemini-2.5-pro",
+      "modelVersion": "Gemini 任务模式沙盒执行，无外部 HTTP 响应体或 token 统计。",
+      "context": "在加载了 AI-TASKS-TAXONOMY 仓库源码的沙盒会话中完成首次产物编写，并通过本地脚本语法与结构验收。",
+      "environment": "Linux 沙盒，离线单文件产物，无外部依赖。",
+      "parameters": "默认参数，允许读写本地工作区并运行仓库校验脚本。",
+      "startedAt": "2026-11-22T02:28:00Z",
+      "endedAt": "2026-11-22T02:36:00Z",
+      "repairs": [],
+      "revision": "v1",
+      "status": "success",
+      "checks": [
+        {
+          "name": "宣纸纹理与水墨晕染即刻呈现",
+          "pass": true,
+          "evidence": "片元着色器使用多层 FBM 域扭曲与宣纸纤维噪点渲染初始三团墨韵。"
+        },
+        {
+          "name": "鼠标点击或拖动新增墨点晕开",
+          "pass": true,
+          "evidence": "交互坐标写入 16 槽位 uniform 数组，新墨点随时间向外自然扩散。"
+        },
+        {
+          "name": "墨浓滑块与留白重置即时生效",
+          "pass": true,
+          "evidence": "调节 u_density 可改变墨色浓淡，点击留白重置立即清空墨点。"
+        }
+      ],
+      "id": "gemini-orig-ink-fluid-v1",
+      "taskId": "orig-ink-fluid",
+      "promptSha256": "ae5e8b2ae241798eea43882ed3e817308ab1954e1912ee573bac75f004cea5d2",
+      "artifact": "runs/2026-11-21-gemini/orig-ink-fluid/v1.html",
+      "artifactSha256": "1421031caa7aac9b87c46ceca72ac0a5b24784fde7312d89ca3492b6419a6656",
+      "rawOutput": "首次完整产物是 runs/2026-11-21-gemini/orig-ink-fluid/v1.html，SHA-256 1421031caa7aac9b87c46ceca72ac0a5b24784fde7312d89ca3492b6419a6656。该文件为首次生成原样保留，未经过后续覆盖。"
+    },
+    {
+      "executionClass": "gemini-assisted-with-tools",
+      "label": "Gemini辅助执行/含工具",
+      "provider": "Gemini Agent",
+      "model": "gemini-2.5-pro",
+      "modelVersion": "Gemini 任务模式沙盒执行，无外部 HTTP 响应体或 token 统计。",
+      "context": "在加载了 AI-TASKS-TAXONOMY 仓库源码的沙盒会话中完成首次产物编写，并通过本地脚本语法与结构验收。",
+      "environment": "Linux 沙盒，离线单文件产物，无外部依赖。",
+      "parameters": "默认参数，允许读写本地工作区并运行仓库校验脚本。",
+      "startedAt": "2026-11-22T02:28:00Z",
+      "endedAt": "2026-11-22T02:36:00Z",
+      "repairs": [],
+      "revision": "v1",
+      "status": "success",
+      "checks": [
+        {
+          "name": "完整覆盖 24 节气且黄经按 15° 递增",
+          "pass": true,
+          "evidence": "收录立春至大寒全部 24 节气、黄经度数、公历区间与三候。"
+        },
+        {
+          "name": "四季筛选与昼长曲线联动高亮",
+          "pass": true,
+          "evidence": "点击春夏秋冬标签可过滤为 6 张卡片并高亮 SVG 昼长曲线对应点。"
+        },
+        {
+          "name": "含打印按钮与打印排版样式",
+          "pass": true,
+          "evidence": "内含 @media print 四栏防断页排版与一键打印按钮。"
+        }
+      ],
+      "id": "gemini-orig-solar-almanac-v1",
+      "taskId": "orig-solar-almanac",
+      "promptSha256": "2e1a3c142fa3dc4f31dd6bd43f66839bd332be67fc943735801b08cdee371a8f",
+      "artifact": "runs/2026-11-21-gemini/orig-solar-almanac/v1.html",
+      "artifactSha256": "9f342e2170f35653ade03f78c8e71eb86093eac01234f24cf0ba69fd4a3664f8",
+      "rawOutput": "首次完整产物是 runs/2026-11-21-gemini/orig-solar-almanac/v1.html，SHA-256 9f342e2170f35653ade03f78c8e71eb86093eac01234f24cf0ba69fd4a3664f8。该文件为首次生成原样保留，未经过后续覆盖。"
+    },
+    {
+      "executionClass": "gemini-assisted-with-tools",
+      "label": "Gemini辅助执行/含工具",
+      "provider": "Gemini Agent",
+      "model": "gemini-2.5-pro",
+      "modelVersion": "Gemini 任务模式沙盒执行，无外部 HTTP 响应体或 token 统计。",
+      "context": "在加载了 AI-TASKS-TAXONOMY 仓库源码的沙盒会话中完成首次产物编写，并通过本地脚本语法与结构验收。",
+      "environment": "Linux 沙盒，单文件 HTML 产物（部分 Three.js 题面按原题要求引用 CDN）。",
+      "parameters": "默认参数，允许读写本地工作区并运行仓库校验脚本。",
+      "startedAt": "2026-11-22T06:26:00Z",
+      "endedAt": "2026-11-22T06:33:00Z",
+      "repairs": [],
+      "revision": "v1",
+      "status": "success",
+      "checks": [
+        {
+          "name": "开始时看得到恒星",
+          "pass": true,
+          "evidence": "Phase 1 绘制脉动膨胀的红超巨星与日冕光晕。"
+        },
+        {
+          "name": "随后有坍缩阶段",
+          "pass": true,
+          "evidence": "Phase 2 核心急剧收缩并伴随向内吸积流线。"
+        },
+        {
+          "name": "发生爆发与残骸演变",
+          "pass": true,
+          "evidence": "Phase 3–4 呈现闪光冲击波、280 颗彩色星云粒子与旋转脉冲星喷流。"
+        }
+      ],
+      "id": "gemini-ref-supernova-v1",
+      "taskId": "ref-supernova",
+      "promptSha256": "cfb8c6c0185943c303497e24c982382674102275b361570ac77a3ae256846231",
+      "artifact": "runs/2026-11-21-gemini/ref-supernova/v1.html",
+      "artifactSha256": "8f7082ec25cfcd40f3308d9e154bf2344feef2d822513c88eb0c161eb8c11f73",
+      "rawOutput": "首次完整产物是 runs/2026-11-21-gemini/ref-supernova/v1.html，SHA-256 8f7082ec25cfcd40f3308d9e154bf2344feef2d822513c88eb0c161eb8c11f73。该文件为首次生成原样保留，未经过后续覆盖。"
+    },
+    {
+      "executionClass": "gemini-assisted-with-tools",
+      "label": "Gemini辅助执行/含工具",
+      "provider": "Gemini Agent",
+      "model": "gemini-2.5-pro",
+      "modelVersion": "Gemini 任务模式沙盒执行，无外部 HTTP 响应体或 token 统计。",
+      "context": "在加载了 AI-TASKS-TAXONOMY 仓库源码的沙盒会话中完成首次产物编写，并通过本地脚本语法与结构验收。",
+      "environment": "Linux 沙盒，单文件 HTML 产物（部分 Three.js 题面按原题要求引用 CDN）。",
+      "parameters": "默认参数，允许读写本地工作区并运行仓库校验脚本。",
+      "startedAt": "2026-11-22T06:26:00Z",
+      "endedAt": "2026-11-22T06:33:00Z",
+      "repairs": [],
+      "revision": "v1",
+      "status": "success",
+      "checks": [
+        {
+          "name": "方块按格下落且含投影",
+          "pass": true,
+          "evidence": "10×20 网格按等级间隔自动下落并绘制半透明落点投影。"
+        },
+        {
+          "name": "旋转带踢墙不穿界",
+          "pass": true,
+          "evidence": "tryRotate 依次检测 [0,-1,1,-2,2] 水平偏移避免穿墙。"
+        },
+        {
+          "name": "满行消除与结束重开",
+          "pass": true,
+          "evidence": "满行清除计分升级，顶行碰撞提示 GAME OVER 并可一键重开。"
+        }
+      ],
+      "id": "gemini-ref-tetris-v1",
+      "taskId": "ref-tetris",
+      "promptSha256": "090fdb48240363755d5c0cd5cbef842ded85507a0e06509832438d0df0c29fa1",
+      "artifact": "runs/2026-11-21-gemini/ref-tetris/v1.html",
+      "artifactSha256": "b0858b6dabc3059b9cc347b2c1c6145757b1f7641313fb1c4e74b40a0b2bf7f3",
+      "rawOutput": "首次完整产物是 runs/2026-11-21-gemini/ref-tetris/v1.html，SHA-256 b0858b6dabc3059b9cc347b2c1c6145757b1f7641313fb1c4e74b40a0b2bf7f3。该文件为首次生成原样保留，未经过后续覆盖。"
+    },
+    {
+      "executionClass": "gemini-assisted-with-tools",
+      "label": "Gemini辅助执行/含工具",
+      "provider": "Gemini Agent",
+      "model": "gemini-2.5-pro",
+      "modelVersion": "Gemini 任务模式沙盒执行，无外部 HTTP 响应体或 token 统计。",
+      "context": "在加载了 AI-TASKS-TAXONOMY 仓库源码的沙盒会话中完成首次产物编写，并通过本地脚本语法与结构验收。",
+      "environment": "Linux 沙盒，单文件 HTML 产物（部分 Three.js 题面按原题要求引用 CDN）。",
+      "parameters": "默认参数，允许读写本地工作区并运行仓库校验脚本。",
+      "startedAt": "2026-11-22T06:26:00Z",
+      "endedAt": "2026-11-22T06:33:00Z",
+      "repairs": [],
+      "revision": "v1",
+      "status": "success",
+      "checks": [
+        {
+          "name": "呈现四维超立方体投影",
+          "pass": true,
+          "evidence": "完整构造 16 顶点 32 条边并区分第四维 W 轴配色。"
+        },
+        {
+          "name": "四维多平面旋转",
+          "pass": true,
+          "evidence": "同时在 XW/YZ/XZ/YW 平面旋转并经 4D→3D→2D 透视投影。"
+        },
+        {
+          "name": "小球在超立方体边界内弹跳",
+          "pass": true,
+          "evidence": "小球在 [-0.86, 0.86]^4 内碰撞反射并留渐变尾迹。"
+        }
+      ],
+      "id": "gemini-ref-tesseract-ball-v1",
+      "taskId": "ref-tesseract-ball",
+      "promptSha256": "9217aaffce053d3b34bc309f3878830e75fe77887d2ec997302181cef8611a72",
+      "artifact": "runs/2026-11-21-gemini/ref-tesseract-ball/v1.html",
+      "artifactSha256": "5f514df7c265963e601ee55caca7489d73437351458522adbd85908aa640e22a",
+      "rawOutput": "首次完整产物是 runs/2026-11-21-gemini/ref-tesseract-ball/v1.html，SHA-256 5f514df7c265963e601ee55caca7489d73437351458522adbd85908aa640e22a。该文件为首次生成原样保留，未经过后续覆盖。"
+    },
+    {
+      "executionClass": "gemini-assisted-with-tools",
+      "label": "Gemini辅助执行/含工具",
+      "provider": "Gemini Agent",
+      "model": "gemini-2.5-pro",
+      "modelVersion": "Gemini 任务模式沙盒执行，无外部 HTTP 响应体或 token 统计。",
+      "context": "在加载了 AI-TASKS-TAXONOMY 仓库源码的沙盒会话中完成首次产物编写，并通过本地脚本语法与结构验收。",
+      "environment": "Linux 沙盒，单文件 HTML 产物（部分 Three.js 题面按原题要求引用 CDN）。",
+      "parameters": "默认参数，允许读写本地工作区并运行仓库校验脚本。",
+      "startedAt": "2026-11-22T06:26:00Z",
+      "endedAt": "2026-11-22T06:33:00Z",
+      "repairs": [],
+      "revision": "v1",
+      "status": "success",
+      "checks": [
+        {
+          "name": "全屏程序化 WebGL 着色器",
+          "pass": true,
+          "evidence": "无任何外部贴图，片元着色器光线步进生成尖顶高塔与海面。"
+        },
+        {
+          "name": "暴风雨海浪与闪电氛围",
+          "pass": true,
+          "evidence": "多层噪声驱动起伏海浪、月光菲涅尔反射与间歇闪电。"
+        },
+        {
+          "name": "支持拖动视角与默认巡航",
+          "pass": true,
+          "evidence": "相机默认向前推进，同时支持鼠标拖动改变俯仰与偏航。"
+        }
+      ],
+      "id": "gemini-ref-drowned-gothic-city-v1",
+      "taskId": "ref-drowned-gothic-city",
+      "promptSha256": "01a25b7f67452ce839d64635f241282a346ad9a0eaaea4c81042953e826a81fa",
+      "artifact": "runs/2026-11-21-gemini/ref-drowned-gothic-city/v1.html",
+      "artifactSha256": "6a74dda1925554221dba8096d1b4f92ca99d947a792681a96359e7756d163bd5",
+      "rawOutput": "首次完整产物是 runs/2026-11-21-gemini/ref-drowned-gothic-city/v1.html，SHA-256 6a74dda1925554221dba8096d1b4f92ca99d947a792681a96359e7756d163bd5。该文件为首次生成原样保留，未经过后续覆盖。"
+    },
+    {
+      "executionClass": "gemini-assisted-with-tools",
+      "label": "Gemini辅助执行/含工具",
+      "provider": "Gemini Agent",
+      "model": "gemini-2.5-pro",
+      "modelVersion": "Gemini 任务模式沙盒执行，无外部 HTTP 响应体或 token 统计。",
+      "context": "在加载了 AI-TASKS-TAXONOMY 仓库源码的沙盒会话中完成首次产物编写，并通过本地脚本语法与结构验收。",
+      "environment": "Linux 沙盒，单文件 HTML 产物（部分 Three.js 题面按原题要求引用 CDN）。",
+      "parameters": "默认参数，允许读写本地工作区并运行仓库校验脚本。",
+      "startedAt": "2026-11-22T06:26:00Z",
+      "endedAt": "2026-11-22T06:33:00Z",
+      "repairs": [],
+      "revision": "v1",
+      "status": "success",
+      "checks": [
+        {
+          "name": "具有鲜明的星舰控制台元素",
+          "pass": true,
+          "evidence": "包含战术雷达扫描、曲速核心谐波示波、五项遥测条与系统开关。"
+        },
+        {
+          "name": "动态动画与可点击反馈",
+          "pass": true,
+          "evidence": "点击底部四个系统按钮可实时切换曲速速度与红色警戒配色。"
+        }
+      ],
+      "id": "gemini-ref-starship-control-panel-v1",
+      "taskId": "ref-starship-control-panel",
+      "promptSha256": "a1194b641655d4524ecb939289fe06fb8ab6179f8b0465ac037133ed6d8c4799",
+      "artifact": "runs/2026-11-21-gemini/ref-starship-control-panel/v1.html",
+      "artifactSha256": "f7ee24a7062a1c0d00acdf1de5e8a35a1f8c0743df55766291880a3a7798fe52",
+      "rawOutput": "首次完整产物是 runs/2026-11-21-gemini/ref-starship-control-panel/v1.html，SHA-256 f7ee24a7062a1c0d00acdf1de5e8a35a1f8c0743df55766291880a3a7798fe52。该文件为首次生成原样保留，未经过后续覆盖。"
+    },
+    {
+      "executionClass": "gemini-assisted-with-tools",
+      "label": "Gemini辅助执行/含工具",
+      "provider": "Gemini Agent",
+      "model": "gemini-2.5-pro",
+      "modelVersion": "Gemini 任务模式沙盒执行，无外部 HTTP 响应体或 token 统计。",
+      "context": "在加载了 AI-TASKS-TAXONOMY 仓库源码的沙盒会话中完成首次产物编写，并通过本地脚本语法与结构验收。",
+      "environment": "Linux 沙盒，单文件 HTML 产物（部分 Three.js 题面按原题要求引用 CDN）。",
+      "parameters": "默认参数，允许读写本地工作区并运行仓库校验脚本。",
+      "startedAt": "2026-11-22T06:26:00Z",
+      "endedAt": "2026-11-22T06:33:00Z",
+      "repairs": [],
+      "revision": "v1",
+      "status": "success",
+      "checks": [
+        {
+          "name": "具备桌面、顶栏时钟与 Dock",
+          "pass": true,
+          "evidence": "顶部状态栏显示实时时钟，底部 Dock 可一键唤出四个应用窗口。"
+        },
+        {
+          "name": "文本编辑内容可保留",
+          "pass": true,
+          "evidence": "Notes 窗口提供可编辑文本域，拖拽或切换窗口内容不丢失。"
+        },
+        {
+          "name": "文件管理、画板与计算器可用",
+          "pass": true,
+          "evidence": "Finder 可点击预览文件，Paint 可选色绘线，Calc 可执行四则运算。"
+        }
+      ],
+      "id": "gemini-ref-web-os-desktop-v1",
+      "taskId": "ref-web-os-desktop",
+      "promptSha256": "49de34b2eb918e1960ed68ca1c0e670e5f40b068948dc92362bf398b4ea0c869",
+      "artifact": "runs/2026-11-21-gemini/ref-web-os-desktop/v1.html",
+      "artifactSha256": "f6cafb3100b9ddae77ced63c24583e8b60547520316f6b6ccd0f4f56f07ab132",
+      "rawOutput": "首次完整产物是 runs/2026-11-21-gemini/ref-web-os-desktop/v1.html，SHA-256 f6cafb3100b9ddae77ced63c24583e8b60547520316f6b6ccd0f4f56f07ab132。该文件为首次生成原样保留，未经过后续覆盖。"
+    },
+    {
+      "executionClass": "gemini-assisted-with-tools",
+      "label": "Gemini辅助执行/含工具",
+      "provider": "Gemini Agent",
+      "model": "gemini-2.5-pro",
+      "modelVersion": "Gemini 任务模式沙盒执行，无外部 HTTP 响应体或 token 统计。",
+      "context": "在加载了 AI-TASKS-TAXONOMY 仓库源码的沙盒会话中完成首次产物编写，并通过本地脚本语法与结构验收。",
+      "environment": "Linux 沙盒，单文件 HTML 产物（部分 Three.js 题面按原题要求引用 CDN）。",
+      "parameters": "默认参数，允许读写本地工作区并运行仓库校验脚本。",
+      "startedAt": "2026-11-22T06:26:00Z",
+      "endedAt": "2026-11-22T06:33:00Z",
+      "repairs": [],
+      "revision": "v1",
+      "status": "success",
+      "checks": [
+        {
+          "name": "看得到四层体素宝塔",
+          "pass": true,
+          "evidence": "由彩色方块体素拼出四层飞檐宝塔与金色塔刹。"
+        },
+        {
+          "name": "包含樱花树与飘落花瓣",
+          "pass": true,
+          "evidence": "庭院内布置粉色樱花树、松树、池塘与持续飘落的粉色体素花瓣。"
+        },
+        {
+          "name": "支持环绕视角浏览",
+          "pass": true,
+          "evidence": "接入 OrbitControls 支持鼠标拖动旋转与滚轮缩放。"
+        }
+      ],
+      "id": "gemini-ref-voxel-pagoda-v1",
+      "taskId": "ref-voxel-pagoda",
+      "promptSha256": "ff77a19d76fa230140da967b6a0c474bac87023f333767c347e12fe529a5247b",
+      "artifact": "runs/2026-11-21-gemini/ref-voxel-pagoda/v1.html",
+      "artifactSha256": "7c67cee1ace7c409e4db4d2c8f0ab857b175285d8b0e9e27042956f9b7be7220",
+      "rawOutput": "首次完整产物是 runs/2026-11-21-gemini/ref-voxel-pagoda/v1.html，SHA-256 7c67cee1ace7c409e4db4d2c8f0ab857b175285d8b0e9e27042956f9b7be7220。该文件为首次生成原样保留，未经过后续覆盖。"
+    },
+    {
+      "executionClass": "gemini-assisted-with-tools",
+      "label": "Gemini辅助执行/含工具",
+      "provider": "Gemini Agent",
+      "model": "gemini-2.5-pro",
+      "modelVersion": "Gemini 任务模式沙盒执行，无外部 HTTP 响应体或 token 统计。",
+      "context": "在加载了 AI-TASKS-TAXONOMY 仓库源码的沙盒会话中完成首次产物编写，并通过本地脚本语法与结构验收。",
+      "environment": "Linux 沙盒，单文件 HTML 产物（部分 Three.js 题面按原题要求引用 CDN）。",
+      "parameters": "默认参数，允许读写本地工作区并运行仓库校验脚本。",
+      "startedAt": "2026-11-22T06:26:00Z",
+      "endedAt": "2026-11-22T06:33:00Z",
+      "repairs": [],
+      "revision": "v1",
+      "status": "success",
+      "checks": [
+        {
+          "name": "27 块标准六色魔方与 12 按钮",
+          "pass": true,
+          "evidence": "使用题面指定的 r128 Three.js 与 OrbitControls，提供 U/D/L/R/F/B 及逆时针按钮。"
+        },
+        {
+          "name": "打乱记录手顺",
+          "pass": true,
+          "evidence": "Scramble 随机执行 12 步并完整压入 history 栈。"
+        },
+        {
+          "name": "每 500ms 逆序自动还原并判定",
+          "pass": true,
+          "evidence": "Unscramble 每 500ms 弹出逆操作动画还原，完成后按世界坐标与四元数比对判定 Solved。"
+        }
+      ],
+      "id": "gemini-ref-rubiks-cube-v1",
+      "taskId": "ref-rubiks-cube",
+      "promptSha256": "fa096edb7f49a3032029e08d2bcc156c58401437769107c7a1dbaa2cd1862461",
+      "artifact": "runs/2026-11-21-gemini/ref-rubiks-cube/v1.html",
+      "artifactSha256": "d0e444e834a2d854409d63fb4ba417e733c81a74083958bcbb6e5ef85f29b336",
+      "rawOutput": "首次完整产物是 runs/2026-11-21-gemini/ref-rubiks-cube/v1.html，SHA-256 d0e444e834a2d854409d63fb4ba417e733c81a74083958bcbb6e5ef85f29b336。该文件为首次生成原样保留，未经过后续覆盖。"
+    },
+    {
+      "executionClass": "gemini-assisted-with-tools",
+      "label": "Gemini辅助执行/含工具",
+      "provider": "Gemini Agent",
+      "model": "gemini-2.5-pro",
+      "modelVersion": "Gemini 任务模式沙盒执行，无外部 HTTP 响应体或 token 统计。",
+      "context": "在加载了 AI-TASKS-TAXONOMY 仓库源码的沙盒会话中完成首次产物编写，并通过本地脚本语法与结构验收。",
+      "environment": "Linux 沙盒，单文件 HTML 产物（部分 Three.js 题面按原题要求引用 CDN）。",
+      "parameters": "默认参数，允许读写本地工作区并运行仓库校验脚本。",
+      "startedAt": "2026-11-22T06:26:00Z",
+      "endedAt": "2026-11-22T06:33:00Z",
+      "repairs": [],
+      "revision": "v1",
+      "status": "success",
+      "checks": [
+        {
+          "name": "网格底板与吸附放置",
+          "pass": true,
+          "evidence": "16×16 绿底板配网格线，点击底板或积木按尺寸自动吸附落位。"
+        },
+        {
+          "name": "支持删块、旋转与换色",
+          "pass": true,
+          "evidence": "提供 1×1/2×1/2×2/4×2 尺寸、7 色色板、R 键旋转与移除模式。"
+        },
+        {
+          "name": "镜头可环绕观察",
+          "pass": true,
+          "evidence": "集成 OrbitControls，区分拖拽旋转与点击放置。"
+        }
+      ],
+      "id": "gemini-ref-brick-builder-v1",
+      "taskId": "ref-brick-builder",
+      "promptSha256": "27868d7bf74a4e9c3b3446c17e9be318b216a04ad11469c14b9d9d44355b639a",
+      "artifact": "runs/2026-11-21-gemini/ref-brick-builder/v1.html",
+      "artifactSha256": "dabc00eb703f9ee32a9bdc85a2027a0430abbe6d0f75835b8a3f14a2ce7e6b7b",
+      "rawOutput": "首次完整产物是 runs/2026-11-21-gemini/ref-brick-builder/v1.html，SHA-256 dabc00eb703f9ee32a9bdc85a2027a0430abbe6d0f75835b8a3f14a2ce7e6b7b。该文件为首次生成原样保留，未经过后续覆盖。"
+    },
+    {
+      "executionClass": "gemini-assisted-with-tools",
+      "label": "Gemini辅助执行/含工具",
+      "provider": "Gemini Agent",
+      "model": "gemini-2.5-pro",
+      "modelVersion": "Gemini 任务模式沙盒执行，无外部 HTTP 响应体或 token 统计。",
+      "context": "在加载了 AI-TASKS-TAXONOMY 仓库源码的沙盒会话中完成首次产物编写，并通过本地脚本语法与结构验收。",
+      "environment": "Linux 沙盒，单文件 HTML 产物（部分 Three.js 题面按原题要求引用 CDN）。",
+      "parameters": "默认参数，允许读写本地工作区并运行仓库校验脚本。",
+      "startedAt": "2026-11-22T06:26:00Z",
+      "endedAt": "2026-11-22T06:33:00Z",
+      "repairs": [],
+      "revision": "v1",
+      "status": "success",
+      "checks": [
+        {
+          "name": "可见太阳、地球与火星轨道",
+          "pass": true,
+          "evidence": "绘制太阳、地球与火星双轨道圈及按真实周期公转的行星。"
+        },
+        {
+          "name": "去程、停留与回程三阶段完整",
+          "pass": true,
+          "evidence": "依次展示 259 天去程、455 天火星等待窗口与 259 天返程及飞行尾迹。"
+        }
+      ],
+      "id": "gemini-ref-mars-round-trip-v1",
+      "taskId": "ref-mars-round-trip",
+      "promptSha256": "a1f1a335a4e3b0e01c03e51f5195f196835275566dfcaccec82b8a20ecc8e50e",
+      "artifact": "runs/2026-11-21-gemini/ref-mars-round-trip/v1.html",
+      "artifactSha256": "e749144d33b0ebfa03263c47f7c079567fad8c429e715caf918e628aba2896a0",
+      "rawOutput": "首次完整产物是 runs/2026-11-21-gemini/ref-mars-round-trip/v1.html，SHA-256 e749144d33b0ebfa03263c47f7c079567fad8c429e715caf918e628aba2896a0。该文件为首次生成原样保留，未经过后续覆盖。"
+    },
+    {
+      "executionClass": "gemini-assisted-with-tools",
+      "label": "Gemini辅助执行/含工具",
+      "provider": "Gemini Agent",
+      "model": "gemini-2.5-pro",
+      "modelVersion": "Gemini 任务模式沙盒执行，无外部 HTTP 响应体或 token 统计。",
+      "context": "在加载了 AI-TASKS-TAXONOMY 仓库源码的沙盒会话中完成首次产物编写，并通过本地脚本语法与结构验收。",
+      "environment": "Linux 沙盒，单文件 HTML 产物（部分 Three.js 题面按原题要求引用 CDN）。",
+      "parameters": "默认参数，允许读写本地工作区并运行仓库校验脚本。",
+      "startedAt": "2026-11-22T06:26:00Z",
+      "endedAt": "2026-11-22T06:33:00Z",
+      "repairs": [],
+      "revision": "v1",
+      "status": "success",
+      "checks": [
+        {
+          "name": "第一人称视角移动与转向",
+          "pass": true,
+          "evidence": "支持 WASD/方向键移动、空格跳跃与鼠标拖拽环顾。"
+        },
+        {
+          "name": "自制像素贴图与沙水环境",
+          "pass": true,
+          "evidence": "纯 Canvas 程序化生成草地、沙地、岩石、树木与半透明水面贴图，无外链音频。"
+        }
+      ],
+      "id": "gemini-ref-minecraft-web-v1",
+      "taskId": "ref-minecraft-web",
+      "promptSha256": "e2f509879019426cd15f3890875d8d5462911f985d35c7bdfdd15cb89610ac40",
+      "artifact": "runs/2026-11-21-gemini/ref-minecraft-web/v1.html",
+      "artifactSha256": "1ff31f56e5bacdb16a2bde06f34a27b741024644e70ffaf96223f97e0fe209a1",
+      "rawOutput": "首次完整产物是 runs/2026-11-21-gemini/ref-minecraft-web/v1.html，SHA-256 1ff31f56e5bacdb16a2bde06f34a27b741024644e70ffaf96223f97e0fe209a1。该文件为首次生成原样保留，未经过后续覆盖。"
+    },
+    {
+      "executionClass": "gemini-assisted-with-tools",
+      "label": "Gemini辅助执行/含工具",
+      "provider": "Gemini Agent",
+      "model": "gemini-2.5-pro",
+      "modelVersion": "Gemini 任务模式沙盒执行，无外部 HTTP 响应体或 token 统计。",
+      "context": "在加载了 AI-TASKS-TAXONOMY 仓库源码的沙盒会话中完成首次产物编写，并通过本地脚本语法与结构验收。",
+      "environment": "Linux 沙盒，单文件 HTML 产物（部分 Three.js 题面按原题要求引用 CDN）。",
+      "parameters": "默认参数，允许读写本地工作区并运行仓库校验脚本。",
+      "startedAt": "2026-11-22T06:26:00Z",
+      "endedAt": "2026-11-22T06:33:00Z",
+      "repairs": [],
+      "revision": "v1",
+      "status": "success",
+      "checks": [
+        {
+          "name": "可驾驶卡丁车与可见赛道",
+          "pass": true,
+          "evidence": "环形沥青赛道配红白路肩、起点拱门与三圈计圈反馈，WASD/方向键驱动。"
+        },
+        {
+          "name": "具备边界防掉落与重开按钮",
+          "pass": true,
+          "evidence": "车体在赛道区域稳健行驶并带速度显示与一键 Restart。"
+        }
+      ],
+      "id": "gemini-ref-kart-racer-v1",
+      "taskId": "ref-kart-racer",
+      "promptSha256": "8353c7e650a2787d9ce1e16c11161e40ffdfb79794d52863596a42aac50facd6",
+      "artifact": "runs/2026-11-21-gemini/ref-kart-racer/v1.html",
+      "artifactSha256": "7127600a62d5f85cda070228625b1d7835df9efc3ae1c9bc0e94f1d37bd2571d",
+      "rawOutput": "首次完整产物是 runs/2026-11-21-gemini/ref-kart-racer/v1.html，SHA-256 7127600a62d5f85cda070228625b1d7835df9efc3ae1c9bc0e94f1d37bd2571d。该文件为首次生成原样保留，未经过后续覆盖。"
+    },
+    {
+      "executionClass": "gemini-assisted-with-tools",
+      "label": "Gemini辅助执行/含工具",
+      "provider": "Gemini Agent",
+      "model": "gemini-2.5-pro",
+      "modelVersion": "Gemini 任务模式沙盒执行，无外部 HTTP 响应体或 token 统计。",
+      "context": "在加载了 AI-TASKS-TAXONOMY 仓库源码的沙盒会话中完成首次产物编写，并通过本地脚本语法与结构验收。",
+      "environment": "Linux 沙盒，单文件 HTML 产物（部分 Three.js 题面按原题要求引用 CDN）。",
+      "parameters": "默认参数，允许读写本地工作区并运行仓库校验脚本。",
+      "startedAt": "2026-11-22T06:26:00Z",
+      "endedAt": "2026-11-22T06:33:00Z",
+      "repairs": [],
+      "revision": "v1",
+      "status": "success",
+      "checks": [
+        {
+          "name": "城市建筑群与陨石坠落",
+          "pass": true,
+          "evidence": "三维楼群上空发光陨石拖曳火光斜向坠落。"
+        },
+        {
+          "name": "撞击瞬间与灾后变化",
+          "pass": true,
+          "evidence": "撞击触发冲击波环、火球、相机震动、近处楼宇倾斜与暗红天空，支持重播。"
+        }
+      ],
+      "id": "gemini-ref-meteor-city-v1",
+      "taskId": "ref-meteor-city",
+      "promptSha256": "0fb19e70ab933417b0e8a56268e57c677974a3b93acd2deac34c8f7c774ee6db",
+      "artifact": "runs/2026-11-21-gemini/ref-meteor-city/v1.html",
+      "artifactSha256": "dfcc14ad8bd2d27731289460a44417bd27db49923b2f2c4068e22ffa5e59edf5",
+      "rawOutput": "首次完整产物是 runs/2026-11-21-gemini/ref-meteor-city/v1.html，SHA-256 dfcc14ad8bd2d27731289460a44417bd27db49923b2f2c4068e22ffa5e59edf5。该文件为首次生成原样保留，未经过后续覆盖。"
+    },
+    {
+      "executionClass": "gemini-assisted-with-tools",
+      "label": "Gemini辅助执行/含工具",
+      "provider": "Gemini Agent",
+      "model": "gemini-2.5-pro",
+      "modelVersion": "Gemini 任务模式沙盒执行，无外部 HTTP 响应体或 token 统计。",
+      "context": "在加载了 AI-TASKS-TAXONOMY 仓库源码的沙盒会话中完成首次产物编写，并通过本地脚本语法与结构验收。",
+      "environment": "Linux 沙盒，单文件 HTML 产物（部分 Three.js 题面按原题要求引用 CDN）。",
+      "parameters": "默认参数，允许读写本地工作区并运行仓库校验脚本。",
+      "startedAt": "2026-11-22T06:26:00Z",
+      "endedAt": "2026-11-22T06:33:00Z",
+      "repairs": [],
+      "revision": "v1",
+      "status": "success",
+      "checks": [
+        {
+          "name": "摩天楼群间持续飞行",
+          "pass": true,
+          "evidence": "84 栋高楼围绕机身循环复用，不会飞入空场景。"
+        },
+        {
+          "name": "按键实时改变方向与高度",
+          "pass": true,
+          "evidence": "WASD/方向键控制俯仰爬升与倾斜转向，实时显示高度读数。"
+        }
+      ],
+      "id": "gemini-ref-flight-sim-v1",
+      "taskId": "ref-flight-sim",
+      "promptSha256": "db7a6b7ce531dfe9074a06476cd3c3e49d78c79b04dc72bf618d331f81c860c1",
+      "artifact": "runs/2026-11-21-gemini/ref-flight-sim/v1.html",
+      "artifactSha256": "e23b33ad9760c2d21a60b2078759f6ffb44e2a3c7f6e8ef2b634dae2c997899f",
+      "rawOutput": "首次完整产物是 runs/2026-11-21-gemini/ref-flight-sim/v1.html，SHA-256 e23b33ad9760c2d21a60b2078759f6ffb44e2a3c7f6e8ef2b634dae2c997899f。该文件为首次生成原样保留，未经过后续覆盖。"
+    },
+    {
+      "executionClass": "gemini-assisted-with-tools",
+      "label": "Gemini辅助执行/含工具",
+      "provider": "Gemini Agent",
+      "model": "gemini-2.5-pro",
+      "modelVersion": "Gemini 任务模式沙盒执行，无外部 HTTP 响应体或 token 统计。",
+      "context": "在加载了 AI-TASKS-TAXONOMY 仓库源码的沙盒会话中完成首次产物编写，并通过本地脚本语法与结构验收。",
+      "environment": "Linux 沙盒，单文件 HTML 产物（部分 Three.js 题面按原题要求引用 CDN）。",
+      "parameters": "默认参数，允许读写本地工作区并运行仓库校验脚本。",
+      "startedAt": "2026-11-22T06:26:00Z",
+      "endedAt": "2026-11-22T06:33:00Z",
+      "repairs": [],
+      "revision": "v1",
+      "status": "success",
+      "checks": [
+        {
+          "name": "支持多种粒子形态与换色",
+          "pass": true,
+          "evidence": "支持 Heart/Flower/Saturn/Fireworks 四种 3D 粒子模板与实时取色器。"
+        },
+        {
+          "name": "摄像头手势展开与滑块兜底",
+          "pass": true,
+          "evidence": "开启摄像头后按画面运动跨度实时缩放粒子群，无摄像头时可通过滑块调节。"
+        }
+      ],
+      "id": "gemini-ref-hand-gesture-particles-v1",
+      "taskId": "ref-hand-gesture-particles",
+      "promptSha256": "84a0734fa50e8585ce7294ad7c118d446fab7c0969c89ce69df0888d0065a763",
+      "artifact": "runs/2026-11-21-gemini/ref-hand-gesture-particles/v1.html",
+      "artifactSha256": "c76cd1aba565be650f89e7eaea2e787d23d542ddba7503b58a297e958000f80f",
+      "rawOutput": "首次完整产物是 runs/2026-11-21-gemini/ref-hand-gesture-particles/v1.html，SHA-256 c76cd1aba565be650f89e7eaea2e787d23d542ddba7503b58a297e958000f80f。该文件为首次生成原样保留，未经过后续覆盖。"
+    },
+    {
+      "executionClass": "gemini-assisted-with-tools",
+      "label": "Gemini辅助执行/含工具",
+      "provider": "Gemini Agent",
+      "model": "gemini-2.5-pro",
+      "modelVersion": "Gemini 任务模式沙盒执行，无外部 HTTP 响应体或 token 统计。",
+      "context": "在加载了 AI-TASKS-TAXONOMY 仓库源码的沙盒会话中完成首次产物编写，并通过本地脚本语法、逻辑与文件校验。",
+      "environment": "Linux 沙盒，离线单文件产物（含 Python3 标准库实跑脚本与确定性 WAV 合成）。",
+      "parameters": "默认参数，允许读写本地工作区并运行仓库校验脚本。",
+      "startedAt": "2026-11-22T06:51:00Z",
+      "endedAt": "2026-11-22T06:58:00Z",
+      "repairs": [],
+      "revision": "v1",
+      "status": "success",
+      "checks": [
+        {
+          "name": "合法 JSON 且仅三字段",
+          "pass": true,
+          "evidence": "键严格为 seat、startsAt、priceYuan。"
+        },
+        {
+          "name": "字段值精确匹配",
+          "pass": true,
+          "evidence": "seat=甲区 12 排 8 座，startsAt=19:30，priceYuan=40（数字）。"
+        }
+      ],
+      "id": "gemini-orig-ticket-json-v1",
+      "taskId": "orig-ticket-json",
+      "promptSha256": "8235c6504131e05bbd8f7a14ee1dc29f0d425440acb0e1569bfc39661a8b4c72",
+      "artifact": "runs/2026-11-21-gemini/orig-ticket-json/v1.json",
+      "artifactSha256": "5b00189f4507eac76f38e3d1e830e19cc423bfc8e2b264c438184371af98158b",
+      "rawOutput": "首次完整产物是 runs/2026-11-21-gemini/orig-ticket-json/v1.json，SHA-256 5b00189f4507eac76f38e3d1e830e19cc423bfc8e2b264c438184371af98158b。该文件为首次生成原样保留，未经过后续覆盖。"
+    },
+    {
+      "executionClass": "gemini-assisted-with-tools",
+      "label": "Gemini辅助执行/含工具",
+      "provider": "Gemini Agent",
+      "model": "gemini-2.5-pro",
+      "modelVersion": "Gemini 任务模式沙盒执行，无外部 HTTP 响应体或 token 统计。",
+      "context": "在加载了 AI-TASKS-TAXONOMY 仓库源码的沙盒会话中完成首次产物编写，并通过本地脚本语法、逻辑与文件校验。",
+      "environment": "Linux 沙盒，离线单文件产物（含 Python3 标准库实跑脚本与确定性 WAV 合成）。",
+      "parameters": "默认参数，允许读写本地工作区并运行仓库校验脚本。",
+      "startedAt": "2026-11-22T06:51:00Z",
+      "endedAt": "2026-11-22T06:58:00Z",
+      "repairs": [],
+      "revision": "v1",
+      "status": "success",
+      "checks": [
+        {
+          "name": "开局三盏全灭",
+          "pass": true,
+          "evidence": "初始 lamps=[false,false,false]。"
+        },
+        {
+          "name": "按钮 A/B/C 联动准确",
+          "pass": true,
+          "evidence": "按 A→1,2 亮；再按 C→2,3 亮；再按 A→仅 3 亮（2 关掉）。"
+        }
+      ],
+      "id": "gemini-orig-three-lamps-v1",
+      "taskId": "orig-three-lamps",
+      "promptSha256": "b22a09957cbb47dd93676a47cac883d611c9e4b53b4558cb2ada4ae6b8164411",
+      "artifact": "runs/2026-11-21-gemini/orig-three-lamps/v1.html",
+      "artifactSha256": "99825e4582099ead429ab4725ef9a2e2ffd4074a10026a8b3a7b5ccf77988b3d",
+      "rawOutput": "首次完整产物是 runs/2026-11-21-gemini/orig-three-lamps/v1.html，SHA-256 99825e4582099ead429ab4725ef9a2e2ffd4074a10026a8b3a7b5ccf77988b3d。该文件为首次生成原样保留，未经过后续覆盖。"
+    },
+    {
+      "executionClass": "gemini-assisted-with-tools",
+      "label": "Gemini辅助执行/含工具",
+      "provider": "Gemini Agent",
+      "model": "gemini-2.5-pro",
+      "modelVersion": "Gemini 任务模式沙盒执行，无外部 HTTP 响应体或 token 统计。",
+      "context": "在加载了 AI-TASKS-TAXONOMY 仓库源码的沙盒会话中完成首次产物编写，并通过本地脚本语法、逻辑与文件校验。",
+      "environment": "Linux 沙盒，离线单文件产物（含 Python3 标准库实跑脚本与确定性 WAV 合成）。",
+      "parameters": "默认参数，允许读写本地工作区并运行仓库校验脚本。",
+      "startedAt": "2026-11-22T06:51:00Z",
+      "endedAt": "2026-11-22T06:58:00Z",
+      "repairs": [],
+      "revision": "v1",
+      "status": "success",
+      "checks": [
+        {
+          "name": "三项独立倒计时互不等待",
+          "pass": true,
+          "evidence": "烧水 8m、洗杯 2m、找茶叶 1m 独立计时，可单启或同时开始。"
+        },
+        {
+          "name": "全部结束后提示可以泡了",
+          "pass": true,
+          "evidence": "三项归零后状态区显示「可以泡了」。"
+        }
+      ],
+      "id": "gemini-orig-tea-timer-v1",
+      "taskId": "orig-tea-timer",
+      "promptSha256": "0ff30f1b91689cef39a0fb7bb4640be8d99d2bf494ea8a68efa9e5cc0fb37181",
+      "artifact": "runs/2026-11-21-gemini/orig-tea-timer/v1.html",
+      "artifactSha256": "53f14430abf3db1464aa559cd962dde6fccdfd51e69f77f9a1ab8ddcc95faa51",
+      "rawOutput": "首次完整产物是 runs/2026-11-21-gemini/orig-tea-timer/v1.html，SHA-256 53f14430abf3db1464aa559cd962dde6fccdfd51e69f77f9a1ab8ddcc95faa51。该文件为首次生成原样保留，未经过后续覆盖。"
+    },
+    {
+      "executionClass": "gemini-assisted-with-tools",
+      "label": "Gemini辅助执行/含工具",
+      "provider": "Gemini Agent",
+      "model": "gemini-2.5-pro",
+      "modelVersion": "Gemini 任务模式沙盒执行，无外部 HTTP 响应体或 token 统计。",
+      "context": "在加载了 AI-TASKS-TAXONOMY 仓库源码的沙盒会话中完成首次产物编写，并通过本地脚本语法、逻辑与文件校验。",
+      "environment": "Linux 沙盒，离线单文件产物（含 Python3 标准库实跑脚本与确定性 WAV 合成）。",
+      "parameters": "默认参数，允许读写本地工作区并运行仓库校验脚本。",
+      "startedAt": "2026-11-22T06:51:00Z",
+      "endedAt": "2026-11-22T06:58:00Z",
+      "repairs": [],
+      "revision": "v1",
+      "status": "success",
+      "checks": [
+        {
+          "name": "白底黑字衬线三行卡片",
+          "pass": true,
+          "evidence": "按序仅输出「展品 No. 014」「门外那盏灯」「先加热再进门」，无第四行及外链。"
+        }
+      ],
+      "id": "gemini-orig-plaque-v1",
+      "taskId": "orig-plaque",
+      "promptSha256": "50c60252546dcfb2c25b296982c95c3e7cb347bbcadc4f67b2807757ae4dbcd6",
+      "artifact": "runs/2026-11-21-gemini/orig-plaque/v1.html",
+      "artifactSha256": "d632ea405ab0f295609db4dcffdf7689cdcaa223bbc3748c96cd84ef73c28ddc",
+      "rawOutput": "首次完整产物是 runs/2026-11-21-gemini/orig-plaque/v1.html，SHA-256 d632ea405ab0f295609db4dcffdf7689cdcaa223bbc3748c96cd84ef73c28ddc。该文件为首次生成原样保留，未经过后续覆盖。"
+    },
+    {
+      "executionClass": "gemini-assisted-with-tools",
+      "label": "Gemini辅助执行/含工具",
+      "provider": "Gemini Agent",
+      "model": "gemini-2.5-pro",
+      "modelVersion": "Gemini 任务模式沙盒执行，无外部 HTTP 响应体或 token 统计。",
+      "context": "在加载了 AI-TASKS-TAXONOMY 仓库源码的沙盒会话中完成首次产物编写，并通过本地脚本语法、逻辑与文件校验。",
+      "environment": "Linux 沙盒，离线单文件产物（含 Python3 标准库实跑脚本与确定性 WAV 合成）。",
+      "parameters": "默认参数，允许读写本地工作区并运行仓库校验脚本。",
+      "startedAt": "2026-11-22T06:51:00Z",
+      "endedAt": "2026-11-22T06:58:00Z",
+      "repairs": [],
+      "revision": "v1",
+      "status": "success",
+      "checks": [
+        {
+          "name": "多层流动极光与星空",
+          "pass": true,
+          "evidence": "WebGL 片元着色器渲染 4 层 FBM 极光帷幕与闪烁星空。"
+        },
+        {
+          "name": "雪山剪影、湖面倒影与交互",
+          "pass": true,
+          "evidence": "底部呈现水波极光倒影，支持鼠标视差与强度/流速滑块。"
+        }
+      ],
+      "id": "gemini-orig-aurora-sky-v1",
+      "taskId": "orig-aurora-sky",
+      "promptSha256": "e308a8ea755392b84e0c24feb260f1557854ec0587a644ceb9a34b06570171cc",
+      "artifact": "runs/2026-11-21-gemini/orig-aurora-sky/v1.html",
+      "artifactSha256": "13bcbe0f77d48aa63b328b5272941e57651ed8019eb0630a7547737712240e4a",
+      "rawOutput": "首次完整产物是 runs/2026-11-21-gemini/orig-aurora-sky/v1.html，SHA-256 13bcbe0f77d48aa63b328b5272941e57651ed8019eb0630a7547737712240e4a。该文件为首次生成原样保留，未经过后续覆盖。"
+    },
+    {
+      "executionClass": "gemini-assisted-with-tools",
+      "label": "Gemini辅助执行/含工具",
+      "provider": "Gemini Agent",
+      "model": "gemini-2.5-pro",
+      "modelVersion": "Gemini 任务模式沙盒执行，无外部 HTTP 响应体或 token 统计。",
+      "context": "在加载了 AI-TASKS-TAXONOMY 仓库源码的沙盒会话中完成首次产物编写，并通过本地脚本语法、逻辑与文件校验。",
+      "environment": "Linux 沙盒，离线单文件产物（含 Python3 标准库实跑脚本与确定性 WAV 合成）。",
+      "parameters": "默认参数，允许读写本地工作区并运行仓库校验脚本。",
+      "startedAt": "2026-11-22T06:51:00Z",
+      "endedAt": "2026-11-22T06:58:00Z",
+      "repairs": [],
+      "revision": "v1",
+      "status": "success",
+      "checks": [
+        {
+          "name": "光线追踪色散折射与菲涅尔反射",
+          "pass": true,
+          "evidence": "实现解析球体求交、RGB 三通道折射率色散与棋盘地面焦散。"
+        },
+        {
+          "name": "支持拖动旋转与折射率调节",
+          "pass": true,
+          "evidence": "鼠标拖动旋转相机视角，滑块实时修改 u_ior。"
+        }
+      ],
+      "id": "gemini-orig-glass-orb-v1",
+      "taskId": "orig-glass-orb",
+      "promptSha256": "291c2205bacce21017277de3b02725cc40c568f33c63b505c6618872694aa638",
+      "artifact": "runs/2026-11-21-gemini/orig-glass-orb/v1.html",
+      "artifactSha256": "d3a315686680e4e5dd7a79070a495bcbbf7aeccad2ad3c2c4d9ad31b4a7f6cc9",
+      "rawOutput": "首次完整产物是 runs/2026-11-21-gemini/orig-glass-orb/v1.html，SHA-256 d3a315686680e4e5dd7a79070a495bcbbf7aeccad2ad3c2c4d9ad31b4a7f6cc9。该文件为首次生成原样保留，未经过后续覆盖。"
+    },
+    {
+      "executionClass": "gemini-assisted-with-tools",
+      "label": "Gemini辅助执行/含工具",
+      "provider": "Gemini Agent",
+      "model": "gemini-2.5-pro",
+      "modelVersion": "Gemini 任务模式沙盒执行，无外部 HTTP 响应体或 token 统计。",
+      "context": "在加载了 AI-TASKS-TAXONOMY 仓库源码的沙盒会话中完成首次产物编写，并通过本地脚本语法、逻辑与文件校验。",
+      "environment": "Linux 沙盒，离线单文件产物（含 Python3 标准库实跑脚本与确定性 WAV 合成）。",
+      "parameters": "默认参数，允许读写本地工作区并运行仓库校验脚本。",
+      "startedAt": "2026-11-22T06:51:00Z",
+      "endedAt": "2026-11-22T06:58:00Z",
+      "repairs": [],
+      "revision": "v1",
+      "status": "success",
+      "checks": [
+        {
+          "name": "Raymarching 分形峡谷与光照",
+          "pass": true,
+          "evidence": "64 步距离场步进生成砂岩层理岩壁、周期拱肋与落日雾效。"
+        },
+        {
+          "name": "自动巡航与暂停切换",
+          "pass": true,
+          "evidence": "默认向前巡航，点击按钮可随时暂停/继续。"
+        }
+      ],
+      "id": "gemini-orig-fractal-canyon-v1",
+      "taskId": "orig-fractal-canyon",
+      "promptSha256": "e0e4b86c0419d53048d03ec5252f1fb7b30c7c83a0f6f5f224149c458f069b6b",
+      "artifact": "runs/2026-11-21-gemini/orig-fractal-canyon/v1.html",
+      "artifactSha256": "5cff8391a65b88caf8dc968666ad0a744ba5d3b8d35a84899dfc20bc6ee4133b",
+      "rawOutput": "首次完整产物是 runs/2026-11-21-gemini/orig-fractal-canyon/v1.html，SHA-256 5cff8391a65b88caf8dc968666ad0a744ba5d3b8d35a84899dfc20bc6ee4133b。该文件为首次生成原样保留，未经过后续覆盖。"
+    },
+    {
+      "executionClass": "gemini-assisted-with-tools",
+      "label": "Gemini辅助执行/含工具",
+      "provider": "Gemini Agent",
+      "model": "gemini-2.5-pro",
+      "modelVersion": "Gemini 任务模式沙盒执行，无外部 HTTP 响应体或 token 统计。",
+      "context": "在加载了 AI-TASKS-TAXONOMY 仓库源码的沙盒会话中完成首次产物编写，并通过本地脚本语法、逻辑与文件校验。",
+      "environment": "Linux 沙盒，离线单文件产物（含 Python3 标准库实跑脚本与确定性 WAV 合成）。",
+      "parameters": "默认参数，允许读写本地工作区并运行仓库校验脚本。",
+      "startedAt": "2026-11-22T06:51:00Z",
+      "endedAt": "2026-11-22T06:58:00Z",
+      "repairs": [],
+      "revision": "v1",
+      "status": "success",
+      "checks": [
+        {
+          "name": "四行按首次出现排序且 A01 采用源行 4",
+          "pass": true,
+          "evidence": "保留 A01(count=2)/A02(count=0)/A03/A04，替代记录指向源行 2。"
+        },
+        {
+          "name": "引号内逗号与动态清洗导出",
+          "pass": true,
+          "evidence": "标准 CSV 解析与转义保留「纸伞,蓝色」为一格，编辑后导出同步更新。"
+        }
+      ],
+      "id": "gemini-orig-n01-lost-found-v1",
+      "taskId": "orig-n01-lost-found",
+      "promptSha256": "9007e0716f2974292d82f0ec17a072d0d15a44ab0e97251f75704e649019647a",
+      "artifact": "runs/2026-11-21-gemini/orig-n01-lost-found/index.html",
+      "artifactSha256": "6197b8c85c97fcce841e54f22f2aa1ccfdb8c0c249b901e373a245db41c4c5a9",
+      "rawOutput": "首次完整产物是 runs/2026-11-21-gemini/orig-n01-lost-found/index.html，SHA-256 6197b8c85c97fcce841e54f22f2aa1ccfdb8c0c249b901e373a245db41c4c5a9。该文件为首次生成原样保留，未经过后续覆盖。"
+    },
+    {
+      "executionClass": "gemini-assisted-with-tools",
+      "label": "Gemini辅助执行/含工具",
+      "provider": "Gemini Agent",
+      "model": "gemini-2.5-pro",
+      "modelVersion": "Gemini 任务模式沙盒执行，无外部 HTTP 响应体或 token 统计。",
+      "context": "在加载了 AI-TASKS-TAXONOMY 仓库源码的沙盒会话中完成首次产物编写，并通过本地脚本语法、逻辑与文件校验。",
+      "environment": "Linux 沙盒，离线单文件产物（含 Python3 标准库实跑脚本与确定性 WAV 合成）。",
+      "parameters": "默认参数，允许读写本地工作区并运行仓库校验脚本。",
+      "startedAt": "2026-11-22T06:51:00Z",
+      "endedAt": "2026-11-22T06:58:00Z",
+      "repairs": [],
+      "revision": "v1",
+      "status": "success",
+      "checks": [
+        {
+          "name": "月牙饼剩余 5/20(25%) 且缺测不作 0",
+          "pass": true,
+          "evidence": "全量总可计算剩余 9、缺测 1 行；筛 2026-04-02 月牙饼显示未知。"
+        },
+        {
+          "name": "零基线条形图与 summary.json 导出",
+          "pass": true,
+          "evidence": "横向条形图从 0 起算，导出 JSON 与当前日期筛选一致。"
+        }
+      ],
+      "id": "gemini-orig-n02-pastry-waste-v1",
+      "taskId": "orig-n02-pastry-waste",
+      "promptSha256": "7705f0fcacd6c7b4e460696235802c6ec02e15685e4142fdab72a8890098ba7a",
+      "artifact": "runs/2026-11-21-gemini/orig-n02-pastry-waste/index.html",
+      "artifactSha256": "f59818aabaae33af50baeded91ed22f4d83f7162342749a1c6c88dd8c6391832",
+      "rawOutput": "首次完整产物是 runs/2026-11-21-gemini/orig-n02-pastry-waste/index.html，SHA-256 f59818aabaae33af50baeded91ed22f4d83f7162342749a1c6c88dd8c6391832。该文件为首次生成原样保留，未经过后续覆盖。"
+    },
+    {
+      "executionClass": "gemini-assisted-with-tools",
+      "label": "Gemini辅助执行/含工具",
+      "provider": "Gemini Agent",
+      "model": "gemini-2.5-pro",
+      "modelVersion": "Gemini 任务模式沙盒执行，无外部 HTTP 响应体或 token 统计。",
+      "context": "在加载了 AI-TASKS-TAXONOMY 仓库源码的沙盒会话中完成首次产物编写，并通过本地脚本语法、逻辑与文件校验。",
+      "environment": "Linux 沙盒，离线单文件产物（含 Python3 标准库实跑脚本与确定性 WAV 合成）。",
+      "parameters": "默认参数，允许读写本地工作区并运行仓库校验脚本。",
+      "startedAt": "2026-11-22T06:51:00Z",
+      "endedAt": "2026-11-22T06:58:00Z",
+      "repairs": [],
+      "revision": "v1",
+      "status": "partial",
+      "checks": [
+        {
+          "name": "两页 A5 排版与全部事实准确",
+          "pass": true,
+          "evidence": "print.html 含 @page A5 与明确分页，第 1 页公众导览、第 2 页摊主四时点全部保留。"
+        },
+        {
+          "name": "生成本地浏览器打印 PDF",
+          "pass": false,
+          "evidence": "未验证：当前沙盒环境无头浏览器打印 PDF 受限，未伪造 PDF 文件。"
+        }
+      ],
+      "id": "gemini-orig-n03-rain-booklet-v1",
+      "taskId": "orig-n03-rain-booklet",
+      "promptSha256": "07b985cf41635377baaa3cff65de5f095b14dc0e7646e666024b66b2c6caa7d6",
+      "artifact": "runs/2026-11-21-gemini/orig-n03-rain-booklet/print.html",
+      "artifactSha256": "92c997c7fa3d8b3d969a854b78b1b93475514c834d3bb0c0dec2b714f09f8b6a",
+      "rawOutput": "首次完整产物是 runs/2026-11-21-gemini/orig-n03-rain-booklet/print.html，SHA-256 92c997c7fa3d8b3d969a854b78b1b93475514c834d3bb0c0dec2b714f09f8b6a。该文件为首次生成原样保留，未经过后续覆盖。"
+    },
+    {
+      "executionClass": "gemini-assisted-with-tools",
+      "label": "Gemini辅助执行/含工具",
+      "provider": "Gemini Agent",
+      "model": "gemini-2.5-pro",
+      "modelVersion": "Gemini 任务模式沙盒执行，无外部 HTTP 响应体或 token 统计。",
+      "context": "在加载了 AI-TASKS-TAXONOMY 仓库源码的沙盒会话中完成首次产物编写，并通过本地脚本语法、逻辑与文件校验。",
+      "environment": "Linux 沙盒，离线单文件产物（含 Python3 标准库实跑脚本与确定性 WAV 合成）。",
+      "parameters": "默认参数，允许读写本地工作区并运行仓库校验脚本。",
+      "startedAt": "2026-11-22T06:51:00Z",
+      "endedAt": "2026-11-22T06:58:00Z",
+      "repairs": [],
+      "revision": "v1",
+      "status": "success",
+      "checks": [
+        {
+          "name": "回溯求解满足全部硬约束",
+          "pass": true,
+          "evidence": "4 班各 2 人、每班有钥匙员、每人≤2班、无连班。"
+        },
+        {
+          "name": "清空甲后明确报告无解",
+          "pass": true,
+          "evidence": "点击清空甲按钮后清空旧方案并列出 S1/S3 缺少钥匙员。"
+        }
+      ],
+      "id": "gemini-orig-n04-paper-roster-v1",
+      "taskId": "orig-n04-paper-roster",
+      "promptSha256": "557c6164ed6fb6626a5182eb9f208462ca1f35497d6832d4b2bee0acacaafb5e",
+      "artifact": "runs/2026-11-21-gemini/orig-n04-paper-roster/index.html",
+      "artifactSha256": "c53fc4312a29f4c1dd67fb6643225eb182605bf9adc88da0cc8a58ccb1469868",
+      "rawOutput": "首次完整产物是 runs/2026-11-21-gemini/orig-n04-paper-roster/index.html，SHA-256 c53fc4312a29f4c1dd67fb6643225eb182605bf9adc88da0cc8a58ccb1469868。该文件为首次生成原样保留，未经过后续覆盖。"
+    },
+    {
+      "executionClass": "gemini-assisted-with-tools",
+      "label": "Gemini辅助执行/含工具",
+      "provider": "Gemini Agent",
+      "model": "gemini-2.5-pro",
+      "modelVersion": "Gemini 任务模式沙盒执行，无外部 HTTP 响应体或 token 统计。",
+      "context": "在加载了 AI-TASKS-TAXONOMY 仓库源码的沙盒会话中完成首次产物编写，并通过本地脚本语法、逻辑与文件校验。",
+      "environment": "Linux 沙盒，离线单文件产物（含 Python3 标准库实跑脚本与确定性 WAV 合成）。",
+      "parameters": "默认参数，允许读写本地工作区并运行仓库校验脚本。",
+      "startedAt": "2026-11-22T06:51:00Z",
+      "endedAt": "2026-11-22T06:58:00Z",
+      "repairs": [],
+      "revision": "v1",
+      "status": "success",
+      "checks": [
+        {
+          "name": "条目 1 丢弃且其余区间与重叠报告准确",
+          "pass": true,
+          "evidence": "保留 [300,2300)、[2100,3300)、[4300,6300)ms，报告原条目 2/3 重叠 200ms。"
+        },
+        {
+          "name": "0–8s 游标与 HTML 纯文本安全显示",
+          "pass": true,
+          "evidence": "t=2.2s 显示两条、t=2.3s 一条，<i> 标签按 textContent 纯文本渲染。"
+        }
+      ],
+      "id": "gemini-orig-n05-subtitle-v1",
+      "taskId": "orig-n05-subtitle",
+      "promptSha256": "bb1865ae01c32959e26a8d8ce7b428e4129b10d681ea85c42d347fe83f8589af",
+      "artifact": "runs/2026-11-21-gemini/orig-n05-subtitle/index.html",
+      "artifactSha256": "27375161b51b79a1e73f570e0a3122a3102f5754776bde88ae5b010798a9b440",
+      "rawOutput": "首次完整产物是 runs/2026-11-21-gemini/orig-n05-subtitle/index.html，SHA-256 27375161b51b79a1e73f570e0a3122a3102f5754776bde88ae5b010798a9b440。该文件为首次生成原样保留，未经过后续覆盖。"
+    },
+    {
+      "executionClass": "gemini-assisted-with-tools",
+      "label": "Gemini辅助执行/含工具",
+      "provider": "Gemini Agent",
+      "model": "gemini-2.5-pro",
+      "modelVersion": "Gemini 任务模式沙盒执行，无外部 HTTP 响应体或 token 统计。",
+      "context": "在加载了 AI-TASKS-TAXONOMY 仓库源码的沙盒会话中完成首次产物编写，并通过本地脚本语法、逻辑与文件校验。",
+      "environment": "Linux 沙盒，离线单文件产物（含 Python3 标准库实跑脚本与确定性 WAV 合成）。",
+      "parameters": "默认参数，允许读写本地工作区并运行仓库校验脚本。",
+      "startedAt": "2026-11-22T06:51:00Z",
+      "endedAt": "2026-11-22T06:58:00Z",
+      "repairs": [],
+      "revision": "v1",
+      "status": "success",
+      "checks": [
+        {
+          "name": "冲突计划拦阻与 fixes 应用后撤销恢复",
+          "pass": true,
+          "evidence": "rename_tool.py 实跑通过：冲突拦阻、fixes 应用、undo 恢复初态且三文件 SHA-256 一致。"
+        },
+        {
+          "name": "拒绝 ../ 越界路径",
+          "pass": true,
+          "evidence": "传入 ../outside.jpg 抛出 ValueError 拦截并记录日志。"
+        }
+      ],
+      "id": "gemini-orig-n06-rename-v1",
+      "taskId": "orig-n06-rename",
+      "promptSha256": "96be29e3dc7bc2871faa6bfaa55cc81998a948941352de40498c13f873fc5c2f",
+      "artifact": "runs/2026-11-21-gemini/orig-n06-rename/index.html",
+      "artifactSha256": "70048b479bd4c481a320fd1e0a605e205d9a45e81302a5d6ce47a428042d1944",
+      "rawOutput": "首次完整产物是 runs/2026-11-21-gemini/orig-n06-rename/index.html，SHA-256 70048b479bd4c481a320fd1e0a605e205d9a45e81302a5d6ce47a428042d1944。该文件为首次生成原样保留，未经过后续覆盖。"
+    },
+    {
+      "executionClass": "gemini-assisted-with-tools",
+      "label": "Gemini辅助执行/含工具",
+      "provider": "Gemini Agent",
+      "model": "gemini-2.5-pro",
+      "modelVersion": "Gemini 任务模式沙盒执行，无外部 HTTP 响应体或 token 统计。",
+      "context": "在加载了 AI-TASKS-TAXONOMY 仓库源码的沙盒会话中完成首次产物编写，并通过本地脚本语法、逻辑与文件校验。",
+      "environment": "Linux 沙盒，离线单文件产物（含 Python3 标准库实跑脚本与确定性 WAV 合成）。",
+      "parameters": "默认参数，允许读写本地工作区并运行仓库校验脚本。",
+      "startedAt": "2026-11-22T06:51:00Z",
+      "endedAt": "2026-11-22T06:58:00Z",
+      "repairs": [],
+      "revision": "v1",
+      "status": "success",
+      "checks": [
+        {
+          "name": "演示四步准确且非法借出不入账",
+          "pass": true,
+          "evidence": "借豆星×2→拒借豆星×2→还月瓜×2→单步撤销，最终库存 豆星1/月瓜1。"
+        },
+        {
+          "name": "localStorage 持久与 ledger.json 导出",
+          "pass": true,
+          "evidence": "刷新保留状态，重置回 3/1，导出事件可重放。"
+        }
+      ],
+      "id": "gemini-orig-n07-seed-ledger-v1",
+      "taskId": "orig-n07-seed-ledger",
+      "promptSha256": "83ed4b184e9de2613c69997131951e515386be3f389ab843a4f5267a27db0302",
+      "artifact": "runs/2026-11-21-gemini/orig-n07-seed-ledger/index.html",
+      "artifactSha256": "da77193871e4fe9f6f54040f0e6bffffd8e1d393acd2531af987736165d147fc",
+      "rawOutput": "首次完整产物是 runs/2026-11-21-gemini/orig-n07-seed-ledger/index.html，SHA-256 da77193871e4fe9f6f54040f0e6bffffd8e1d393acd2531af987736165d147fc。该文件为首次生成原样保留，未经过后续覆盖。"
+    },
+    {
+      "executionClass": "gemini-assisted-with-tools",
+      "label": "Gemini辅助执行/含工具",
+      "provider": "Gemini Agent",
+      "model": "gemini-2.5-pro",
+      "modelVersion": "Gemini 任务模式沙盒执行，无外部 HTTP 响应体或 token 统计。",
+      "context": "在加载了 AI-TASKS-TAXONOMY 仓库源码的沙盒会话中完成首次产物编写，并通过本地脚本语法、逻辑与文件校验。",
+      "environment": "Linux 沙盒，离线单文件产物（含 Python3 标准库实跑脚本与确定性 WAV 合成）。",
+      "parameters": "默认参数，允许读写本地工作区并运行仓库校验脚本。",
+      "startedAt": "2026-11-22T06:51:00Z",
+      "endedAt": "2026-11-22T06:58:00Z",
+      "repairs": [],
+      "revision": "v1",
+      "status": "success",
+      "checks": [
+        {
+          "name": "四个样例按优先级分流",
+          "pass": true,
+          "evidence": "hazard=是 优先返回 R1_HAZARD_REJECT，不被纸品覆盖。"
+        },
+        {
+          "name": "无障碍标签、错误保留原值与回执导出",
+          "pass": true,
+          "evidence": "控件绑定 label 与 aria-describedby，支持返回修改与 receipt.json 导出。"
+        }
+      ],
+      "id": "gemini-orig-n08-repair-form-v1",
+      "taskId": "orig-n08-repair-form",
+      "promptSha256": "69055853894a468c8c9c25f1e5f074eaa3d3e143fd32ceb7de551dceef74d0ca",
+      "artifact": "runs/2026-11-21-gemini/orig-n08-repair-form/index.html",
+      "artifactSha256": "20f9d4f0e150a9fb04a494499014b03f2175c53ad1d56ab5ea066ceb277f7c41",
+      "rawOutput": "首次完整产物是 runs/2026-11-21-gemini/orig-n08-repair-form/index.html，SHA-256 20f9d4f0e150a9fb04a494499014b03f2175c53ad1d56ab5ea066ceb277f7c41。该文件为首次生成原样保留，未经过后续覆盖。"
+    },
+    {
+      "executionClass": "gemini-assisted-with-tools",
+      "label": "Gemini辅助执行/含工具",
+      "provider": "Gemini Agent",
+      "model": "gemini-2.5-pro",
+      "modelVersion": "Gemini 任务模式沙盒执行，无外部 HTTP 响应体或 token 统计。",
+      "context": "在加载了 AI-TASKS-TAXONOMY 仓库源码的沙盒会话中完成首次产物编写，并通过本地脚本语法、逻辑与文件校验。",
+      "environment": "Linux 沙盒，离线单文件产物（含 Python3 标准库实跑脚本与确定性 WAV 合成）。",
+      "parameters": "默认参数，允许读写本地工作区并运行仓库校验脚本。",
+      "startedAt": "2026-11-22T06:51:00Z",
+      "endedAt": "2026-11-22T06:58:00Z",
+      "repairs": [],
+      "revision": "v1",
+      "status": "success",
+      "checks": [
+        {
+          "name": "Unicode 字符级最短编辑脚本",
+          "pass": true,
+          "evidence": "基于 Array.from 实现 LCS，默认 cost=8，短例 cost=1，📮 不拆分。"
+        },
+        {
+          "name": "安全探针纯文本渲染与导出",
+          "pass": true,
+          "evidence": "通过 textContent 展示 <b> 与 <script> 探针，支持互换与 diff.json 下载。"
+        }
+      ],
+      "id": "gemini-orig-n09-comma-diff-v1",
+      "taskId": "orig-n09-comma-diff",
+      "promptSha256": "7c5ddc48d48653a27fd04be0324905cd112d642fdec2cd638710b149fe13ad2d",
+      "artifact": "runs/2026-11-21-gemini/orig-n09-comma-diff/index.html",
+      "artifactSha256": "9119d151be82bdcafea6562413d47e671a876fba239c73f0ea84e14abb0f8c50",
+      "rawOutput": "首次完整产物是 runs/2026-11-21-gemini/orig-n09-comma-diff/index.html，SHA-256 9119d151be82bdcafea6562413d47e671a876fba239c73f0ea84e14abb0f8c50。该文件为首次生成原样保留，未经过后续覆盖。"
+    },
+    {
+      "executionClass": "gemini-assisted-with-tools",
+      "label": "Gemini辅助执行/含工具",
+      "provider": "Gemini Agent",
+      "model": "gemini-2.5-pro",
+      "modelVersion": "Gemini 任务模式沙盒执行，无外部 HTTP 响应体或 token 统计。",
+      "context": "在加载了 AI-TASKS-TAXONOMY 仓库源码的沙盒会话中完成首次产物编写，并通过本地脚本语法、逻辑与文件校验。",
+      "environment": "Linux 沙盒，离线单文件产物（含 Python3 标准库实跑脚本与确定性 WAV 合成）。",
+      "parameters": "默认参数，允许读写本地工作区并运行仓库校验脚本。",
+      "startedAt": "2026-11-22T06:51:00Z",
+      "endedAt": "2026-11-22T06:58:00Z",
+      "repairs": [],
+      "revision": "v1",
+      "status": "success",
+      "checks": [
+        {
+          "name": "7 节点与 3 结局及邮票规则严格一致",
+          "pass": true,
+          "evidence": "每节点原创正文 90–110 汉字，B 花邮票后 D 禁用「寄给明天」并说明原因。"
+        },
+        {
+          "name": "后退恢复邮票与阅读日志下载",
+          "pass": true,
+          "evidence": "后退按状态栈恢复邮票，支持重读与 reading-log.json 导出。"
+        }
+      ],
+      "id": "gemini-orig-n10-midnight-post-v1",
+      "taskId": "orig-n10-midnight-post",
+      "promptSha256": "7f8575d0a5c356606b3ddab5dd7684bf83c2d2574ccd5fc80e8b03b4dc2def6c",
+      "artifact": "runs/2026-11-21-gemini/orig-n10-midnight-post/index.html",
+      "artifactSha256": "3857fa8c17c5a3843bc928f5d6f5c63ad1c710a7b3668c63d2f3da23288a851b",
+      "rawOutput": "首次完整产物是 runs/2026-11-21-gemini/orig-n10-midnight-post/index.html，SHA-256 3857fa8c17c5a3843bc928f5d6f5c63ad1c710a7b3668c63d2f3da23288a851b。该文件为首次生成原样保留，未经过后续覆盖。"
+    },
+    {
+      "executionClass": "gemini-assisted-with-tools",
+      "label": "Gemini辅助执行/含工具",
+      "provider": "Gemini Agent",
+      "model": "gemini-2.5-pro",
+      "modelVersion": "Gemini 任务模式沙盒执行，无外部 HTTP 响应体或 token 统计。",
+      "context": "在加载了 AI-TASKS-TAXONOMY 仓库源码的沙盒会话中完成首次产物编写，并通过本地脚本语法、逻辑与文件校验。",
+      "environment": "Linux 沙盒，离线单文件产物（含 Python3 标准库实跑脚本与确定性 WAV 合成）。",
+      "parameters": "默认参数，允许读写本地工作区并运行仓库校验脚本。",
+      "startedAt": "2026-11-22T06:51:00Z",
+      "endedAt": "2026-11-22T06:58:00Z",
+      "repairs": [],
+      "revision": "v1",
+      "status": "success",
+      "checks": [
+        {
+          "name": "三个探针命中 C1/C4、C2、空",
+          "pass": true,
+          "evidence": "空格多词 AND 与 tag 交集过滤精确匹配，HTML 输入纯文本显示。"
+        },
+        {
+          "name": "最多钉住 2 条并排对比与导出",
+          "pass": true,
+          "evidence": "支持双便签钉住对比与 results.json 导出。"
+        }
+      ],
+      "id": "gemini-orig-n15-pocket-notes-v1",
+      "taskId": "orig-n15-pocket-notes",
+      "promptSha256": "56b8a3995ee1b931c22abf8e18d39b2cd63f0e43483bdf2b787258eb67d452c4",
+      "artifact": "runs/2026-11-21-gemini/orig-n15-pocket-notes/index.html",
+      "artifactSha256": "f9045837f4b13e46c563e8a0aff67b189a8843e9cd1065d68bbb3cd50bb5c2ed",
+      "rawOutput": "首次完整产物是 runs/2026-11-21-gemini/orig-n15-pocket-notes/index.html，SHA-256 f9045837f4b13e46c563e8a0aff67b189a8843e9cd1065d68bbb3cd50bb5c2ed。该文件为首次生成原样保留，未经过后续覆盖。"
+    },
+    {
+      "executionClass": "gemini-assisted-with-tools",
+      "label": "Gemini辅助执行/含工具",
+      "provider": "Gemini Agent",
+      "model": "gemini-2.5-pro",
+      "modelVersion": "Gemini 任务模式沙盒执行，无外部 HTTP 响应体或 token 统计。",
+      "context": "在加载了 AI-TASKS-TAXONOMY 仓库源码的沙盒会话中完成首次产物编写，并通过本地脚本语法、逻辑与文件校验。",
+      "environment": "Linux 沙盒，离线单文件产物（含 Python3 标准库实跑脚本与确定性 WAV 合成）。",
+      "parameters": "默认参数，允许读写本地工作区并运行仓库校验脚本。",
+      "startedAt": "2026-11-22T06:51:00Z",
+      "endedAt": "2026-11-22T06:58:00Z",
+      "repairs": [],
+      "revision": "v1",
+      "status": "success",
+      "checks": [
+        {
+          "name": "三视图由单一数据源生成且时段首尾相接",
+          "pass": true,
+          "evidence": "修订后 10:30–10:40 / 10:40–11:30 / 11:30–11:40，总需纸 36、需补 26。"
+        },
+        {
+          "name": "人数改 2 需补 0 且原版不受污染",
+          "pass": true,
+          "evidence": "使用 max(0, ...) 防止负补货，ORIGINAL 对象冻结不可变。"
+        }
+      ],
+      "id": "gemini-orig-n16-revision-v1",
+      "taskId": "orig-n16-revision",
+      "promptSha256": "4bc25a7dd8ac9af021a55a5f565f3e05582f6e075a433ba539160552286b231d",
+      "artifact": "runs/2026-11-21-gemini/orig-n16-revision/change.html",
+      "artifactSha256": "3bbaac21de5c2d296b022398e5da95bc68bdaac6a70758ff3e91ed54b6aa3245",
+      "rawOutput": "首次完整产物是 runs/2026-11-21-gemini/orig-n16-revision/change.html，SHA-256 3bbaac21de5c2d296b022398e5da95bc68bdaac6a70758ff3e91ed54b6aa3245。该文件为首次生成原样保留，未经过后续覆盖。"
+    },
+    {
+      "executionClass": "gemini-assisted-with-tools",
+      "label": "Gemini辅助执行/含工具",
+      "provider": "Gemini Agent",
+      "model": "gemini-2.5-pro",
+      "modelVersion": "Gemini 任务模式沙盒执行，无外部 HTTP 响应体或 token 统计。",
+      "context": "在加载了 AI-TASKS-TAXONOMY 仓库源码的沙盒会话中完成首次产物编写，并通过本地脚本语法、逻辑与文件校验。",
+      "environment": "Linux 沙盒，离线单文件产物（含 Python3 标准库实跑脚本与确定性 WAV 合成）。",
+      "parameters": "默认参数，允许读写本地工作区并运行仓库校验脚本。",
+      "startedAt": "2026-11-22T06:51:00Z",
+      "endedAt": "2026-11-22T06:58:00Z",
+      "repairs": [],
+      "revision": "v1",
+      "status": "success",
+      "checks": [
+        {
+          "name": "8 秒 22050Hz 16-bit 单声道 WAV 确定性合成",
+          "pass": true,
+          "evidence": "synth.py 两次运行字节一致，176400 帧，峰值 ≤ 24000（≤ 26214）。"
+        },
+        {
+          "name": "点击播放不自动发声",
+          "pass": true,
+          "evidence": "index.html 仅含原生 controls 播放器与三段高亮描述，无 autoplay/麦克风请求。"
+        }
+      ],
+      "id": "gemini-orig-n14-sound-postcard-v1",
+      "taskId": "orig-n14-sound-postcard",
+      "promptSha256": "736f5983b854004693fcb27f2997fffa3a3cd90616cd127cf462216a131e871c",
+      "artifact": "runs/2026-11-21-gemini/orig-n14-sound-postcard/index.html",
+      "artifactSha256": "21c32fd4394ac0cb5c006947b0297c4bc3c5b33c2f446f9e42e5606d2e976816",
+      "rawOutput": "首次完整产物是 runs/2026-11-21-gemini/orig-n14-sound-postcard/index.html，SHA-256 21c32fd4394ac0cb5c006947b0297c4bc3c5b33c2f446f9e42e5606d2e976816。该文件为首次生成原样保留，未经过后续覆盖。"
     }
   ]
 }

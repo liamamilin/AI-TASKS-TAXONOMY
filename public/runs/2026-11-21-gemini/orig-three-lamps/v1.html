@@ -1,0 +1,75 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>三盏连动灯</title>
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      min-height: 100vh; background: #f3ecdf; color: #1d1916;
+      font-family: "Noto Serif SC", system-ui, sans-serif;
+      display: grid; place-items: center; padding: 20px;
+    }
+    .panel {
+      width: min(520px, 100%); background: #fffaf2; border: 1px solid #dfd3bf;
+      border-radius: 16px; padding: 26px; text-align: center;
+      box-shadow: 0 16px 36px rgba(50, 34, 16, 0.09);
+      display: grid; gap: 20px;
+    }
+    h1 { font-size: 22px; }
+    .lamps { display: flex; justify-content: center; gap: 28px; padding: 10px 0; }
+    .lamp-box { display: grid; gap: 8px; justify-items: center; }
+    .lamp {
+      width: 72px; height: 72px; border-radius: 50%;
+      background: #332e29; border: 3px solid #1d1916;
+      transition: all 0.2s ease;
+    }
+    .lamp.on {
+      background: #f6d55c; border-color: #c28e18;
+      box-shadow: 0 0 28px rgba(246, 213, 92, 0.9), inset 0 0 12px #fff8d6;
+    }
+    .state { font-size: 13px; color: #675e53; }
+    .btns { display: flex; justify-content: center; gap: 12px; flex-wrap: wrap; }
+    button {
+      border-radius: 999px; padding: 10px 18px; cursor: pointer; font: 600 14px inherit;
+      border: 1px solid #1d1916; background: #1d1916; color: #fffaf2;
+    }
+    button.ghost { background: transparent; color: #1d1916; border-color: #cabba3; }
+  </style>
+</head>
+<body>
+  <main class="panel">
+    <h1>三盏连动灯</h1>
+    <div class="lamps" id="lamps">
+      <div class="lamp-box"><div class="lamp" data-lamp="0"></div><span class="state">1 号：灭</span></div>
+      <div class="lamp-box"><div class="lamp" data-lamp="1"></div><span class="state">2 号：灭</span></div>
+      <div class="lamp-box"><div class="lamp" data-lamp="2"></div><span class="state">3 号：灭</span></div>
+    </div>
+    <div class="btns">
+      <button type="button" data-btn="A">按钮 A（1、2）</button>
+      <button type="button" data-btn="B">按钮 B（2、3）</button>
+      <button type="button" data-btn="C">按钮 C（1、3）</button>
+      <button type="button" class="ghost" id="reset">重置全灭</button>
+    </div>
+  </main>
+  <script>
+    const lamps = [false, false, false];
+    const map = { A: [0, 1], B: [1, 2], C: [0, 2] };
+    function render() {
+      document.querySelectorAll(".lamp-box").forEach((box, i) => {
+        box.querySelector(".lamp").classList.toggle("on", lamps[i]);
+        box.querySelector(".state").textContent = `${i + 1} 号：${lamps[i] ? "亮" : "灭"}`;
+      });
+    }
+    document.querySelectorAll("[data-btn]").forEach((btn) => {
+      btn.addEventListener("click", () => {
+        for (const idx of map[btn.dataset.btn]) lamps[idx] = !lamps[idx];
+        render();
+      });
+    });
+    document.getElementById("reset").addEventListener("click", () => { lamps.fill(false); render(); });
+    render();
+  </script>
+</body>
+</html>

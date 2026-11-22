@@ -1,0 +1,25 @@
+{
+  "filterDay": "all",
+  "totalComputableLeft": 9,
+  "totalMissingRows": 1,
+  "byItem": [
+    {
+      "item": "月牙饼",
+      "totalMade": 32,
+      "knownSold": 15,
+      "computableDenominator": 20,
+      "computableLeft": 5,
+      "leftoverRatePercent": 25,
+      "missingRows": 1
+    },
+    {
+      "item": "星星酥",
+      "totalMade": 26,
+      "knownSold": 22,
+      "computableDenominator": 26,
+      "computableLeft": 4,
+      "leftoverRatePercent": 15.38,
+      "missingRows": 0
+    }
+  ]
+}

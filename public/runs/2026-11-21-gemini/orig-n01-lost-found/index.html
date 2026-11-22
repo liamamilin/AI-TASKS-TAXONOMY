@@ -1,0 +1,148 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>失物招领洗衣机</title>
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body { background: #f3ecdf; color: #1d1916; font-family: system-ui, -apple-system, sans-serif; padding: 20px; line-height: 1.55; }
+    .wrap { max-width: 920px; margin: 0 auto; display: grid; gap: 16px; }
+    .card { background: #fffaf2; border: 1px solid #dfd3bf; border-radius: 12px; padding: 16px; }
+    h1 { font-size: 22px; margin-bottom: 4px; }
+    h2 { font-size: 15px; margin-bottom: 10px; color: #5f564b; }
+    textarea { width: 100%; min-height: 130px; padding: 10px; border: 1px solid #d5c8b4; border-radius: 8px; font: 13px/1.5 ui-monospace, monospace; background: #fff; }
+    .bar { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 10px; }
+    button { border-radius: 999px; padding: 7px 14px; border: 1px solid #1d1916; background: #1d1916; color: #fffaf2; cursor: pointer; font: 600 13px inherit; }
+    button.ghost { background: transparent; color: #1d1916; border-color: #cbbba2; }
+    table { width: 100%; border-collapse: collapse; font-size: 13px; }
+    th, td { text-align: left; padding: 7px 8px; border-bottom: 1px solid #e7dccb; }
+    th { background: #f5ede0; color: #5f564b; }
+    .badge { display: inline-block; padding: 2px 8px; border-radius: 999px; font-size: 11.5px; background: #f8e4e2; color: #9c3b32; }
+  </style>
+</head>
+<body>
+  <main class="wrap">
+    <section class="card">
+      <h1>失物招领洗衣机（离线数据清洗台）</h1>
+      <p style="font-size:13px;color:#665c51;">按 trim 后的 id 去重（保留最后行并记被替代源行），规范 zone/date/count，支持引号内逗号与即时下载。</p>
+      <textarea id="raw"></textarea>
+      <div class="bar">
+        <button type="button" id="run">执行清洗</button>
+        <button type="button" class="ghost" id="dl-csv">下载 cleaned.csv</button>
+        <button type="button" class="ghost" id="dl-json">下载 issues.json</button>
+      </div>
+    </section>
+    <section class="card">
+      <h2>规范化输出（按首次 id 出现顺序）</h2>
+      <div id="clean-table"></div>
+    </section>
+    <section class="card">
+      <h2>问题与替代记录清单</h2>
+      <div id="issues-table"></div>
+    </section>
+  </main>
+  <script>
+    const SAMPLE = 'id,item,date,zone,count\n A01 ,"纸伞,蓝色",2026/04/01,东门,1\nA02,手套,2026-04-02,West,0\nA01,"纸伞,蓝色",2026-04-03,East,2\nA03,围巾,04/05/26,西门,\nA04,帽子,2026-02-30,北门,-1\n';
+    const rawEl = document.getElementById("raw");
+    rawEl.value = SAMPLE;
+    let lastCsv = "", lastIssues = [];
+
+    function parseCSV(text) {
+      const rows = []; let row = [], field = "", inQ = false;
+      for (let i = 0; i < text.length; i++) {
+        const ch = text[i];
+        if (inQ) {
+          if (ch === '"' && text[i+1] === '"') { field += '"'; i++; }
+          else if (ch === '"') inQ = false;
+          else field += ch;
+        } else {
+          if (ch === '"') inQ = true;
+          else if (ch === ",") { row.push(field); field = ""; }
+          else if (ch === "\n" || ch === "\r") {
+            if (ch === "\r" && text[i+1] === "\n") i++;
+            row.push(field); field = "";
+            if (row.some((c) => c !== "")) rows.push(row);
+            row = [];
+          } else field += ch;
+        }
+      }
+      if (field !== "" || row.length) { row.push(field); rows.push(row); }
+      return rows;
+    }
+
+    function escCSV(v) {
+      const s = v === null || v === undefined ? "" : String(v);
+      return /[",\n\r]/.test(s) ? `"${s.replace(/"/g, '""')}"` : s;
+    }
+
+    function normDate(raw) {
+      const s = raw.trim();
+      const m = /^(\d{4})[-/](\d{2})[-/](\d{2})$/.exec(s);
+      if (!m) return null;
+      const y = Number(m[1]), mo = Number(m[2]), d = Number(m[3]);
+      const dt = new Date(Date.UTC(y, mo - 1, d));
+      if (dt.getUTCFullYear() !== y || dt.getUTCMonth() !== mo - 1 || dt.getUTCDate() !== d) return null;
+      return `${m[1]}-${m[2]}-${m[3]}`;
+    }
+
+    function clean(text) {
+      const rows = parseCSV(text);
+      const issues = [];
+      const order = [];
+      const map = new Map();
+      for (let i = 1; i < rows.length; i++) {
+        const srcLine = i + 1;
+        const [rawId = "", rawItem = "", rawDate = "", rawZone = "", rawCount = ""] = rows[i];
+        const id = rawId.trim();
+        const item = rawItem.trim();
+        const dNorm = normDate(rawDate);
+        if (dNorm === null) issues.push({ line: srcLine, id, field: "date", original: rawDate, reason: "日期格式不合规或无效日历日期" });
+
+        const zRaw = rawZone.trim();
+        let zone = "unknown";
+        if (zRaw === "东门" || zRaw.toLowerCase() === "east") zone = "East";
+        else if (zRaw === "西门" || zRaw.toLowerCase() === "west") zone = "West";
+        else issues.push({ line: srcLine, id, field: "zone", original: rawZone, reason: "未知区域，已标记为 unknown" });
+
+        const cRaw = rawCount.trim();
+        let count = "";
+        if (/^\d+$/.test(cRaw)) count = Number(cRaw);
+        else issues.push({ line: srcLine, id, field: "count", original: rawCount, reason: "数量缺失或非负整数校验失败" });
+
+        if (!map.has(id)) order.push(id);
+        else {
+          const prev = map.get(id);
+          issues.push({ line: srcLine, id, field: "id", original: rawId, reason: `重复 id，替代源行 ${prev.sourceLine}`, replacedLine: prev.sourceLine });
+        }
+        map.set(id, { id, item, date: dNorm || "", zone, count, sourceLine: srcLine });
+      }
+      const cleaned = order.map((id) => map.get(id));
+      const csvLines = ["id,item,date,zone,count", ...cleaned.map((r) => [r.id, r.item, r.date, r.zone, r.count].map(escCSV).join(","))];
+      return { cleaned, issues, csv: csvLines.join("\n") + "\n" };
+    }
+
+    function escH(s) { return String(s).replace(/[&<>"']/g, (c) => ({ "&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;" }[c])); }
+    function download(name, text, mime) {
+      const a = document.createElement("a");
+      a.href = URL.createObjectURL(new Blob([text], { type: mime }));
+      a.download = name; a.click(); URL.revokeObjectURL(a.href);
+    }
+
+    function run() {
+      const res = clean(rawEl.value);
+      lastCsv = res.csv; lastIssues = res.issues;
+      document.getElementById("clean-table").innerHTML = `<table><thead><tr><th>源行</th><th>id</th><th>item</th><th>date</th><th>zone</th><th>count</th></tr></thead><tbody>${
+        res.cleaned.map((r) => `<tr><td>${r.sourceLine}</td><td>${escH(r.id)}</td><td>${escH(r.item)}</td><td>${escH(r.date)}</td><td>${escH(r.zone)}</td><td>${escH(r.count)}</td></tr>`).join("")
+      }</tbody></table>`;
+      document.getElementById("issues-table").innerHTML = `<table><thead><tr><th>源行</th><th>id</th><th>字段</th><th>原值</th><th>说明</th></tr></thead><tbody>${
+        res.issues.map((x) => `<tr><td>${x.line}</td><td>${escH(x.id)}</td><td><span class="badge">${escH(x.field)}</span></td><td>${escH(x.original)}</td><td>${escH(x.reason)}</td></tr>`).join("")
+      }</tbody></table>`;
+    }
+    document.getElementById("run").addEventListener("click", run);
+    document.getElementById("dl-csv").addEventListener("click", () => download("cleaned.csv", lastCsv, "text/csv;charset=utf-8"));
+    document.getElementById("dl-json").addEventListener("click", () => download("issues.json", JSON.stringify(lastIssues, null, 2), "application/json"));
+    run();
+  </script>
+</body>
+</html>

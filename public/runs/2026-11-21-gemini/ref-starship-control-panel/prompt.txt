@@ -1,0 +1,1 @@
+create something I can paste into p5js that will startle me with its cleverness in creating something that invokes the control panel of a starship in the distant future

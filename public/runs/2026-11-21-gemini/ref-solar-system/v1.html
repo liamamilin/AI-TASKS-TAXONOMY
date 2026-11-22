@@ -1,0 +1,172 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Solar System Simulation</title>
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    html, body {
+      width: 100%; height: 100%; overflow: hidden;
+      background: #060913; color: #e8edf7;
+      font-family: system-ui, -apple-system, sans-serif;
+    }
+    canvas { display: block; width: 100%; height: 100%; }
+    .hud {
+      position: fixed; left: 16px; top: 14px;
+      display: flex; flex-wrap: wrap; gap: 10px; align-items: center;
+      background: rgba(12, 18, 34, 0.78);
+      border: 1px solid rgba(148, 174, 220, 0.22);
+      border-radius: 999px; padding: 8px 14px; font-size: 13px;
+      backdrop-filter: blur(8px);
+    }
+    .hud button {
+      background: #1d2b4a; color: #eef3ff; border: 1px solid rgba(148,174,220,.35);
+      border-radius: 999px; padding: 4px 12px; cursor: pointer; font: inherit;
+    }
+    .hud input[type="range"] { width: 92px; accent-color: #f6c453; }
+    .hud .days { font-variant-numeric: tabular-nums; color: #b7c6e4; }
+  </style>
+</head>
+<body>
+  <canvas id="c"></canvas>
+  <div class="hud">
+    <button id="toggle" type="button">Pause</button>
+    <label>Speed <input id="speed" type="range" min="1" max="120" value="28"></label>
+    <span class="days" id="days">Day 0</span>
+  </div>
+  <script>
+    const canvas = document.getElementById("c");
+    const ctx = canvas.getContext("2d");
+    const toggleBtn = document.getElementById("toggle");
+    const speedInput = document.getElementById("speed");
+    const daysEl = document.getElementById("days");
+
+    // Real orbital periods in Earth days
+    const planets = [
+      { name: "Mercury", period: 87.97,   orbit: 0.14, r: 4.0,  color: "#b7b2aa", angle: 0.3 },
+      { name: "Venus",   period: 224.70,  orbit: 0.21, r: 6.2,  color: "#e6c387", angle: 1.9 },
+      { name: "Earth",   period: 365.25,  orbit: 0.29, r: 6.8,  color: "#4ea8de", angle: 3.1, moon: true },
+      { name: "Mars",    period: 686.98,  orbit: 0.37, r: 5.2,  color: "#d96b43", angle: 4.7 },
+      { name: "Jupiter", period: 4332.59, orbit: 0.51, r: 14.5, color: "#d8a878", angle: 0.9 },
+      { name: "Saturn",  period: 10759.2, orbit: 0.66, r: 12.0, color: "#e5cf94", angle: 2.5, ring: true },
+      { name: "Uranus",  period: 30688.5, orbit: 0.80, r: 8.5,  color: "#80d8e0", angle: 5.2 },
+      { name: "Neptune", period: 60182.0, orbit: 0.92, r: 8.2,  color: "#4a73d1", angle: 3.9 },
+    ];
+
+    const stars = Array.from({ length: 240 }, (_, i) => ({
+      x: ((i * 73.17) % 100) / 100,
+      y: ((i * 37.91) % 100) / 100,
+      r: (i % 3 === 0 ? 1.5 : 0.9),
+      a: 0.35 + ((i * 19) % 60) / 100,
+    }));
+
+    let paused = false;
+    let simDays = 0;
+    let last = performance.now();
+
+    toggleBtn.addEventListener("click", () => {
+      paused = !paused;
+      toggleBtn.textContent = paused ? "Resume" : "Pause";
+    });
+
+    function resize() {
+      const dpr = Math.min(window.devicePixelRatio || 1, 2);
+      canvas.width = Math.floor(innerWidth * dpr);
+      canvas.height = Math.floor(innerHeight * dpr);
+      ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+    }
+    window.addEventListener("resize", resize);
+    resize();
+
+    function draw(now) {
+      const dt = Math.min(0.05, (now - last) / 1000);
+      last = now;
+      if (!paused) {
+        const daysPerSec = Number(speedInput.value);
+        simDays += dt * daysPerSec;
+        for (const p of planets) {
+          p.angle += (dt * daysPerSec / p.period) * Math.PI * 2;
+        }
+        daysEl.textContent = `Day ${Math.floor(simDays)}`;
+      }
+
+      const w = innerWidth;
+      const h = innerHeight;
+      const cx = w / 2;
+      const cy = h / 2;
+      const maxR = Math.min(w, h) * 0.46;
+
+      ctx.fillStyle = "#060913";
+      ctx.fillRect(0, 0, w, h);
+
+      for (const s of stars) {
+        ctx.fillStyle = `rgba(235, 242, 255, ${s.a})`;
+        ctx.beginPath();
+        ctx.arc(s.x * w, s.y * h, s.r, 0, Math.PI * 2);
+        ctx.fill();
+      }
+
+      // Sun glow
+      const sunR = Math.max(18, maxR * 0.082);
+      const glow = ctx.createRadialGradient(cx, cy, sunR * 0.3, cx, cy, sunR * 3.1);
+      glow.addColorStop(0, "rgba(255, 240, 170, 1)");
+      glow.addColorStop(0.35, "rgba(255, 178, 56, 0.85)");
+      glow.addColorStop(1, "rgba(255, 120, 20, 0)");
+      ctx.fillStyle = glow;
+      ctx.beginPath();
+      ctx.arc(cx, cy, sunR * 3.1, 0, Math.PI * 2);
+      ctx.fill();
+
+      ctx.fillStyle = "#ffd966";
+      ctx.beginPath();
+      ctx.arc(cx, cy, sunR, 0, Math.PI * 2);
+      ctx.fill();
+
+      for (const p of planets) {
+        const orbitR = p.orbit * maxR;
+        ctx.strokeStyle = "rgba(150, 178, 224, 0.2)";
+        ctx.lineWidth = 1;
+        ctx.beginPath();
+        ctx.arc(cx, cy, orbitR, 0, Math.PI * 2);
+        ctx.stroke();
+
+        const x = cx + Math.cos(p.angle) * orbitR;
+        const y = cy + Math.sin(p.angle) * orbitR;
+
+        if (p.ring) {
+          ctx.save();
+          ctx.translate(x, y);
+          ctx.rotate(-0.35);
+          ctx.strokeStyle = "rgba(232, 212, 162, 0.72)";
+          ctx.lineWidth = 3;
+          ctx.beginPath();
+          ctx.ellipse(0, 0, p.r * 1.95, p.r * 0.72, 0, 0, Math.PI * 2);
+          ctx.stroke();
+          ctx.restore();
+        }
+
+        ctx.fillStyle = p.color;
+        ctx.beginPath();
+        ctx.arc(x, y, p.r, 0, Math.PI * 2);
+        ctx.fill();
+
+        if (p.moon) {
+          const ma = simDays * (Math.PI * 2 / 27.32);
+          ctx.fillStyle = "#d9dee8";
+          ctx.beginPath();
+          ctx.arc(x + Math.cos(ma) * (p.r + 7), y + Math.sin(ma) * (p.r + 7), 2.1, 0, Math.PI * 2);
+          ctx.fill();
+        }
+
+        ctx.fillStyle = "rgba(220, 230, 248, 0.78)";
+        ctx.font = "11px system-ui, sans-serif";
+        ctx.fillText(p.name, x + p.r + 5, y + 4);
+      }
+
+      requestAnimationFrame(draw);
+    }
+    requestAnimationFrame(draw);
+  </script>
+</body>
+</html>

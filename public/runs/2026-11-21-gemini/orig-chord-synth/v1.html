@@ -1,0 +1,187 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>纸上和弦合成器</title>
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      min-height: 100vh; background: #f3ecdf; color: #1d1916;
+      font-family: "Noto Serif SC", system-ui, sans-serif;
+      display: grid; place-items: center; padding: 18px;
+    }
+    .synth {
+      width: min(820px, 100%); background: #fffaf2;
+      border: 1px solid #dfd3bf; border-radius: 16px; padding: 20px;
+      box-shadow: 0 18px 40px rgba(60, 40, 20, 0.1);
+      display: grid; gap: 16px;
+    }
+    header { display: flex; flex-wrap: wrap; justify-content: space-between; align-items: center; gap: 12px; }
+    h1 { font-size: 22px; }
+    .controls { display: flex; flex-wrap: wrap; gap: 10px; align-items: center; font-size: 13px; }
+    select, button {
+      font: inherit; border-radius: 999px; padding: 6px 14px;
+      border: 1px solid #d5c7b2; background: #f5ede0; color: #1d1916; cursor: pointer;
+    }
+    button.primary { background: #9c3b32; color: #fffaf2; border-color: #9c3b32; }
+    canvas { width: 100%; height: 96px; background: #1d1916; border-radius: 10px; display: block; }
+    .pads { display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px; }
+    .pad {
+      border: 1.5px solid #d7c9b4; background: #f7f1e5; border-radius: 12px;
+      padding: 14px 10px; text-align: left; cursor: pointer; transition: all 0.12s ease;
+    }
+    .pad strong { display: block; font-size: 18px; margin-bottom: 4px; }
+    .pad span { font-size: 12px; color: #675e53; }
+    .pad.active { background: #1d1916; color: #f7f1e5; border-color: #1d1916; transform: translateY(-2px); }
+    .pad.active span { color: #d6c8b4; }
+    .foot { font-size: 12.5px; color: #675e53; display: flex; justify-content: space-between; flex-wrap: wrap; gap: 8px; }
+    @media (max-width: 600px) { .pads { grid-template-columns: repeat(2, 1fr); } }
+  </style>
+</head>
+<body>
+  <main class="synth">
+    <header>
+      <h1>纸上和弦合成器</h1>
+      <div class="controls">
+        <label>波形
+          <select id="wave">
+            <option value="triangle">三角波（温润）</option>
+            <option value="sine">正弦波（清透）</option>
+            <option value="sawtooth">锯齿波（复古）</option>
+          </select>
+        </label>
+        <label>滤波 <input id="cutoff" type="range" min="300" max="4200" value="1800"></label>
+        <button id="arp" type="button" class="primary">自动轮播进行</button>
+      </div>
+    </header>
+    <canvas id="scope" width="780" height="96"></canvas>
+    <div class="pads" id="pads"></div>
+    <div class="foot">
+      <span>支持点击或按键盘 1–8 弹奏和弦</span>
+      <span id="now">当前：静默</span>
+    </div>
+  </main>
+  <script>
+    const CHORDS = [
+      { key: "1", name: "Cmaj7", notes: "C4 E4 G4 B4",  freqs: [261.63, 329.63, 392.00, 493.88] },
+      { key: "2", name: "Am7",   notes: "A3 C4 E4 G4",  freqs: [220.00, 261.63, 329.63, 392.00] },
+      { key: "3", name: "Dm9",   notes: "D4 F4 A4 E5",  freqs: [293.66, 349.23, 440.00, 659.25] },
+      { key: "4", name: "G13",   notes: "G3 B3 F4 E5",  freqs: [196.00, 246.94, 349.23, 659.25] },
+      { key: "5", name: "Fmaj7", notes: "F3 A3 C4 E4",  freqs: [174.61, 220.00, 261.63, 329.63] },
+      { key: "6", name: "Em7",   notes: "E3 G3 B3 D4",  freqs: [164.81, 196.00, 246.94, 293.66] },
+      { key: "7", name: "A7",    notes: "A3 C#4 E4 G4", freqs: [220.00, 277.18, 329.63, 392.00] },
+      { key: "8", name: "Dmaj7", notes: "D4 F#4 A4 C#5",freqs: [293.66, 369.99, 440.00, 554.37] },
+    ];
+
+    const padsEl = document.getElementById("pads");
+    const waveEl = document.getElementById("wave");
+    const cutoffEl = document.getElementById("cutoff");
+    const arpBtn = document.getElementById("arp");
+    const nowEl = document.getElementById("now");
+    const scope = document.getElementById("scope");
+    const sctx = scope.getContext("2d");
+
+    let ac = null, analyser = null, arpTimer = null, arpIdx = 0;
+
+    function ensureAudio() {
+      if (!ac) {
+        const Ctx = window.AudioContext || window.webkitAudioContext;
+        ac = new Ctx();
+        analyser = ac.createAnalyser();
+        analyser.fftSize = 1024;
+        analyser.connect(ac.destination);
+      }
+      if (ac.state === "suspended") ac.resume();
+    }
+
+    function playChord(idx) {
+      ensureAudio();
+      const ch = CHORDS[idx];
+      const now = ac.currentTime;
+      const filter = ac.createBiquadFilter();
+      filter.type = "lowpass";
+      filter.frequency.setValueAtTime(Number(cutoffEl.value), now);
+
+      const gain = ac.createGain();
+      gain.gain.setValueAtTime(0.001, now);
+      gain.gain.exponentialRampToValueAtTime(0.24, now + 0.05);
+      gain.gain.exponentialRampToValueAtTime(0.0008, now + 1.45);
+
+      filter.connect(gain);
+      gain.connect(analyser);
+
+      for (const f of ch.freqs) {
+        const osc = ac.createOscillator();
+        osc.type = waveEl.value;
+        osc.frequency.setValueAtTime(f, now);
+        osc.connect(filter);
+        osc.start(now);
+        osc.stop(now + 1.5);
+      }
+
+      document.querySelectorAll(".pad").forEach((el, i) => el.classList.toggle("active", i === idx));
+      nowEl.textContent = `当前：${ch.name} (${ch.notes})`;
+    }
+
+    CHORDS.forEach((ch, idx) => {
+      const btn = document.createElement("button");
+      btn.type = "button";
+      btn.className = "pad";
+      btn.innerHTML = `<strong>${ch.name}</strong><span>[${ch.key}] ${ch.notes}</span>`;
+      btn.addEventListener("click", () => playChord(idx));
+      padsEl.appendChild(btn);
+    });
+
+    window.addEventListener("keydown", (e) => {
+      const idx = CHORDS.findIndex((c) => c.key === e.key);
+      if (idx >= 0) playChord(idx);
+    });
+
+    arpBtn.addEventListener("click", () => {
+      if (arpTimer) {
+        clearInterval(arpTimer);
+        arpTimer = null;
+        arpBtn.textContent = "自动轮播进行";
+        return;
+      }
+      const seq = [0, 1, 2, 3];
+      arpIdx = 0;
+      playChord(seq[0]);
+      arpTimer = setInterval(() => {
+        arpIdx = (arpIdx + 1) % seq.length;
+        playChord(seq[arpIdx]);
+      }, 1200);
+      arpBtn.textContent = "停止轮播";
+    });
+
+    function drawScope() {
+      const w = scope.width, h = scope.height;
+      sctx.fillStyle = "#1d1916";
+      sctx.fillRect(0, 0, w, h);
+      sctx.strokeStyle = "#e8b068";
+      sctx.lineWidth = 2;
+      sctx.beginPath();
+      if (analyser) {
+        const data = new Uint8Array(analyser.fftSize);
+        analyser.getByteTimeDomainData(data);
+        for (let i = 0; i < data.length; i++) {
+          const x = (i / data.length) * w;
+          const y = (data[i] / 255) * h;
+          if (i === 0) sctx.moveTo(x, y); else sctx.lineTo(x, y);
+        }
+      } else {
+        // Gentle idle preview wave
+        const t = performance.now() * 0.002;
+        for (let x = 0; x <= w; x += 6) {
+          const y = h / 2 + Math.sin(x * 0.02 + t) * 14 * Math.sin((x / w) * Math.PI);
+          if (x === 0) sctx.moveTo(x, y); else sctx.lineTo(x, y);
+        }
+      }
+      sctx.stroke();
+      requestAnimationFrame(drawScope);
+    }
+    requestAnimationFrame(drawScope);
+  </script>
+</body>
+</html>

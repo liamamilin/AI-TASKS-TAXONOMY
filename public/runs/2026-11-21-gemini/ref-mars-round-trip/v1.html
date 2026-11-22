@@ -1,0 +1,141 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Earth–Mars Round-Trip Mission</title>
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    html, body { width: 100%; height: 100%; overflow: hidden; background: #050812; color: #e8eef9; font-family: system-ui, sans-serif; }
+    .hud {
+      position: fixed; left: 14px; top: 14px; display: flex; flex-wrap: wrap; gap: 10px; align-items: center;
+      background: rgba(12, 18, 34, 0.84); border: 1px solid rgba(148, 178, 228, 0.24);
+      border-radius: 999px; padding: 7px 14px; font-size: 13px;
+    }
+    .hud button {
+      background: #233354; color: #fff; border: 1px solid rgba(148,178,228,.35);
+      border-radius: 999px; padding: 4px 12px; cursor: pointer; font: inherit;
+    }
+    .phase { color: #ffd166; font-weight: 600; }
+  </style>
+</head>
+<body>
+  <div class="hud">
+    <span class="phase" id="phase">Outbound Transfer: Earth → Mars</span>
+    <span id="day">Day 0</span>
+    <button id="replay" type="button">Replay</button>
+  </div>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/controls/OrbitControls.js"></script>
+  <script>
+    const scene = new THREE.Scene();
+    scene.background = new THREE.Color(0x050812);
+    const camera = new THREE.PerspectiveCamera(45, innerWidth / innerHeight, 0.1, 300);
+    camera.position.set(0, 26, 30);
+
+    const renderer = new THREE.WebGLRenderer({ antialias: true });
+    renderer.setSize(innerWidth, innerHeight);
+    renderer.setPixelRatio(Math.min(devicePixelRatio || 1, 2));
+    document.body.appendChild(renderer.domElement);
+
+    const controls = new THREE.OrbitControls(camera, renderer.domElement);
+    controls.enableDamping = true;
+
+    scene.add(new THREE.AmbientLight(0x8899bb, 0.55));
+    const sunLight = new THREE.PointLight(0xfff1cc, 2.2, 120);
+    scene.add(sunLight);
+
+    const sun = new THREE.Mesh(new THREE.SphereGeometry(2.2, 24, 24), new THREE.MeshBasicMaterial({ color: 0xffd25a }));
+    scene.add(sun);
+
+    const R_EARTH = 10, R_MARS = 15.2;
+    const W_EARTH = (Math.PI * 2) / 365.25;
+    const W_MARS = (Math.PI * 2) / 686.98;
+
+    function orbitRing(r, col) {
+      const pts = [];
+      for (let i = 0; i <= 128; i++) {
+        const a = (i / 128) * Math.PI * 2;
+        pts.push(new THREE.Vector3(Math.cos(a) * r, 0, Math.sin(a) * r));
+      }
+      return new THREE.LineLoop(new THREE.BufferGeometry().setFromPoints(pts), new THREE.LineBasicMaterial({ color: col, transparent: true, opacity: 0.45 }));
+    }
+    scene.add(orbitRing(R_EARTH, 0x4ea8de));
+    scene.add(orbitRing(R_MARS, 0xd96b43));
+
+    const earth = new THREE.Mesh(new THREE.SphereGeometry(0.85, 20, 20), new THREE.MeshStandardMaterial({ color: 0x3b8ed6 }));
+    const mars = new THREE.Mesh(new THREE.SphereGeometry(0.68, 20, 20), new THREE.MeshStandardMaterial({ color: 0xd95f36 }));
+    const ship = new THREE.Mesh(new THREE.ConeGeometry(0.32, 0.9, 8), new THREE.MeshBasicMaterial({ color: 0xfff3b0 }));
+    scene.add(earth, mars, ship);
+
+    // Timeline in Earth days: 0..259 outbound, 259..714 stay on Mars, 714..973 return to Earth
+    const T_OUT = 259, T_STAY = 455, T_RET = 259, T_TOTAL = T_OUT + T_STAY + T_RET;
+    const mars0 = Math.PI - W_MARS * T_OUT;
+
+    let trailPts = [];
+    let trailLine = new THREE.Line(new THREE.BufferGeometry(), new THREE.LineBasicMaterial({ color: 0xffd166 }));
+    scene.add(trailLine);
+
+    const phaseEl = document.getElementById("phase");
+    const dayEl = document.getElementById("day");
+    let simDay = 0;
+
+    function reset() { simDay = 0; trailPts = []; }
+    document.getElementById("replay").addEventListener("click", reset);
+
+    function earthPos(d) { const a = d * W_EARTH; return new THREE.Vector3(Math.cos(a) * R_EARTH, 0, Math.sin(a) * R_EARTH); }
+    function marsPos(d) { const a = mars0 + d * W_MARS; return new THREE.Vector3(Math.cos(a) * R_MARS, 0, Math.sin(a) * R_MARS); }
+
+    let last = performance.now();
+    function animate(now) {
+      requestAnimationFrame(animate);
+      const dt = Math.min(0.05, (now - last) / 1000);
+      last = now;
+      simDay += dt * 75;
+      if (simDay > T_TOTAL + 40) reset();
+
+      const d = Math.min(simDay, T_TOTAL);
+      const ep = earthPos(d);
+      const mp = marsPos(d);
+      earth.position.copy(ep);
+      mars.position.copy(mp);
+
+      let sp = new THREE.Vector3();
+      if (d <= T_OUT) {
+        const u = d / T_OUT;
+        const a0 = 0, a1 = mars0 + W_MARS * T_OUT;
+        const ang = a0 + (a1 - a0) * u;
+        const r = R_EARTH + (R_MARS - R_EARTH) * (0.5 - 0.5 * Math.cos(Math.PI * u));
+        sp.set(Math.cos(ang) * r, Math.sin(Math.PI * u) * 0.9, Math.sin(ang) * r);
+        phaseEl.textContent = "Phase 1: Outbound Transfer (Earth → Mars)";
+      } else if (d <= T_OUT + T_STAY) {
+        sp.copy(mp).add(new THREE.Vector3(0, 0.95, 0));
+        phaseEl.textContent = "Phase 2: Surface Stay on Mars (Waiting Launch Window)";
+      } else {
+        const u = (d - T_OUT - T_STAY) / T_RET;
+        const a0 = mars0 + W_MARS * (T_OUT + T_STAY);
+        const a1 = W_EARTH * T_TOTAL;
+        let diff = a1 - a0;
+        while (diff < 0.8) diff += Math.PI * 2;
+        const ang = a0 + diff * u;
+        const r = R_MARS + (R_EARTH - R_MARS) * (0.5 - 0.5 * Math.cos(Math.PI * u));
+        sp.set(Math.cos(ang) * r, Math.sin(Math.PI * u) * 0.9, Math.sin(ang) * r);
+        phaseEl.textContent = "Phase 3: Return Transfer (Mars → Earth)";
+      }
+      ship.position.copy(sp);
+      dayEl.textContent = `Day ${Math.floor(d)} / ${T_TOTAL}`;
+
+      if (trailPts.length === 0 || trailPts[trailPts.length - 1].distanceTo(sp) > 0.35) {
+        trailPts.push(sp.clone());
+        if (trailPts.length > 240) trailPts.shift();
+        trailLine.geometry.dispose();
+        trailLine.geometry = new THREE.BufferGeometry().setFromPoints(trailPts);
+      }
+
+      controls.update();
+      renderer.render(scene, camera);
+    }
+    animate(performance.now());
+  </script>
+</body>
+</html>

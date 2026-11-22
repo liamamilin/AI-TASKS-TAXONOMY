@@ -4,7 +4,7 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>问笺馆</title>
-    <meta name="description" content="问笺馆陈列短而好玩的原创考题。提示词可以复制，参考答案默认收着。这里还没有模型实测。">
+    <meta name="description" content="问笺馆陈列 48 道可复现的作品任务，收录 Gemini 与 Grok（Cursor）的真实首次产物，支持同屏并排对比，并保留 88 道短题热身。">
     <meta name="theme-color" content="#f3ecdf">
     <link rel="icon" href="./favicon.svg" type="image/svg+xml">
     <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -12,13 +12,16 @@
     <link href="https://fonts.googleapis.com/css2?family=Newsreader:opsz,wght@6..72,500;6..72,650&family=Noto+Serif+SC:wght@500;600;700&display=swap" rel="stylesheet">
     <script>
       try {
-        if (localStorage.getItem("wenjian-theme") === "night") document.documentElement.dataset.theme = "night"
+        if (localStorage.getItem("wenjian-theme") === "night") {
+          document.documentElement.dataset.theme = "night"
+          document.querySelector('meta[name="theme-color"]')?.setAttribute("content", "#161310")
+        }
       } catch (error) {}
     </script>
   </head>
   <body>
     <div id="app"></div>
-    <noscript>问笺馆需要浏览器脚本才能翻页和检索。题库文件在仓库的 data/questions 目录。</noscript>
+    <noscript>问笺馆需要浏览器脚本才能浏览作品任务、模型对比与短题热身。原始数据位于仓库的 data/ 目录。</noscript>
     <script type="module" src="/src/main.js"></script>
   </body>
 </html>

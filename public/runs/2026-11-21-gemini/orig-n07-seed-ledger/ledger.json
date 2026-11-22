@@ -1,0 +1,27 @@
+{
+  "initial": {
+    "豆星": 3,
+    "月瓜": 1
+  },
+  "events": [
+    {
+      "id": 1,
+      "type": "borrow",
+      "item": "豆星",
+      "qty": 2,
+      "undone": false
+    },
+    {
+      "id": 2,
+      "type": "return",
+      "item": "月瓜",
+      "qty": 2,
+      "undone": true,
+      "undoNote": "已撤销：归还 月瓜×2"
+    }
+  ],
+  "current": {
+    "豆星": 1,
+    "月瓜": 1
+  }
+}

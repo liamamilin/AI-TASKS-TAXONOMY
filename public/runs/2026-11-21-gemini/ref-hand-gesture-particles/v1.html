@@ -1,0 +1,175 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Hand-Gesture 3D Particle System</title>
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    html, body { width: 100%; height: 100%; overflow: hidden; background: #070912; color: #eef3fb; font-family: system-ui, sans-serif; }
+    .panel {
+      position: fixed; left: 14px; top: 14px; width: 250px;
+      background: rgba(14, 18, 30, 0.84); border: 1px solid rgba(255,255,255,0.14);
+      border-radius: 14px; padding: 14px; display: grid; gap: 10px; backdrop-filter: blur(10px); font-size: 13px;
+    }
+    .row { display: flex; flex-wrap: wrap; gap: 6px; align-items: center; }
+    button {
+      border: 1px solid rgba(255,255,255,0.2); background: #1e273d; color: #fff;
+      border-radius: 999px; padding: 5px 11px; cursor: pointer; font: 600 12px inherit;
+    }
+    button.on { background: #4ea8de; border-color: #4ea8de; color: #06101c; }
+    input[type="range"] { width: 100%; accent-color: #4ea8de; }
+    video { display: none; }
+    .cam-status { font-size: 11.5px; color: #9eb0cf; }
+  </style>
+</head>
+<body>
+  <div class="panel">
+    <strong>3D Gesture Particles</strong>
+    <div class="row" id="shapes">
+      <button type="button" data-shape="heart" class="on">Heart</button>
+      <button type="button" data-shape="flower">Flower</button>
+      <button type="button" data-shape="saturn">Saturn</button>
+      <button type="button" data-shape="fireworks">Fireworks</button>
+    </div>
+    <div class="row">
+      <label>Color <input type="color" id="color" value="#ff6b9d"></label>
+      <button type="button" id="cam-btn">Enable Camera</button>
+    </div>
+    <label>Hand Spread / Scale <input type="range" id="spread" min="0.4" max="2.4" step="0.05" value="1.0"></label>
+    <div class="cam-status" id="cam-status">Slider active (click Enable Camera for live hand spread)</div>
+  </div>
+  <video id="vid" playsinline muted></video>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+  <script>
+    const scene = new THREE.Scene();
+    scene.background = new THREE.Color(0x070912);
+    const camera = new THREE.PerspectiveCamera(50, innerWidth / innerHeight, 0.1, 200);
+    camera.position.set(0, 0, 14);
+
+    const renderer = new THREE.WebGLRenderer({ antialias: true });
+    renderer.setSize(innerWidth, innerHeight);
+    renderer.setPixelRatio(Math.min(devicePixelRatio || 1, 2));
+    document.body.appendChild(renderer.domElement);
+
+    const COUNT = 2600;
+    const positions = new Float32Array(COUNT * 3);
+    const targets = new Float32Array(COUNT * 3);
+    const geo = new THREE.BufferGeometry();
+    geo.setAttribute("position", new THREE.BufferAttribute(positions, 3));
+    const mat = new THREE.PointsMaterial({ color: 0xff6b9d, size: 0.11, transparent: true, opacity: 0.9 });
+    const points = new THREE.Points(geo, mat);
+    scene.add(points);
+
+    function setShape(name) {
+      for (let i = 0; i < COUNT; i++) {
+        const u = (i / COUNT) * Math.PI * 2;
+        const v = ((i * 73.1) % COUNT) / COUNT * Math.PI * 2;
+        let x = 0, y = 0, z = 0;
+        if (name === "heart") {
+          const t = u;
+          x = 16 * Math.pow(Math.sin(t), 3) * 0.22;
+          y = (13 * Math.cos(t) - 5 * Math.cos(2*t) - 2 * Math.cos(3*t) - Math.cos(4*t)) * 0.22;
+          z = (Math.sin(v) * 1.4) * (1 - Math.abs(y) * 0.12);
+        } else if (name === "flower") {
+          const r = 3.6 * Math.cos(5 * u) + 1.2;
+          x = r * Math.cos(u);
+          y = r * Math.sin(u);
+          z = Math.sin(5 * u) * 1.2 + Math.cos(v) * 0.4;
+        } else if (name === "saturn") {
+          if (i < COUNT * 0.55) {
+            const phi = Math.acos(1 - 2 * (i / (COUNT * 0.55)));
+            const theta = Math.sqrt(COUNT * 0.55 * Math.PI) * phi;
+            x = 2.4 * Math.sin(phi) * Math.cos(theta);
+            y = 2.4 * Math.cos(phi);
+            z = 2.4 * Math.sin(phi) * Math.sin(theta);
+          } else {
+            const rr = 3.5 + ((i * 19) % 100) / 100 * 2.2;
+            x = rr * Math.cos(v);
+            y = Math.sin(v) * 0.45;
+            z = rr * Math.sin(v);
+          }
+        } else {
+          const rad = 1.2 + ((i * 31) % 100) / 100 * 3.8;
+          const phi = Math.acos(1 - 2 * ((i + 0.5) / COUNT));
+          const theta = i * 2.39996;
+          x = rad * Math.sin(phi) * Math.cos(theta);
+          y = rad * Math.cos(phi);
+          z = rad * Math.sin(phi) * Math.sin(theta);
+        }
+        targets[i * 3] = x; targets[i * 3 + 1] = y; targets[i * 3 + 2] = z;
+      }
+    }
+    setShape("heart");
+    for (let i = 0; i < COUNT * 3; i++) positions[i] = targets[i];
+
+    document.getElementById("shapes").addEventListener("click", (e) => {
+      const btn = e.target.closest("[data-shape]");
+      if (!btn) return;
+      setShape(btn.dataset.shape);
+      document.querySelectorAll("#shapes button").forEach((b) => b.classList.toggle("on", b === btn));
+    });
+    document.getElementById("color").addEventListener("input", (e) => mat.color.set(e.target.value));
+
+    const spreadInput = document.getElementById("spread");
+    const camStatus = document.getElementById("cam-status");
+    const vid = document.getElementById("vid");
+    let camCanvas = null, camCtx = null, prevFrame = null, camScale = 1.0, camActive = false;
+
+    document.getElementById("cam-btn").addEventListener("click", async () => {
+      if (!navigator.mediaDevices?.getUserMedia) { camStatus.textContent = "Camera API unavailable; use slider."; return; }
+      try {
+        const stream = await navigator.mediaDevices.getUserMedia({ video: { width: 160, height: 120 } });
+        vid.srcObject = stream; await vid.play();
+        camCanvas = document.createElement("canvas"); camCanvas.width = 64; camCanvas.height = 48;
+        camCtx = camCanvas.getContext("2d");
+        camActive = true;
+        camStatus.textContent = "Camera live: spread or close hands in view!";
+      } catch {
+        camStatus.textContent = "Camera permission denied; slider remains active.";
+      }
+    });
+
+    function sampleCamera() {
+      if (!camActive || vid.readyState < 2) return;
+      camCtx.drawImage(vid, 0, 0, 64, 48);
+      const data = camCtx.getImageData(0, 0, 64, 48).data;
+      if (prevFrame) {
+        let minX = 64, maxX = 0, motion = 0;
+        for (let y = 0; y < 48; y++) {
+          for (let x = 0; x < 64; x++) {
+            const idx = (y * 64 + x) * 4;
+            const diff = Math.abs(data[idx] - prevFrame[idx]) + Math.abs(data[idx+1] - prevFrame[idx+1]);
+            if (diff > 55) { motion++; if (x < minX) minX = x; if (x > maxX) maxX = x; }
+          }
+        }
+        if (motion > 12) {
+          const span = Math.max(0.45, Math.min(2.3, 0.5 + ((maxX - minX) / 64) * 1.9));
+          camScale += (span - camScale) * 0.15;
+          spreadInput.value = camScale.toFixed(2);
+        }
+      }
+      prevFrame = new Uint8ClampedArray(data);
+    }
+
+    window.addEventListener("resize", () => {
+      camera.aspect = innerWidth / innerHeight; camera.updateProjectionMatrix();
+      renderer.setSize(innerWidth, innerHeight);
+    });
+
+    function animate(now) {
+      requestAnimationFrame(animate);
+      sampleCamera();
+      const s = Number(spreadInput.value);
+      const pos = geo.attributes.position.array;
+      for (let i = 0; i < COUNT * 3; i++) {
+        pos[i] += (targets[i] * s - pos[i]) * 0.08;
+      }
+      geo.attributes.position.needsUpdate = true;
+      points.rotation.y = now * 0.00045;
+      renderer.render(scene, camera);
+    }
+    animate(0);
+  </script>
+</body>
+</html>

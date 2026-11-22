@@ -1,0 +1,128 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Skyscraper Flight Sim</title>
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    html, body { width: 100%; height: 100%; overflow: hidden; background: #9bc8e8; font-family: system-ui, sans-serif; }
+    .hud {
+      position: fixed; left: 14px; top: 12px; display: flex; gap: 12px; align-items: center;
+      background: rgba(14, 20, 32, 0.78); color: #f0f5fc; padding: 7px 14px; border-radius: 999px; font-size: 13px;
+    }
+  </style>
+</head>
+<body>
+  <div class="hud">
+    <span id="alt">ALT 28m</span>
+    <span>WASD / Arrows: Pitch & Steer</span>
+  </div>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+  <script>
+    const scene = new THREE.Scene();
+    scene.background = new THREE.Color(0xa9d4f2);
+    scene.fog = new THREE.Fog(0xa9d4f2, 40, 175);
+
+    const camera = new THREE.PerspectiveCamera(65, innerWidth / innerHeight, 0.1, 240);
+    const renderer = new THREE.WebGLRenderer({ antialias: true });
+    renderer.setSize(innerWidth, innerHeight);
+    renderer.setPixelRatio(Math.min(devicePixelRatio || 1, 2));
+    document.body.appendChild(renderer.domElement);
+
+    scene.add(new THREE.AmbientLight(0xffffff, 0.68));
+    const sun = new THREE.DirectionalLight(0xfff2d6, 0.85);
+    sun.position.set(40, 70, 30);
+    scene.add(sun);
+
+    const ground = new THREE.Mesh(
+      new THREE.PlaneGeometry(400, 400),
+      new THREE.MeshLambertMaterial({ color: 0x3b4450 })
+    );
+    ground.rotation.x = -Math.PI / 2;
+    scene.add(ground);
+
+    // Endless wrapping skyscraper city blocks
+    const towers = [];
+    const SPAN = 180;
+    const palette = [0x4c5d73, 0x61738a, 0x3e4d61, 0x73859c];
+    for (let i = 0; i < 84; i++) {
+      let x = ((i * 37) % SPAN) - SPAN / 2;
+      if (Math.abs(x) < 11) x += x >= 0 ? 14 : -14; // keep central flight corridor open
+      const z = ((i * 53) % SPAN) - SPAN / 2;
+      const h = 18 + (i % 7) * 9;
+      const w = 5 + (i % 3) * 2;
+      const m = new THREE.Mesh(
+        new THREE.BoxGeometry(w, h, w),
+        new THREE.MeshStandardMaterial({ color: palette[i % palette.length], roughness: 0.6 })
+      );
+      m.position.set(x, h / 2, z);
+      scene.add(m);
+      towers.push(m);
+    }
+
+    // Player aircraft
+    const plane = new THREE.Group();
+    const body = new THREE.Mesh(new THREE.ConeGeometry(0.45, 3.2, 8), new THREE.MeshStandardMaterial({ color: 0xe63946 }));
+    body.rotation.x = -Math.PI / 2;
+    const wing = new THREE.Mesh(new THREE.BoxGeometry(4.4, 0.12, 0.9), new THREE.MeshStandardMaterial({ color: 0xf4f6fa }));
+    const tail = new THREE.Mesh(new THREE.BoxGeometry(1.4, 0.1, 0.5), new THREE.MeshStandardMaterial({ color: 0xf4f6fa }));
+    tail.position.set(0, 0.2, 1.2);
+    plane.add(body, wing, tail);
+    scene.add(plane);
+
+    const altEl = document.getElementById("alt");
+    const keys = {};
+    window.addEventListener("keydown", (e) => { keys[e.code] = true; });
+    window.addEventListener("keyup", (e) => { keys[e.code] = false; });
+
+    const flight = { x: 0, y: 28, z: 0, yaw: 0, pitch: 0, roll: 0, speed: 30 };
+
+    window.addEventListener("resize", () => {
+      camera.aspect = innerWidth / innerHeight; camera.updateProjectionMatrix();
+      renderer.setSize(innerWidth, innerHeight);
+    });
+
+    let last = performance.now();
+    function animate(now) {
+      requestAnimationFrame(animate);
+      const dt = Math.min(0.05, (now - last) / 1000);
+      last = now;
+
+      const turn = (keys["KeyA"] || keys["ArrowLeft"] ? 1 : 0) - (keys["KeyD"] || keys["ArrowRight"] ? 1 : 0);
+      const climb = (keys["KeyW"] || keys["ArrowUp"] ? 1 : 0) - (keys["KeyS"] || keys["ArrowDown"] ? 1 : 0);
+
+      flight.yaw += turn * 1.15 * dt;
+      flight.roll += (turn * 0.55 - flight.roll) * 5 * dt;
+      flight.pitch += (climb * 0.45 - flight.pitch) * 5 * dt;
+
+      flight.x -= Math.sin(flight.yaw) * flight.speed * dt;
+      flight.z -= Math.cos(flight.yaw) * flight.speed * dt;
+      flight.y = Math.max(6, Math.min(82, flight.y + Math.sin(flight.pitch) * flight.speed * dt));
+
+      // Recycle skyscrapers around the aircraft so city is endless
+      for (const m of towers) {
+        if (m.position.z - flight.z > SPAN / 2) m.position.z -= SPAN;
+        if (m.position.z - flight.z < -SPAN / 2) m.position.z += SPAN;
+        if (m.position.x - flight.x > SPAN / 2) m.position.x -= SPAN;
+        if (m.position.x - flight.x < -SPAN / 2) m.position.x += SPAN;
+      }
+      ground.position.set(flight.x, 0, flight.z);
+
+      plane.position.set(flight.x, flight.y, flight.z);
+      plane.rotation.order = "YXZ";
+      plane.rotation.set(flight.pitch, flight.yaw, flight.roll);
+
+      camera.position.set(
+        flight.x + Math.sin(flight.yaw) * 9.5,
+        flight.y + 2.8,
+        flight.z + Math.cos(flight.yaw) * 9.5
+      );
+      camera.lookAt(flight.x - Math.sin(flight.yaw) * 14, flight.y, flight.z - Math.cos(flight.yaw) * 14);
+      altEl.textContent = `ALT ${Math.round(flight.y)}m`;
+      renderer.render(scene, camera);
+    }
+    animate(performance.now());
+  </script>
+</body>
+</html>

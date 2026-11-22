@@ -1,0 +1,212 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>能玩的过河</title>
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      min-height: 100vh;
+      background: #f4ede0;
+      color: #1f1b16;
+      font-family: "Noto Serif SC", "Songti SC", system-ui, sans-serif;
+      display: grid; place-items: center; padding: 20px;
+    }
+    .app {
+      width: min(760px, 100%);
+      background: #fffaf2;
+      border: 1px solid #dfd3bf;
+      border-radius: 16px;
+      padding: 24px;
+      box-shadow: 0 16px 36px rgba(55, 38, 18, 0.09);
+    }
+    header { display: flex; justify-content: space-between; align-items: baseline; gap: 12px; margin-bottom: 14px; }
+    h1 { font-size: 24px; }
+    .steps { color: #8c3b2f; font-weight: 700; }
+    .rules { color: #61584d; font-size: 14px; line-height: 1.6; margin-bottom: 18px; }
+    .scene {
+      display: grid; grid-template-columns: 1fr 1.15fr 1fr; gap: 14px;
+      align-items: stretch; margin-bottom: 18px;
+    }
+    .bank {
+      background: #efe6d6; border: 1px solid #d9cbb5; border-radius: 12px;
+      padding: 14px; display: flex; flex-direction: column; gap: 10px; min-height: 196px;
+    }
+    .bank h2 { font-size: 15px; color: #574e44; display: flex; justify-content: space-between; }
+    .river {
+      background: linear-gradient(180deg, #94c5d8 0%, #6ba7c2 100%);
+      border-radius: 12px; padding: 14px; display: flex; flex-direction: column;
+      justify-content: space-between; align-items: center; color: #fff; position: relative;
+    }
+    .boat {
+      background: #5a3c26; color: #fff6e6; padding: 10px 14px; border-radius: 999px;
+      font-size: 14px; font-weight: 600; transition: transform 0.35s ease;
+      box-shadow: 0 6px 14px rgba(0,0,0,.22);
+    }
+    .boat.left { transform: translateX(-28px); }
+    .boat.right { transform: translateX(28px); }
+    .items { display: flex; flex-wrap: wrap; gap: 8px; }
+    .item {
+      border: 1.5px solid #c6b59b; background: #fffdf8; color: #1f1b16;
+      border-radius: 10px; padding: 10px 14px; cursor: pointer; font: inherit;
+      font-weight: 600; transition: all 0.15s ease;
+    }
+    .item:hover:not(:disabled) { border-color: #8c3b2f; }
+    .item.picked { background: #2d4c6e; color: #fff; border-color: #2d4c6e; }
+    .item:disabled { opacity: 0.45; cursor: not-allowed; }
+    .controls { display: flex; flex-wrap: wrap; gap: 10px; align-items: center; }
+    .btn {
+      border-radius: 999px; padding: 10px 20px; cursor: pointer; font: inherit; font-weight: 600;
+      border: 1px solid #1f1b16; background: #1f1b16; color: #fffaf2;
+    }
+    .btn.ghost { background: transparent; color: #1f1b16; border-color: #cbbba3; }
+    .msg {
+      margin-top: 14px; min-height: 24px; font-size: 15px; font-weight: 600; color: #2d4c6e;
+    }
+    .msg.err { color: #b23326; }
+    .msg.win { color: #2e7340; }
+    @media (max-width: 620px) { .scene { grid-template-columns: 1fr; } .boat.left, .boat.right { transform: none; } }
+  </style>
+</head>
+<body>
+  <main class="app">
+    <header>
+      <h1>能玩的过河</h1>
+      <span class="steps" id="steps">已渡河：0 次</span>
+    </header>
+    <p class="rules">左岸有「人、猫、鱼、鱼食」。每次必须由<strong>人</strong>划船，且至多再带<strong>一件</strong>。人不在时，猫会吃鱼，鱼会吃鱼食（猫不吃鱼食）。</p>
+    <section class="scene">
+      <div class="bank">
+        <h2><span>左岸</span><span id="left-count">4</span></h2>
+        <div class="items" id="left-bank"></div>
+      </div>
+      <div class="river">
+        <span id="side-label">船在左岸</span>
+        <div class="boat left" id="boat">木船（空）</div>
+        <button class="btn" id="cross" type="button">划船渡河</button>
+      </div>
+      <div class="bank">
+        <h2><span>右岸</span><span id="right-count">0</span></h2>
+        <div class="items" id="right-bank"></div>
+      </div>
+    </section>
+    <div class="controls">
+      <button class="btn ghost" id="clear" type="button">清空选择</button>
+      <button class="btn ghost" id="reset" type="button">重新开始</button>
+    </div>
+    <p class="msg" id="msg" role="status"></p>
+  </main>
+  <script>
+    const NAMES = { person: "人", cat: "猫", fish: "鱼", food: "鱼食" };
+    let state, picked, moves;
+
+    const leftEl = document.getElementById("left-bank");
+    const rightEl = document.getElementById("right-bank");
+    const leftCount = document.getElementById("left-count");
+    const rightCount = document.getElementById("right-count");
+    const boatEl = document.getElementById("boat");
+    const sideLabel = document.getElementById("side-label");
+    const stepsEl = document.getElementById("steps");
+    const msgEl = document.getElementById("msg");
+
+    function init() {
+      state = { person: "L", cat: "L", fish: "L", food: "L" };
+      picked = new Set();
+      moves = 0;
+      setMsg("请选择人以及至多一件东西上船。", "");
+      render();
+    }
+
+    function setMsg(text, cls) {
+      msgEl.textContent = text;
+      msgEl.className = `msg ${cls}`;
+    }
+
+    function togglePick(key) {
+      if (state[key] !== state.person) return;
+      if (picked.has(key)) {
+        picked.delete(key);
+        render();
+        return;
+      }
+      if (picked.size >= 2) {
+        setMsg("一次最多只能带人以及至多一件东西。", "err");
+        return;
+      }
+      if (key !== "person" && !picked.has("person") && picked.size >= 1) {
+        setMsg("船必须由人来划，一次最多再带一件。", "err");
+        return;
+      }
+      picked.add(key);
+      render();
+    }
+
+    function checkUnsafe(nextState) {
+      for (const side of ["L", "R"]) {
+        if (nextState.person === side) continue;
+        if (nextState.cat === side && nextState.fish === side) return "人不在时，猫会把鱼吃掉！本次移动已取消。";
+        if (nextState.fish === side && nextState.food === side) return "人不在时，鱼会把鱼食吃掉！本次移动已取消。";
+      }
+      return null;
+    }
+
+    document.getElementById("cross").addEventListener("click", () => {
+      if (!picked.has("person")) {
+        setMsg("必须先选「人」上船才能划船。", "err");
+        return;
+      }
+      if (picked.size > 2) {
+        setMsg("一次最多再带一件东西。", "err");
+        return;
+      }
+      const next = { ...state };
+      const target = state.person === "L" ? "R" : "L";
+      for (const key of picked) next[key] = target;
+      const err = checkUnsafe(next);
+      if (err) {
+        setMsg(err, "err");
+        return;
+      }
+      state = next;
+      moves += 1;
+      picked.clear();
+      const allRight = Object.values(state).every((v) => v === "R");
+      if (allRight) {
+        setMsg(`全部安全到达右岸！共用了 ${moves} 次。`, "win");
+      } else {
+        setMsg(`已安全渡到${target === "R" ? "右" : "左"}岸。`, "");
+      }
+      render();
+    });
+
+    document.getElementById("clear").addEventListener("click", () => { picked.clear(); render(); });
+    document.getElementById("reset").addEventListener("click", init);
+
+    function render() {
+      leftEl.innerHTML = "";
+      rightEl.innerHTML = "";
+      let lc = 0, rc = 0;
+      for (const key of ["person", "cat", "fish", "food"]) {
+        const btn = document.createElement("button");
+        btn.type = "button";
+        btn.className = `item${picked.has(key) ? " picked" : ""}`;
+        btn.textContent = NAMES[key];
+        btn.disabled = state[key] !== state.person;
+        btn.addEventListener("click", () => togglePick(key));
+        if (state[key] === "L") { leftEl.appendChild(btn); lc++; }
+        else { rightEl.appendChild(btn); rc++; }
+      }
+      leftCount.textContent = String(lc);
+      rightCount.textContent = String(rc);
+      stepsEl.textContent = `已渡河：${moves} 次`;
+      sideLabel.textContent = state.person === "L" ? "船在左岸" : "船在右岸";
+      boatEl.className = `boat ${state.person === "L" ? "left" : "right"}`;
+      const names = [...picked].map((k) => NAMES[k]);
+      boatEl.textContent = names.length ? `船上：${names.join(" + ")}` : "木船（空）";
+    }
+
+    init();
+  </script>
+</body>
+</html>

@@ -1,0 +1,152 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>纸船社四班排班器</title>
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body { background: #f3ecdf; color: #1d1916; font-family: system-ui, -apple-system, sans-serif; padding: 20px; line-height: 1.55; }
+    .wrap { max-width: 860px; margin: 0 auto; display: grid; gap: 16px; }
+    .card { background: #fffaf2; border: 1px solid #dfd3bf; border-radius: 12px; padding: 16px 18px; }
+    h1 { font-size: 22px; margin-bottom: 6px; }
+    h2 { font-size: 15px; color: #5e554a; margin-bottom: 10px; }
+    table { width: 100%; border-collapse: collapse; font-size: 13.5px; }
+    th, td { text-align: left; padding: 8px; border-bottom: 1px solid #e7dccb; }
+    th { background: #f5ede0; }
+    .bar { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 12px; }
+    button { border-radius: 999px; padding: 7px 14px; border: 1px solid #1d1916; background: #1d1916; color: #fffaf2; cursor: pointer; font: 600 13px inherit; }
+    button.ghost { background: transparent; color: #1d1916; border-color: #cbbba2; }
+    .ok { color: #2b6e3f; font-weight: 700; }
+    .err { color: #a83329; font-weight: 700; }
+    ul { padding-left: 18px; font-size: 13px; }
+  </style>
+</head>
+<body>
+  <main class="wrap">
+    <section class="card">
+      <h1>纸船社四班排班器</h1>
+      <p style="font-size:13px;color:#62584d;">硬约束：每班 2 名不同人（至少 1 名钥匙员）、每人最多 2 班、不得连上相邻班次（S1/S2、S2/S3、S3/S4）。</p>
+      <div id="avail-table" style="margin-top:12px;"></div>
+      <div class="bar">
+        <button type="button" id="solve">生成排班</button>
+        <button type="button" class="ghost" id="clear-a">清空「甲」可用班次（测试无解）</button>
+        <button type="button" class="ghost" id="reset">恢复初始可用性</button>
+        <button type="button" class="ghost" id="dl">下载 roster.json</button>
+      </div>
+    </section>
+    <section class="card">
+      <h2>排班结果与逐条约束检查</h2>
+      <div id="result"></div>
+    </section>
+  </main>
+  <script>
+    const SLOTS = [
+      { id: "S1", time: "09:00–10:00" },
+      { id: "S2", time: "10:00–11:00" },
+      { id: "S3", time: "11:00–12:00" },
+      { id: "S4", time: "12:00–13:00" },
+    ];
+    const INITIAL_PEOPLE = [
+      { id: "甲", key: true,  available: ["S1", "S3"] },
+      { id: "乙", key: true,  available: ["S2", "S4"] },
+      { id: "丙", key: false, available: ["S1", "S4"] },
+      { id: "丁", key: false, available: ["S2", "S3"] },
+      { id: "戊", key: false, available: ["S1", "S3"] },
+      { id: "己", key: false, available: ["S2", "S4"] },
+    ];
+    let people = INITIAL_PEOPLE.map((p) => ({ ...p, available: [...p.available] }));
+    let lastOutput = null;
+
+    function solveRoster(ppl) {
+      const slotIds = SLOTS.map((s) => s.id);
+      const assigned = [[], [], [], []];
+      const counts = Object.fromEntries(ppl.map((p) => [p.id, 0]));
+      const byId = Object.fromEntries(ppl.map((p) => [p.id, p]));
+
+      function backtrack(idx) {
+        if (idx === 4) return true;
+        const sid = slotIds[idx];
+        const cands = ppl.filter((p) => p.available.includes(sid) && counts[p.id] < 2 && !(idx > 0 && assigned[idx - 1].includes(p.id)));
+        for (let i = 0; i < cands.length; i++) {
+          for (let j = i + 1; j < cands.length; j++) {
+            const a = cands[i], b = cands[j];
+            if (!a.key && !b.key) continue;
+            assigned[idx] = [a.id, b.id];
+            counts[a.id]++; counts[b.id]++;
+            if (backtrack(idx + 1)) return true;
+            counts[a.id]--; counts[b.id]--;
+            assigned[idx] = [];
+          }
+        }
+        return false;
+      }
+
+      const solvable = backtrack(0);
+      if (!solvable) {
+        const reasons = [];
+        for (const s of SLOTS) {
+          const avail = ppl.filter((p) => p.available.includes(s.id));
+          const keys = avail.filter((p) => p.key);
+          if (avail.length < 2) reasons.push(`${s.id} 可用人数不足 2 人（当前 ${avail.length} 人）`);
+          if (keys.length < 1) reasons.push(`${s.id} 缺少钥匙员（key=true）`);
+        }
+        if (!reasons.length) reasons.push("满足单班条件但在每人 ≤2 班且不连班约束下无可行全局分配");
+        return { solvable: false, schedule: null, unsatisfied: reasons, checks: [] };
+      }
+
+      const schedule = SLOTS.map((s, i) => ({ slot: s.id, time: s.time, members: assigned[i] }));
+      const checks = [
+        { name: "4 班各 2 名不同人且共 8 人次", pass: schedule.every((r) => r.members.length === 2 && r.members[0] !== r.members[1]) },
+        { name: "所有分配均在个人可用班次内", pass: schedule.every((r) => r.members.every((id) => byId[id].available.includes(r.slot))) },
+        { name: "每班至少 1 名钥匙员", pass: schedule.every((r) => r.members.some((id) => byId[id].key)) },
+        { name: "每人最多 2 班", pass: Object.values(counts).every((c) => c <= 2) },
+        { name: "无人连上相邻班次", pass: [0, 1, 2].every((i) => !assigned[i].some((id) => assigned[i + 1].includes(id))) },
+      ];
+      return { solvable: true, schedule, unsatisfied: [], checks };
+    }
+
+    function renderAvail() {
+      document.getElementById("avail-table").innerHTML = `<table><thead><tr><th>成员</th><th>钥匙员</th>${SLOTS.map((s) => `<th>${s.id}<br><small>${s.time}</small></th>`).join("")}</tr></thead><tbody>${
+        people.map((p, pi) => `<tr><td><strong>${p.id}</strong></td><td>${p.key ? "是" : "否"}</td>${
+          SLOTS.map((s) => `<td><input type="checkbox" data-p="${pi}" data-s="${s.id}" ${p.available.includes(s.id) ? "checked" : ""}></td>`).join("")
+        }</tr>`).join("")
+      }</tbody></table>`;
+    }
+
+    function runSolve() {
+      lastOutput = solveRoster(people);
+      const resEl = document.getElementById("result");
+      if (!lastOutput.solvable) {
+        resEl.innerHTML = `<p class="err">当前约束下无解（已清空旧方案，不伪造排班）。</p><ul>${lastOutput.unsatisfied.map((u) => `<li>${u}</li>`).join("")}</ul>`;
+        return;
+      }
+      resEl.innerHTML = `<p class="ok">已生成满足全部硬约束的有效排班：</p>
+        <table style="margin:10px 0;"><thead><tr><th>班次</th><th>时间</th><th>成员</th></tr></thead><tbody>${
+          lastOutput.schedule.map((r) => `<tr><td>${r.slot}</td><td>${r.time}</td><td>${r.members.join("、")}</td></tr>`).join("")
+        }</tbody></table>
+        <ul>${lastOutput.checks.map((c) => `<li>${c.pass ? "通过" : "失败"}：${c.name}</li>`).join("")}</ul>`;
+    }
+
+    document.getElementById("avail-table").addEventListener("change", (e) => {
+      const cb = e.target;
+      if (!cb.matches("input[type=checkbox]")) return;
+      const p = people[Number(cb.dataset.p)];
+      const sid = cb.dataset.s;
+      if (cb.checked) { if (!p.available.includes(sid)) p.available.push(sid); }
+      else p.available = p.available.filter((x) => x !== sid);
+    });
+    document.getElementById("solve").addEventListener("click", runSolve);
+    document.getElementById("clear-a").addEventListener("click", () => { people[0].available = []; renderAvail(); runSolve(); });
+    document.getElementById("reset").addEventListener("click", () => { people = INITIAL_PEOPLE.map((p) => ({ ...p, available: [...p.available] })); renderAvail(); runSolve(); });
+    document.getElementById("dl").addEventListener("click", () => {
+      const a = document.createElement("a");
+      a.href = URL.createObjectURL(new Blob([JSON.stringify(lastOutput, null, 2)], { type: "application/json" }));
+      a.download = "roster.json"; a.click(); URL.revokeObjectURL(a.href);
+    });
+
+    renderAvail();
+    runSolve();
+  </script>
+</body>
+</html>

@@ -1,0 +1,134 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>口袋资料夹找回器</title>
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body { background: #f3ecdf; color: #1d1916; font-family: system-ui, -apple-system, sans-serif; padding: 20px; line-height: 1.55; }
+    .wrap { max-width: 900px; margin: 0 auto; display: grid; gap: 16px; }
+    .card { background: #fffaf2; border: 1px solid #dfd3bf; border-radius: 12px; padding: 16px 18px; }
+    h1 { font-size: 22px; margin-bottom: 6px; }
+    h2 { font-size: 15px; color: #5e554a; margin-bottom: 10px; }
+    .bar { display: flex; flex-wrap: wrap; gap: 8px; align-items: center; }
+    input[type="search"] { flex: 1; min-width: 200px; padding: 8px 12px; border: 1px solid #cbbba2; border-radius: 999px; font: inherit; background: #fff; }
+    button { border-radius: 999px; padding: 6px 14px; border: 1px solid #cbbba2; background: #f5ede0; color: #1d1916; cursor: pointer; font: 600 13px inherit; }
+    button.on { background: #1d1916; color: #fffaf2; border-color: #1d1916; }
+    .notes { display: grid; grid-template-columns: repeat(auto-fill, minmax(240px, 1fr)); gap: 10px; }
+    .note { border: 1px solid #dfd3bf; background: #fff; border-radius: 10px; padding: 12px; display: grid; gap: 6px; }
+    .note-top { display: flex; justify-content: space-between; align-items: center; font-size: 12px; color: #665c51; }
+    .pins { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+    @media (max-width: 600px) { .pins { grid-template-columns: 1fr; } }
+  </style>
+</head>
+<body>
+  <main class="wrap">
+    <section class="card">
+      <h1>口袋资料夹找回器（6 条本地便签）</h1>
+      <div class="bar" style="margin-top:10px;">
+        <input id="q" type="search" placeholder="空格分隔多词（AND 匹配），如：蓝厅 纸船">
+        <div id="tags" class="bar"></div>
+        <button type="button" id="dl">导出 results.json</button>
+      </div>
+      <p id="status" style="font-size:13px;color:#62584d;margin-top:8px;"></p>
+    </section>
+    <section class="card" id="pin-card" hidden>
+      <h2>并排对比（最多钉住 2 条）</h2>
+      <div class="pins" id="pins"></div>
+    </section>
+    <section class="card">
+      <h2>检索结果</h2>
+      <div class="notes" id="results"></div>
+    </section>
+  </main>
+  <script>
+    const NOTES = [
+      { id: "C1", tag: "活动", title: "纸船会", body: "周六 10:00 在蓝厅折纸。" },
+      { id: "C2", tag: "库存", title: "蓝纸", body: "蓝厅剩蓝纸12张，日期04-01。" },
+      { id: "C3", tag: "活动", title: "换书角", body: "周日 14:00 在黄厅交换旧书。" },
+      { id: "C4", tag: "规则", title: "纸船规则", body: "蓝厅纸船不可放入水池。" },
+      { id: "C5", tag: "库存", title: "彩笔", body: "黄厅有彩笔3盒。" },
+      { id: "C6", tag: "规则", title: "换书规则", body: "旧书不可夹带食品。" },
+    ];
+    let curTag = "全部";
+    let pinned = [];
+    let lastPayload = null;
+    const qEl = document.getElementById("q");
+
+    function search(query, tag) {
+      const words = query.trim().toLowerCase().split(/\s+/).filter(Boolean);
+      return NOTES.filter((n) => {
+        if (tag !== "全部" && n.tag !== tag) return false;
+        if (!words.length) return true;
+        const hay = `${n.title} ${n.body}`.toLowerCase();
+        return words.every((w) => hay.includes(w));
+      });
+    }
+
+    function renderNoteCard(n, showPinBtn = true) {
+      const div = document.createElement("article");
+      div.className = "note";
+      const top = document.createElement("div"); top.className = "note-top";
+      const idSpan = document.createElement("span"); idSpan.textContent = `${n.id} · ${n.tag}`;
+      top.appendChild(idSpan);
+      if (showPinBtn) {
+        const btn = document.createElement("button");
+        btn.type = "button";
+        const isPinned = pinned.includes(n.id);
+        btn.className = isPinned ? "on" : "";
+        btn.textContent = isPinned ? "取消钉住" : "钉住对比";
+        btn.addEventListener("click", () => {
+          if (isPinned) pinned = pinned.filter((x) => x !== n.id);
+          else if (pinned.length < 2) pinned.push(n.id);
+          else { pinned.shift(); pinned.push(n.id); }
+          render();
+        });
+        top.appendChild(btn);
+      }
+      const h3 = document.createElement("strong"); h3.textContent = n.title;
+      const p = document.createElement("p"); p.textContent = n.body;
+      div.append(top, h3, p);
+      return div;
+    }
+
+    function render() {
+      const tags = ["全部", "活动", "库存", "规则"];
+      const tBox = document.getElementById("tags"); tBox.innerHTML = "";
+      tags.forEach((t) => {
+        const b = document.createElement("button");
+        b.type = "button"; b.className = curTag === t ? "on" : ""; b.textContent = t;
+        b.addEventListener("click", () => { curTag = t; render(); });
+        tBox.appendChild(b);
+      });
+
+      const hits = search(qEl.value, curTag);
+      lastPayload = { query: qEl.value, tag: curTag, ids: hits.map((h) => h.id), notes: hits };
+      document.getElementById("status").textContent = `查询「${qEl.value || "（空）"}」 · 标签「${curTag}」 · 命中 ${hits.length} 条（${hits.map((h) => h.id).join(", ") || "无"}）`;
+
+      const resEl = document.getElementById("results"); resEl.innerHTML = "";
+      if (!hits.length) {
+        const empty = document.createElement("p"); empty.textContent = "没有命中的便签。"; resEl.appendChild(empty);
+      } else {
+        hits.forEach((n) => resEl.appendChild(renderNoteCard(n, true)));
+      }
+
+      const pinCard = document.getElementById("pin-card");
+      const pinsEl = document.getElementById("pins"); pinsEl.innerHTML = "";
+      pinCard.hidden = pinned.length === 0;
+      pinned.forEach((id) => {
+        const n = NOTES.find((x) => x.id === id);
+        if (n) pinsEl.appendChild(renderNoteCard(n, true));
+      });
+    }
+
+    qEl.addEventListener("input", render);
+    document.getElementById("dl").addEventListener("click", () => {
+      const a = document.createElement("a");
+      a.href = URL.createObjectURL(new Blob([JSON.stringify(lastPayload, null, 2)], { type: "application/json" }));
+      a.download = "results.json"; a.click(); URL.revokeObjectURL(a.href);
+    });
+    render();
+  </script>
+</body>
+</html>

@@ -1,0 +1,252 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>引力弹弓送信</title>
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    html, body {
+      width: 100%; height: 100%; overflow: hidden;
+      background: #080d18; color: #eef2fb;
+      font-family: "Noto Serif SC", system-ui, sans-serif;
+    }
+    canvas { display: block; width: 100%; height: 100%; }
+    .hud {
+      position: fixed; left: 16px; top: 14px; right: 16px;
+      display: flex; flex-wrap: wrap; gap: 10px; align-items: center; justify-content: space-between;
+      pointer-events: none;
+    }
+    .bar {
+      pointer-events: auto;
+      display: flex; flex-wrap: wrap; gap: 10px; align-items: center;
+      background: rgba(14, 21, 36, 0.85); border: 1px solid rgba(154, 184, 232, 0.24);
+      border-radius: 999px; padding: 7px 14px; font-size: 13px;
+    }
+    .bar button {
+      background: #d95d39; color: #fff; border: 0; border-radius: 999px;
+      padding: 5px 14px; cursor: pointer; font: inherit; font-weight: 600;
+    }
+    .bar button.ghost { background: #1f2c46; border: 1px solid rgba(154,184,232,.3); }
+    .bar input[type="range"] { width: 84px; accent-color: #f4b942; }
+    .status { color: #f7d27a; font-weight: 600; }
+  </style>
+</head>
+<body>
+  <canvas id="c"></canvas>
+  <div class="hud">
+    <div class="bar">
+      <strong id="lvl">第 1 关</strong>
+      <label>仰角 <input id="angle" type="range" min="-80" max="80" value="-24"></label>
+      <label>初速 <input id="power" type="range" min="150" max="420" value="275"></label>
+      <button id="launch" type="button">发射信使</button>
+      <button id="next" type="button" class="ghost">下一关</button>
+    </div>
+    <div class="bar"><span class="status" id="status">调好仰角与初速，借行星引力把信使送进金色信标</span></div>
+  </div>
+  <script>
+    const canvas = document.getElementById("c");
+    const ctx = canvas.getContext("2d");
+    const lvlEl = document.getElementById("lvl");
+    const angleEl = document.getElementById("angle");
+    const powerEl = document.getElementById("power");
+    const launchBtn = document.getElementById("launch");
+    const nextBtn = document.getElementById("next");
+    const statusEl = document.getElementById("status");
+
+    const LEVELS = [
+      {
+        start: [0.14, 0.62], target: [0.84, 0.34, 26],
+        planets: [{ x: 0.48, y: 0.50, r: 34, mass: 1750000, col: "#4ea8de" }],
+        angle: -28, power: 265,
+      },
+      {
+        start: [0.12, 0.72], target: [0.86, 0.28, 24],
+        planets: [
+          { x: 0.42, y: 0.62, r: 30, mass: 1400000, col: "#d96b43" },
+          { x: 0.64, y: 0.32, r: 28, mass: 1350000, col: "#83c5be" },
+        ],
+        angle: -40, power: 295,
+      },
+      {
+        start: [0.12, 0.52], target: [0.88, 0.52, 22],
+        planets: [
+          { x: 0.46, y: 0.34, r: 28, mass: 1350000, col: "#b5838d" },
+          { x: 0.54, y: 0.70, r: 32, mass: 1650000, col: "#457b9d" },
+        ],
+        angle: -18, power: 280,
+      },
+    ];
+
+    let levelIdx = 0;
+    let probe = null;
+    let trail = [];
+    let W = innerWidth, H = innerHeight;
+
+    function resize() {
+      const dpr = Math.min(devicePixelRatio || 1, 2);
+      W = innerWidth; H = innerHeight;
+      canvas.width = Math.floor(W * dpr);
+      canvas.height = Math.floor(H * dpr);
+      ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+    }
+    window.addEventListener("resize", resize);
+    resize();
+
+    function loadLevel(i) {
+      levelIdx = (i + LEVELS.length) % LEVELS.length;
+      const lv = LEVELS[levelIdx];
+      lvlEl.textContent = `第 ${levelIdx + 1} 关`;
+      angleEl.value = String(lv.angle);
+      powerEl.value = String(lv.power);
+      probe = null;
+      trail = [];
+      statusEl.textContent = "调好仰角与初速，借行星引力把信使送进金色信标";
+    }
+
+    function launch() {
+      const lv = LEVELS[levelIdx];
+      const rad = (Number(angleEl.value) * Math.PI) / 180;
+      const spd = Number(powerEl.value);
+      probe = {
+        x: lv.start[0] * W, y: lv.start[1] * H,
+        vx: Math.cos(rad) * spd, vy: Math.sin(rad) * spd,
+        active: true,
+      };
+      trail = [{ x: probe.x, y: probe.y }];
+      statusEl.textContent = "信使飞行中…";
+    }
+
+    launchBtn.addEventListener("click", launch);
+    nextBtn.addEventListener("click", () => loadLevel(levelIdx + 1));
+    loadLevel(0);
+
+    function predictPath(lv) {
+      const rad = (Number(angleEl.value) * Math.PI) / 180;
+      const spd = Number(powerEl.value);
+      let x = lv.start[0] * W, y = lv.start[1] * H;
+      let vx = Math.cos(rad) * spd, vy = Math.sin(rad) * spd;
+      const pts = [];
+      for (let step = 0; step < 52; step++) {
+        const dt = 0.025;
+        for (const p of lv.planets) {
+          const dx = p.x * W - x, dy = p.y * H - y;
+          const d2 = Math.max(900, dx * dx + dy * dy);
+          const d = Math.sqrt(d2);
+          const a = p.mass / d2;
+          vx += (dx / d) * a * dt;
+          vy += (dy / d) * a * dt;
+        }
+        x += vx * dt; y += vy * dt;
+        pts.push({ x, y });
+      }
+      return pts;
+    }
+
+    let last = performance.now();
+    function loop(now) {
+      const dt = Math.min(0.032, (now - last) / 1000);
+      last = now;
+      const lv = LEVELS[levelIdx];
+
+      if (probe && probe.active) {
+        const sub = 4, sdt = dt / sub;
+        for (let s = 0; s < sub; s++) {
+          for (const p of lv.planets) {
+            const px = p.x * W, py = p.y * H;
+            const dx = px - probe.x, dy = py - probe.y;
+            const d2 = Math.max(400, dx * dx + dy * dy);
+            const d = Math.sqrt(d2);
+            if (d < p.r + 6) {
+              probe.active = false;
+              statusEl.textContent = "撞上行星表面！微调仰角再试一次。";
+              break;
+            }
+            const a = p.mass / d2;
+            probe.vx += (dx / d) * a * sdt;
+            probe.vy += (dy / d) * a * sdt;
+          }
+          if (!probe.active) break;
+          probe.x += probe.vx * sdt;
+          probe.y += probe.vy * sdt;
+          const tx = lv.target[0] * W, ty = lv.target[1] * H;
+          if (Math.hypot(probe.x - tx, probe.y - ty) < lv.target[2] + 6) {
+            probe.active = false;
+            statusEl.textContent = "送达成功！点击「下一关」挑战新星系。";
+            break;
+          }
+          if (probe.x < -80 || probe.x > W + 80 || probe.y < -80 || probe.y > H + 80) {
+            probe.active = false;
+            statusEl.textContent = "飞出星系边界了，调整初速后再发射。";
+            break;
+          }
+        }
+        trail.push({ x: probe.x, y: probe.y });
+        if (trail.length > 260) trail.shift();
+      }
+
+      ctx.fillStyle = "#080d18";
+      ctx.fillRect(0, 0, W, H);
+
+      // Stars
+      ctx.fillStyle = "rgba(220,235,255,0.45)";
+      for (let i = 0; i < 90; i++) {
+        ctx.fillRect(((i * 97) % 100) / 100 * W, ((i * 53) % 100) / 100 * H, 1.5, 1.5);
+      }
+
+      // Preview trajectory
+      const preview = predictPath(lv);
+      ctx.setLineDash([4, 6]);
+      ctx.strokeStyle = "rgba(244, 185, 66, 0.45)";
+      ctx.lineWidth = 1.6;
+      ctx.beginPath();
+      preview.forEach((pt, idx) => (idx === 0 ? ctx.moveTo(pt.x, pt.y) : ctx.lineTo(pt.x, pt.y)));
+      ctx.stroke();
+      ctx.setLineDash([]);
+
+      // Target beacon
+      const tx = lv.target[0] * W, ty = lv.target[1] * H, tr = lv.target[2];
+      const pulse = 1 + 0.14 * Math.sin(now * 0.005);
+      ctx.strokeStyle = "rgba(247, 210, 122, 0.7)";
+      ctx.lineWidth = 2.5;
+      ctx.beginPath(); ctx.arc(tx, ty, tr * pulse, 0, Math.PI * 2); ctx.stroke();
+      ctx.fillStyle = "rgba(247, 210, 122, 0.22)";
+      ctx.fill();
+
+      // Planets
+      for (const p of lv.planets) {
+        const px = p.x * W, py = p.y * H;
+        const g = ctx.createRadialGradient(px, py, p.r, px, py, p.r * 3.1);
+        g.addColorStop(0, "rgba(110, 180, 240, 0.25)");
+        g.addColorStop(1, "rgba(110, 180, 240, 0)");
+        ctx.fillStyle = g;
+        ctx.beginPath(); ctx.arc(px, py, p.r * 3.1, 0, Math.PI * 2); ctx.fill();
+
+        ctx.fillStyle = p.col;
+        ctx.beginPath(); ctx.arc(px, py, p.r, 0, Math.PI * 2); ctx.fill();
+      }
+
+      // Launcher pad
+      const sx = lv.start[0] * W, sy = lv.start[1] * H;
+      ctx.fillStyle = "#e0e7f5";
+      ctx.beginPath(); ctx.arc(sx, sy, 8, 0, Math.PI * 2); ctx.fill();
+
+      // Actual trail & probe
+      if (trail.length > 1) {
+        ctx.strokeStyle = "#ff7f50";
+        ctx.lineWidth = 2.4;
+        ctx.beginPath();
+        trail.forEach((pt, idx) => (idx === 0 ? ctx.moveTo(pt.x, pt.y) : ctx.lineTo(pt.x, pt.y)));
+        ctx.stroke();
+      }
+      if (probe) {
+        ctx.fillStyle = "#ffffff";
+        ctx.beginPath(); ctx.arc(probe.x, probe.y, 5.5, 0, Math.PI * 2); ctx.fill();
+      }
+
+      requestAnimationFrame(loop);
+    }
+    requestAnimationFrame(loop);
+  </script>
+</body>
+</html>

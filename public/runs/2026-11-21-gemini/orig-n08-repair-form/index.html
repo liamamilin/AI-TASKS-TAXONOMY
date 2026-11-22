@@ -1,0 +1,169 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>维修咖啡馆分诊单</title>
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body { background: #f3ecdf; color: #1d1916; font-family: system-ui, -apple-system, sans-serif; padding: 20px; line-height: 1.55; }
+    .wrap { max-width: 720px; margin: 0 auto; display: grid; gap: 16px; }
+    .card { background: #fffaf2; border: 1px solid #dfd3bf; border-radius: 12px; padding: 20px; }
+    h1 { font-size: 22px; margin-bottom: 6px; }
+    .field { display: grid; gap: 6px; margin-bottom: 14px; }
+    label { font-weight: 600; font-size: 14px; }
+    input[type="text"], select, textarea { width: 100%; padding: 9px 11px; border: 1px solid #cabba2; border-radius: 8px; font: inherit; background: #fff; }
+    :focus-visible { outline: 2px solid #9c3b32; outline-offset: 2px; }
+    fieldset { border: 1px solid #dfd3bf; border-radius: 8px; padding: 10px 12px; margin-bottom: 14px; }
+    legend { font-weight: 600; font-size: 14px; padding: 0 6px; }
+    .radios { display: flex; gap: 18px; margin-top: 6px; }
+    .radios label { font-weight: 400; display: inline-flex; gap: 6px; align-items: center; cursor: pointer; }
+    .err-summary { background: #fbeae8; border: 1px solid #d9827b; color: #8c241b; border-radius: 8px; padding: 10px 14px; margin-bottom: 14px; font-size: 13px; }
+    .field-err { color: #a83329; font-size: 12.5px; min-height: 18px; }
+    .bar { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 10px; }
+    button { border-radius: 999px; padding: 8px 16px; border: 1px solid #1d1916; background: #1d1916; color: #fffaf2; cursor: pointer; font: 600 13.5px inherit; }
+    button.ghost { background: transparent; color: #1d1916; border-color: #cbbba2; }
+    .result-box { background: #f8f2e7; border-left: 4px solid #9c3b32; padding: 14px; border-radius: 0 10px 10px 0; display: grid; gap: 6px; font-size: 14px; }
+  </style>
+</head>
+<body>
+  <main class="wrap">
+    <section class="card" id="form-card">
+      <h1>维修咖啡馆分诊单（虚构离线原型）</h1>
+      <p style="font-size:13px;color:#62584d;margin-bottom:14px;">仅做规则分流演示，不提供真实维修建议，不收集姓名或联系方式，不向服务器提交。</p>
+      <div id="err-summary" class="err-summary" hidden role="alert" tabindex="-1"></div>
+      <form id="triage-form" novalidate>
+        <div class="field">
+          <label for="f-item">物品名称（必填，不超过 40 字）</label>
+          <input id="f-item" name="item" type="text" aria-describedby="err-item">
+          <span class="field-err" id="err-item"></span>
+        </div>
+        <div class="field">
+          <label for="f-cat">类别</label>
+          <select id="f-cat" name="category">
+            <option value="纸品">纸品</option>
+            <option value="布艺">布艺</option>
+            <option value="其他">其他</option>
+          </select>
+        </div>
+        <fieldset aria-describedby="err-hazard">
+          <legend>是否涉及发热、带电或危险部件？（必选）</legend>
+          <div class="radios">
+            <label><input type="radio" name="hazard" value="否"> 否</label>
+            <label><input type="radio" name="hazard" value="是"> 是</label>
+          </div>
+          <span class="field-err" id="err-hazard"></span>
+        </fieldset>
+        <div class="field">
+          <label for="f-note">补充说明（选填，不超过 100 字）</label>
+          <textarea id="f-note" name="note" rows="3" aria-describedby="err-note"></textarea>
+          <span class="field-err" id="err-note"></span>
+        </div>
+        <div class="bar">
+          <button type="submit">生成分诊回执</button>
+          <button type="button" class="ghost" data-case="0">填样例1（折角书签）</button>
+          <button type="button" class="ghost" data-case="1">填样例2（布袋）</button>
+          <button type="button" class="ghost" data-case="2">填样例3（发热模型）</button>
+          <button type="button" class="ghost" data-case="3">填样例4（木片）</button>
+        </div>
+      </form>
+    </section>
+
+    <section class="card" id="receipt-card" hidden>
+      <h1>分诊回执</h1>
+      <div class="result-box" id="receipt-body" style="margin:12px 0;"></div>
+      <div class="bar">
+        <button type="button" id="dl">下载 receipt.json</button>
+        <button type="button" class="ghost" id="back">返回修改</button>
+      </div>
+    </section>
+  </main>
+  <script>
+    const CASES = [
+      { item: "折角书签", category: "纸品", hazard: "否", note: "边角轻微折损" },
+      { item: "布袋", category: "布艺", hazard: "否", note: "提手开线" },
+      { item: "发热装置模型", category: "纸品", hazard: "是", note: "含发热部件" },
+      { item: "木片", category: "其他", hazard: "否", note: "表面毛刺" },
+    ];
+    let lastReceipt = null;
+    const form = document.getElementById("triage-form");
+    const formCard = document.getElementById("form-card");
+    const receiptCard = document.getElementById("receipt-card");
+
+    function triage(input) {
+      if (input.hazard === "是") return { desk: "不接收：此演示只处理无危险手工物品", rule_id: "R1_HAZARD_REJECT" };
+      if (input.category === "纸品") return { desk: "纸艺桌", rule_id: "R2_PAPER_DESK" };
+      if (input.category === "布艺") return { desk: "缝补桌", rule_id: "R3_FABRIC_DESK" };
+      return { desk: "咨询桌", rule_id: "R4_GENERAL_DESK" };
+    }
+
+    document.querySelectorAll("[data-case]").forEach((btn) => {
+      btn.addEventListener("click", () => {
+        const c = CASES[Number(btn.dataset.case)];
+        document.getElementById("f-item").value = c.item;
+        document.getElementById("f-cat").value = c.category;
+        document.querySelectorAll('input[name="hazard"]').forEach((r) => { r.checked = r.value === c.hazard; });
+        document.getElementById("f-note").value = c.note;
+      });
+    });
+
+    form.addEventListener("submit", (e) => {
+      e.preventDefault();
+      const item = document.getElementById("f-item").value.trim();
+      const category = document.getElementById("f-cat").value;
+      const hazardEl = document.querySelector('input[name="hazard"]:checked');
+      const hazard = hazardEl ? hazardEl.value : "";
+      const note = document.getElementById("f-note").value.trim();
+
+      const errs = [];
+      document.getElementById("err-item").textContent = "";
+      document.getElementById("err-hazard").textContent = "";
+      document.getElementById("err-note").textContent = "";
+
+      if (!item) { const m = "物品名称为必填项。"; document.getElementById("err-item").textContent = m; errs.push(m); }
+      else if (Array.from(item).length > 40) { const m = "物品名称不能超过 40 字。"; document.getElementById("err-item").textContent = m; errs.push(m); }
+      if (!hazard) { const m = "必须选择是否涉及危险部件。"; document.getElementById("err-hazard").textContent = m; errs.push(m); }
+      if (Array.from(note).length > 100) { const m = "补充说明不能超过 100 字。"; document.getElementById("err-note").textContent = m; errs.push(m); }
+
+      const sumEl = document.getElementById("err-summary");
+      if (errs.length) {
+        sumEl.hidden = false;
+        sumEl.innerHTML = `<strong>提交未通过（共 ${errs.length} 项错误，已保留原填内容）：</strong><ul>${errs.map((x) => `<li>${x}</li>`).join("")}</ul>`;
+        sumEl.focus();
+        return;
+      }
+      sumEl.hidden = true;
+      const input = { item, category, hazard, note };
+      const decision = triage(input);
+      lastReceipt = { input, decision };
+      const body = document.getElementById("receipt-body");
+      body.innerHTML = "";
+      [
+        ["物品", item],
+        ["类别", category],
+        ["危险部件", hazard],
+        ["说明", note || "（无）"],
+        ["分流结果", decision.desk],
+        ["命中规则", decision.rule_id],
+      ].forEach(([k, v]) => {
+        const p = document.createElement("p");
+        const b = document.createElement("strong"); b.textContent = `${k}：`;
+        p.appendChild(b); p.appendChild(document.createTextNode(v));
+        body.appendChild(p);
+      });
+      formCard.hidden = true; receiptCard.hidden = false;
+    });
+
+    document.getElementById("back").addEventListener("click", () => {
+      receiptCard.hidden = true; formCard.hidden = false;
+      document.getElementById("f-item").focus();
+    });
+    document.getElementById("dl").addEventListener("click", () => {
+      if (!lastReceipt) return;
+      const a = document.createElement("a");
+      a.href = URL.createObjectURL(new Blob([JSON.stringify(lastReceipt, null, 2)], { type: "application/json" }));
+      a.download = "receipt.json"; a.click(); URL.revokeObjectURL(a.href);
+    });
+  </script>
+</body>
+</html>
