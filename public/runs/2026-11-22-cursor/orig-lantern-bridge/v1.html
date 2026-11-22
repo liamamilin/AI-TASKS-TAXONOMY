@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>灯笼桥</title>
+<style>
+  html, body { margin: 0; background: #9fd0ea; }
+  svg { width: min(100vw, 960px); height: auto; display: block; margin: 0 auto; }
+  .lantern { transform-box: fill-box; transform-origin: center top; animation: sway 2.4s ease-in-out infinite; }
+  .reflection { opacity: 0.28; }
+  @keyframes sway {
+    0%, 100% { transform: rotate(-7deg); }
+    50% { transform: rotate(7deg); }
+  }
+</style>
+</head>
+<body>
+<svg id="scene" viewBox="0 0 960 540" role="img">
+  <rect width="960" height="300" fill="#9fd0ea"/>
+  <rect y="300" width="960" height="240" fill="#7eb6c9"/>
+  <path d="M80 250 C 200 250 220 390 480 390 C 740 390 760 250 880 250 L 880 430 L 80 430 Z" fill="#b7aa96"/>
+  <path d="M120 250 H840" stroke="#8d7b66" stroke-width="18"/>
+  <path d="M700 150 H900 L860 210 H740 Z" fill="#8e3b32"/>
+  <path d="M760 210 H860 V230 H760 Z" fill="#6e4b32"/>
+  <g class="lantern" id="lantern-1">
+    <line x1="220" y1="232" x2="220" y2="268" stroke="#5c3b2e" stroke-width="2"/>
+    <rect x="200" y="268" width="40" height="52" rx="8" fill="#d23b3b"/>
+    <rect x="206" y="262" width="28" height="8" fill="#e6c36a"/>
+  </g>
+  <g class="lantern" id="lantern-2">
+    <line x1="400" y1="300" x2="400" y2="336" stroke="#5c3b2e" stroke-width="2"/>
+    <rect x="380" y="336" width="40" height="52" rx="8" fill="#d23b3b"/>
+    <rect x="386" y="330" width="28" height="8" fill="#e6c36a"/>
+  </g>
+  <g class="lantern" id="lantern-3">
+    <line x1="580" y1="300" x2="580" y2="336" stroke="#5c3b2e" stroke-width="2"/>
+    <rect x="560" y="336" width="40" height="52" rx="8" fill="#d23b3b"/>
+    <rect x="566" y="330" width="28" height="8" fill="#e6c36a"/>
+  </g>
+  <g class="lantern" id="lantern-4">
+    <line x1="810" y1="230" x2="810" y2="268" stroke="#5c3b2e" stroke-width="2"/>
+    <rect x="790" y="268" width="40" height="52" rx="8" fill="#d23b3b"/>
+    <rect x="796" y="262" width="28" height="8" fill="#e6c36a"/>
+  </g>
+  <g class="reflection" id="reflection-1">
+    <ellipse cx="400" cy="470" rx="18" ry="8" fill="#d23b3b"/>
+  </g>
+  <g class="reflection" id="reflection-2">
+    <ellipse cx="580" cy="478" rx="18" ry="8" fill="#d23b3b"/>
+  </g>
+</svg>
+</body>
+</html>

@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>三盏灯</title>
+<style>
+  html, body { margin: 0; background: #f7f3eb; color: #1c1915; font-family: Georgia, "Songti SC", serif; }
+  main { max-width: 40rem; margin: 0 auto; padding: 1.25rem; }
+  .row { display: flex; gap: 1rem; justify-content: space-between; }
+  .lamp { width: 28%; min-height: 8rem; border: 2px solid #1c1915; background: #2a2724; color: #d9d0c3; display: grid; place-items: center; }
+  .lamp.on { background: #f3d36b; color: #1c1915; }
+  .buttons { display: flex; flex-wrap: wrap; gap: 0.5rem; margin-top: 1rem; }
+  button { font: inherit; background: #1c1915; color: #fff; border: 0; padding: 0.55rem 0.9rem; }
+</style>
+</head>
+<body>
+<main>
+  <div class="row">
+    <div class="lamp" id="l1">灭</div>
+    <div class="lamp" id="l2">灭</div>
+    <div class="lamp" id="l3">灭</div>
+  </div>
+  <div class="buttons">
+    <button id="a" type="button">A 切换一二</button>
+    <button id="b" type="button">B 切换二三</button>
+    <button id="c" type="button">C 切换一三</button>
+  </div>
+</main>
+<script>
+const on = [false, false, false]
+const lamps = [document.getElementById("l1"), document.getElementById("l2"), document.getElementById("l3")]
+function paint() {
+  lamps.forEach((lamp, index) => {
+    lamp.classList.toggle("on", on[index])
+    lamp.textContent = on[index] ? "亮" : "灭"
+  })
+}
+function toggle(indexes) {
+  indexes.forEach((index) => { on[index] = !on[index] })
+  paint()
+}
+document.getElementById("a").onclick = () => toggle([0, 1])
+document.getElementById("b").onclick = () => toggle([1, 2])
+document.getElementById("c").onclick = () => toggle([0, 2])
+paint()
+window.__lamps = () => on.slice()
+</script>
+</body>
+</html>

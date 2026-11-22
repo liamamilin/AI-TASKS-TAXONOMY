@@ -1,0 +1,166 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>手势粒子</title>
+<style>
+  html, body { margin: 0; background: #12141a; color: #f4efe6; font-family: Georgia, sans-serif; }
+  canvas { width: 100%; height: 68vh; display: block; }
+  .bar { display: flex; flex-wrap: wrap; gap: 0.4rem; align-items: center; padding: 0.5rem; }
+  button, input { font: inherit; }
+  button { background: #f4efe6; color: #1c1915; border: 0; padding: 0.4rem 0.65rem; }
+  #note { margin: 0; flex-basis: 100%; }
+</style>
+</head>
+<body>
+<canvas id="c"></canvas>
+<div class="bar">
+  <button type="button" data-shape="heart">爱心</button>
+  <button type="button" data-shape="flower">花</button>
+  <button type="button" data-shape="saturn">土星</button>
+  <button type="button" data-shape="buddha">坐像</button>
+  <button type="button" data-shape="fireworks">烟花</button>
+  <label>颜色 <input id="color" type="color" value="#e7c56a"></label>
+  <button id="camera" type="button">打开摄像头</button>
+  <p id="note">粒子大小只接受手部关键点。此页不会自动申请摄像头。</p>
+</div>
+<video id="cam" playsinline style="display:none"></video>
+<script src="https://cdn.jsdelivr.net/npm/@mediapipe/hands/hands.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+<script>
+const shapes = {
+  heart(i, n) {
+    const t = (i / n) * Math.PI * 2;
+    return [16 * Math.sin(t) ** 3, 13 * Math.cos(t) - 5 * Math.cos(2 * t) - 2 * Math.cos(3 * t) - Math.cos(4 * t), (i % 7) - 3];
+  },
+  flower(i, n) {
+    const t = (i / n) * Math.PI * 2;
+    const r = 6 + 4 * Math.cos(5 * t);
+    return [Math.cos(t) * r, Math.sin(t) * r, (i % 5) - 2];
+  },
+  saturn(i, n) {
+    const t = (i / n) * Math.PI * 2;
+    if (i % 4 === 0) return [Math.cos(t) * 4, (i % 9) - 4, Math.sin(t) * 4];
+    return [Math.cos(t) * 10, Math.sin(t) * 1.2, Math.sin(t) * 3];
+  },
+  buddha(i, n) {
+    const row = i % 10;
+    const y = (i / n) * 16 - 8;
+    const r = y > 4 ? 2.2 : y > -2 ? 4.5 : 6.5;
+    const t = row / 10 * Math.PI * 2;
+    return [Math.cos(t) * r, y, Math.sin(t) * r * 0.6];
+  },
+  fireworks(i, n) {
+    const t = (i / n) * Math.PI * 2;
+    const u = ((i * 17) % n) / n;
+    const r = 3 + u * 9;
+    return [Math.cos(t) * r, Math.sin(t * 3) * r * 0.6, Math.sin(t) * r];
+  }
+};
+const count = 900;
+const positions = new Float32Array(count * 3);
+let shape = "heart";
+let spread = 1;
+function fill(name, scale) {
+  for (let i = 0; i < count; i++) {
+    const p = shapes[name](i, count);
+    positions[i * 3] = p[0] * scale;
+    positions[i * 3 + 1] = p[1] * scale;
+    positions[i * 3 + 2] = p[2] * scale;
+  }
+}
+fill(shape, spread);
+const canvas = document.getElementById("c");
+const renderer = new THREE.WebGLRenderer({ canvas, antialias: false });
+const scene = new THREE.Scene();
+scene.background = new THREE.Color(0x12141a);
+const camera = new THREE.PerspectiveCamera(60, 1, 0.1, 200);
+camera.position.set(0, 0, 36);
+const geo = new THREE.BufferGeometry();
+geo.setAttribute("position", new THREE.BufferAttribute(positions, 3));
+const material = new THREE.PointsMaterial({ color: 0xe7c56a, size: 0.28 });
+const points = new THREE.Points(geo, material);
+scene.add(points);
+const state = { shape, spread, handsReady: false, handsError: "", landmarks: 0, cameraOpened: false, fixture: "未送入" };
+let hands = null;
+function openness(landmarks) {
+  if (!landmarks || landmarks.length < 2) return null;
+  const wrists = landmarks.map((hand) => hand[0]);
+  const dx = wrists[0].x - wrists[1].x;
+  const dy = wrists[0].y - wrists[1].y;
+  return Math.min(2.4, Math.max(0.35, Math.hypot(dx, dy) * 3));
+}
+function applySpread(next) {
+  if (next == null || Math.abs(next - spread) < 0.02) return;
+  spread = next;
+  fill(shape, spread);
+  geo.attributes.position.needsUpdate = true;
+  state.spread = spread;
+}
+async function bootHands() {
+  if (!window.Hands) { state.handsError = "检测脚本没有载入"; return; }
+  try {
+    hands = new Hands({ locateFile: (file) => "https://cdn.jsdelivr.net/npm/@mediapipe/hands/" + file });
+    hands.setOptions({ maxNumHands: 2, modelComplexity: 0, minDetectionConfidence: 0.5, minTrackingConfidence: 0.5 });
+    hands.onResults((results) => {
+      const found = results.multiHandLandmarks || [];
+      state.landmarks = found.length;
+      applySpread(openness(found));
+    });
+    if (hands.initialize) await hands.initialize();
+    state.handsReady = true;
+  } catch (error) {
+    state.handsError = String(error && error.message || error);
+  }
+}
+bootHands();
+document.querySelectorAll("[data-shape]").forEach((button) => button.addEventListener("click", () => {
+  shape = button.getAttribute("data-shape");
+  state.shape = shape;
+  fill(shape, spread);
+  geo.attributes.position.needsUpdate = true;
+}));
+document.getElementById("color").addEventListener("input", (event) => {
+  material.color.set(event.target.value);
+});
+document.getElementById("camera").addEventListener("click", async () => {
+  state.cameraOpened = true;
+  const stream = await navigator.mediaDevices.getUserMedia({ video: true });
+  const video = document.getElementById("cam");
+  video.srcObject = stream;
+  await video.play();
+  const tick = async () => {
+    if (hands && video.readyState >= 2) await hands.send({ image: video });
+    requestAnimationFrame(tick);
+  };
+  tick();
+});
+function resize() {
+  const w = canvas.clientWidth || innerWidth;
+  const h = canvas.clientHeight || Math.floor(innerHeight * 0.68);
+  renderer.setSize(w, h, false);
+  camera.aspect = w / Math.max(1, h);
+  camera.updateProjectionMatrix();
+}
+window.addEventListener("resize", resize);
+resize();
+function frame() {
+  points.rotation.y += 0.004;
+  renderer.render(scene, camera);
+  requestAnimationFrame(frame);
+}
+requestAnimationFrame(frame);
+window.__gesture = {
+  state: () => ({ ...state, color: "#" + material.color.getHexString(), spread, shape }),
+  signature: () => positions.slice(0, 12).join(","),
+  feedCanvas: async (source) => {
+    state.fixture = "合成画面";
+    if (!hands) return { ok: false, reason: state.handsError || "检测器未就绪" };
+    await hands.send({ image: source });
+    return { ok: true, landmarks: state.landmarks, fixture: "合成画面，不是真人，也没有打开摄像头" };
+  }
+};
+</script>
+</body>
+</html>

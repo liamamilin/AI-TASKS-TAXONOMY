@@ -1,0 +1,1 @@
+create a three.js basic working version of minecraft, make your own textures, no sound. add some environment to make it more interesting, like sand, water etc.

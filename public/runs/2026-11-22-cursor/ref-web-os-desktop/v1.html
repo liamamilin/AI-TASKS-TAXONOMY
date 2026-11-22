@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>桌面</title>
+<style>
+  html, body { margin: 0; height: 100%; background: #1c3d66; color: #1c1915; font-family: Georgia, "Songti SC", sans-serif; }
+  #desk { min-height: 100vh; position: relative; background: linear-gradient(#2f6ea5, #16324f); }
+  .icons { display: flex; flex-direction: column; gap: 0.7rem; padding: 1rem; width: max-content; }
+  .icon { width: 5.5rem; color: #fff; background: transparent; border: 0; text-align: center; font: inherit; }
+  .win { position: absolute; top: 4.5rem; left: 8rem; width: min(32rem, calc(100vw - 2rem)); background: #f6f1e7; border: 1px solid #1c1915; box-shadow: 0 12px 30px rgba(0,0,0,.25); }
+  .title { display: flex; justify-content: space-between; align-items: center; background: #1c1915; color: #f6f1e7; padding: 0.35rem 0.5rem; }
+  .title button, .pad button { font: inherit; }
+  .body { padding: 0.6rem; }
+  textarea, input { width: 100%; box-sizing: border-box; font: inherit; }
+  canvas { width: 100%; height: 180px; background: #fff; border: 1px solid #1c1915; touch-action: none; }
+  .menu { position: absolute; left: 0; right: 0; bottom: 0; display: flex; gap: 0.4rem; padding: 0.4rem; background: rgba(20,16,12,.88); }
+  .menu button { font: inherit; background: #f6f1e7; border: 0; padding: 0.35rem 0.6rem; }
+  ul { margin: 0; padding-left: 1.1rem; }
+  @media (max-width: 640px) { .win { left: 0.5rem; top: 8rem; } }
+</style>
+</head>
+<body>
+<div id="desk">
+  <div class="icons">
+    <button class="icon" type="button" data-app="text">文本</button>
+    <button class="icon" type="button" data-app="files">文件</button>
+    <button class="icon" type="button" data-app="paint">画板</button>
+    <button class="icon" type="button" data-app="video">影像</button>
+  </div>
+  <section class="win" id="win" hidden>
+    <div class="title"><span id="win-title">窗口</span><button id="close" type="button">关闭</button></div>
+    <div class="body" id="win-body"></div>
+  </section>
+  <nav class="menu">
+    <button type="button" data-app="text">文本</button>
+    <button type="button" data-app="files">文件</button>
+    <button type="button" data-app="paint">画板</button>
+    <button type="button" data-app="video">影像</button>
+  </nav>
+</div>
+<script>
+const files = ["备忘.txt", "草稿.png"];
+let text = "";
+let trim = 20;
+const win = document.getElementById("win");
+const body = document.getElementById("win-body");
+function openApp(name) {
+  win.hidden = false;
+  document.getElementById("win-title").textContent = { text: "文本", files: "文件", paint: "画板", video: "影像" }[name];
+  if (name === "text") {
+    body.innerHTML = `<textarea id="editor" rows="8"></textarea>`;
+    const editor = document.getElementById("editor");
+    editor.value = text;
+    editor.addEventListener("input", () => { text = editor.value; });
+  } else if (name === "files") {
+    body.innerHTML = `<ul id="file-list"></ul><button id="new-file" type="button">新建文件</button>`;
+    const list = document.getElementById("file-list");
+    const render = () => { list.innerHTML = files.map((file) => `<li>${file}</li>`).join(""); };
+    render();
+    document.getElementById("new-file").onclick = () => { files.push("未命名" + files.length + ".txt"); render(); };
+  } else if (name === "paint") {
+    body.innerHTML = `<canvas id="board" width="480" height="180"></canvas>`;
+    const board = document.getElementById("board");
+    const ctx = board.getContext("2d");
+    ctx.fillStyle = "#fff";
+    ctx.fillRect(0, 0, board.width, board.height);
+    let drawing = false;
+    const dot = (event) => {
+      const rect = board.getBoundingClientRect();
+      const x = (event.clientX - rect.left) * board.width / rect.width;
+      const y = (event.clientY - rect.top) * board.height / rect.height;
+      ctx.fillStyle = "#9c3b32";
+      ctx.beginPath();
+      ctx.arc(x, y, 4, 0, Math.PI * 2);
+      ctx.fill();
+    };
+    board.addEventListener("pointerdown", (event) => { drawing = true; dot(event); });
+    board.addEventListener("pointermove", (event) => { if (drawing) dot(event); });
+    window.addEventListener("pointerup", () => { drawing = false; });
+  } else {
+    body.innerHTML = `<p>这里只能拖一条色块的入点，不能导入或导出真实影片。</p><input id="trim" type="range" min="0" max="80" value="${trim}"><p id="trim-label"></p>`;
+    const slider = document.getElementById("trim");
+    const label = document.getElementById("trim-label");
+    const show = () => { trim = Number(slider.value); label.textContent = "入点 " + trim; };
+    slider.addEventListener("input", show);
+    show();
+  }
+}
+document.querySelectorAll("[data-app]").forEach((button) => button.addEventListener("click", () => openApp(button.getAttribute("data-app"))));
+document.getElementById("close").onclick = () => { win.hidden = true; };
+window.__desk = {
+  open: openApp,
+  text: () => text,
+  files: () => files.slice(),
+  trim: () => trim,
+  visible: () => !win.hidden
+};
+</script>
+</body>
+</html>

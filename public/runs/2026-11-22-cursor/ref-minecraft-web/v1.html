@@ -1,0 +1,188 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>方块世界</title>
+<style>
+  html, body { margin: 0; background: #87b4d6; color: #1c1915; font-family: Georgia, sans-serif; overflow: hidden; }
+  canvas { width: 100vw; height: 78vh; display: block; }
+  .bar { display: flex; flex-wrap: wrap; gap: 0.4rem; align-items: center; padding: 0.45rem; }
+  button, select { font: inherit; background: #1c1915; color: #fff; border: 0; padding: 0.4rem 0.65rem; }
+</style>
+</head>
+<body>
+<canvas id="c"></canvas>
+<div class="bar">
+  <span id="hud">方块</span>
+  <button id="forward" type="button">前进</button>
+  <button id="back" type="button">后退</button>
+  <button id="look" type="button">转身</button>
+  <button id="dig" type="button">挖掉前方</button>
+  <button id="put" type="button">放下方块</button>
+  <select id="kind"><option value="4">沙</option><option value="2">土</option><option value="3">石</option><option value="1">草</option></select>
+</div>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+<script>
+const N = 24, H = 6, AIR = 0, GRASS = 1, DIRT = 2, STONE = 3, SAND = 4, WATER = 5;
+const cells = new Uint8Array(N * H * N);
+const index = (x, y, z) => (y * N + z) * N + x;
+const inside = (x, y, z) => x >= 0 && y >= 0 && z >= 0 && x < N && y < H && z < N;
+function get(x, y, z) { return inside(x, y, z) ? cells[index(x, y, z)] : 0; }
+function set(x, y, z, type) { if (inside(x, y, z)) cells[index(x, y, z)] = type; }
+for (let x = 0; x < N; x++) {
+  for (let z = 0; z < N; z++) {
+    const hill = 1 + ((x + z) % 3 === 0 ? 1 : 0);
+    for (let y = 0; y < hill; y++) set(x, y, z, y === hill - 1 ? GRASS : DIRT);
+    set(x, 0, z, STONE);
+    if (x > 16) set(x, hill - 1, z, SAND);
+    if (x < 5 && z < 5) {
+      set(x, 0, z, STONE);
+      set(x, 1, z, WATER);
+      set(x, 2, z, AIR);
+    }
+  }
+}
+function paint(draw, color) {
+  const board = document.createElement("canvas");
+  board.width = board.height = 16;
+  const g = board.getContext("2d");
+  g.fillStyle = color;
+  g.fillRect(0, 0, 16, 16);
+  draw(g);
+  const texture = new THREE.CanvasTexture(board);
+  texture.magFilter = THREE.NearestFilter;
+  texture.minFilter = THREE.NearestFilter;
+  return texture;
+}
+const materials = {
+  1: new THREE.MeshLambertMaterial({ map: paint((g) => { g.fillStyle = "#3f7d32"; g.fillRect(0, 0, 16, 5); }, "#6b8f3a") }),
+  2: new THREE.MeshLambertMaterial({ map: paint((g) => { g.fillStyle = "#4a3424"; g.fillRect(2, 3, 3, 3); }, "#7a5a3a") }),
+  3: new THREE.MeshLambertMaterial({ map: paint((g) => { g.fillStyle = "#9aa0a6"; g.fillRect(1, 1, 6, 6); }, "#7d848c") }),
+  4: new THREE.MeshLambertMaterial({ map: paint((g) => { g.fillStyle = "#e6d39a"; g.fillRect(0, 0, 8, 8); }, "#d8c07a") }),
+  5: new THREE.MeshLambertMaterial({ map: paint((g) => { g.fillStyle = "#d5f2ff"; g.fillRect(0, 10, 16, 3); }, "#3d7ea6"), transparent: true, opacity: 0.72 })
+};
+const canvas = document.getElementById("c");
+const renderer = new THREE.WebGLRenderer({ canvas, antialias: false });
+const scene = new THREE.Scene();
+scene.background = new THREE.Color(0x8ec6ea);
+scene.add(new THREE.AmbientLight(0xffffff, 0.65));
+const sun = new THREE.DirectionalLight(0xfff4e0, 0.8);
+sun.position.set(10, 20, 8);
+scene.add(sun);
+const camera = new THREE.PerspectiveCamera(70, 1, 0.1, 80);
+const group = new THREE.Group();
+scene.add(group);
+const meshes = new Map();
+const geo = new THREE.BoxGeometry(1, 1, 1);
+function rebuild() {
+  group.clear();
+  meshes.clear();
+  for (let y = 0; y < H; y++) for (let z = 0; z < N; z++) for (let x = 0; x < N; x++) {
+    const type = get(x, y, z);
+    if (!type) continue;
+    const mesh = new THREE.Mesh(geo, materials[type]);
+    mesh.position.set(x + 0.5, y + 0.5, z + 0.5);
+    group.add(mesh);
+    meshes.set(index(x, y, z), mesh);
+  }
+}
+rebuild();
+const player = { x: 12.2, y: 3, z: 12.2, yaw: 0, pitch: 0, vy: 0 };
+const keys = {};
+function hold(id, key) {
+  const button = document.getElementById(id);
+  button.addEventListener("pointerdown", (event) => { keys[key] = true; event.preventDefault(); });
+  button.addEventListener("pointerup", () => { keys[key] = false; });
+  button.addEventListener("pointerleave", () => { keys[key] = false; });
+}
+hold("forward", "w");
+hold("back", "s");
+hold("look", "ArrowRight");
+window.addEventListener("keydown", (event) => { keys[event.key] = true; if (event.key === "x") dig(); if (event.key === "c") put(); });
+window.addEventListener("keyup", (event) => { keys[event.key] = false; });
+function solidAt(x, y, z) {
+  const type = get(Math.floor(x), Math.floor(y), Math.floor(z));
+  return type && type !== WATER;
+}
+function frontCell() {
+  const dx = Math.sin(player.yaw);
+  const dz = Math.cos(player.yaw);
+  return [Math.floor(player.x + dx * 1.2), Math.floor(player.y + 0.2), Math.floor(player.z + dz * 1.2)];
+}
+function counts() {
+  const tally = { grass: 0, dirt: 0, stone: 0, sand: 0, water: 0 };
+  const names = [, "grass", "dirt", "stone", "sand", "water"];
+  for (const type of cells) if (names[type]) tally[names[type]]++;
+  return tally;
+}
+function dig() {
+  const [x, y, z] = frontCell();
+  const type = get(x, y, z);
+  if (!type || type === WATER) return false;
+  set(x, y, z, AIR);
+  const mesh = meshes.get(index(x, y, z));
+  if (mesh) { group.remove(mesh); meshes.delete(index(x, y, z)); }
+  return true;
+}
+function put() {
+  const [x, y, z] = frontCell();
+  if (!inside(x, y, z) || get(x, y, z)) return false;
+  const type = Number(document.getElementById("kind").value);
+  set(x, y, z, type);
+  const mesh = new THREE.Mesh(geo, materials[type]);
+  mesh.position.set(x + 0.5, y + 0.5, z + 0.5);
+  group.add(mesh);
+  meshes.set(index(x, y, z), mesh);
+  return true;
+}
+document.getElementById("dig").onclick = dig;
+document.getElementById("put").onclick = put;
+let last = performance.now();
+function frame(now) {
+  const dt = Math.min(0.05, (now - last) / 1000);
+  last = now;
+  if (keys.ArrowLeft) player.yaw += 1.6 * dt;
+  if (keys.ArrowRight) player.yaw -= 1.6 * dt;
+  if (keys.ArrowUp) player.pitch = Math.min(1.1, player.pitch + dt);
+  if (keys.ArrowDown) player.pitch = Math.max(-1.1, player.pitch - dt);
+  const speed = 4.2 * dt;
+  let nx = player.x, nz = player.z;
+  if (keys.w || keys.W) { nx += Math.sin(player.yaw) * speed; nz += Math.cos(player.yaw) * speed; }
+  if (keys.s || keys.S) { nx -= Math.sin(player.yaw) * speed; nz -= Math.cos(player.yaw) * speed; }
+  if (!solidAt(nx, player.y, player.z) && !solidAt(nx, player.y + 0.9, player.z)) player.x = nx;
+  if (!solidAt(player.x, player.y, nz) && !solidAt(player.x, player.y + 0.9, nz)) player.z = nz;
+  player.vy = Math.max(-12, player.vy - 18 * dt);
+  let ny = player.y + player.vy * dt;
+  if (solidAt(player.x, ny, player.z)) {
+    if (player.vy < 0) ny = Math.floor(player.y);
+    player.vy = 0;
+  }
+  player.y = Math.max(0.05, ny);
+  const eye = player.y + 1.55;
+  camera.position.set(player.x, eye, player.z);
+  camera.lookAt(player.x + Math.sin(player.yaw) * Math.cos(player.pitch), eye + Math.sin(player.pitch), player.z + Math.cos(player.yaw) * Math.cos(player.pitch));
+  document.getElementById("hud").textContent = "沙 " + counts().sand + " 水 " + counts().water;
+  renderer.render(scene, camera);
+  requestAnimationFrame(frame);
+}
+function resize() {
+  const w = canvas.clientWidth || innerWidth;
+  const h = canvas.clientHeight || Math.floor(innerHeight * 0.78);
+  renderer.setSize(w, h, false);
+  camera.aspect = w / Math.max(1, h);
+  camera.updateProjectionMatrix();
+}
+window.addEventListener("resize", resize);
+resize();
+requestAnimationFrame(frame);
+window.__vox = {
+  pos: () => ({ x: player.x, y: player.y, z: player.z, yaw: player.yaw, pitch: player.pitch }),
+  counts,
+  audio: () => document.querySelectorAll("audio").length,
+  textureIsCanvas: () => materials[4].map.image instanceof HTMLCanvasElement && materials[5].map.image instanceof HTMLCanvasElement,
+  front: () => frontCell().concat(get(...frontCell()))
+};
+</script>
+</body>
+</html>

@@ -981,6 +981,269 @@
       "artifact": "runs/2026-11-22-cursor/ref-starship-control-panel/v1.html",
       "artifactSha256": "a3fbd7b0e79718d91cda0e1e6f77cf117e83dd27a99df5ad4c35b767eb98ffb3",
       "rawOutput": "首次完整产物是 runs/2026-11-22-cursor/ref-starship-control-panel/v1.html，SHA-256 a3fbd7b0e79718d91cda0e1e6f77cf117e83dd27a99df5ad4c35b767eb98ffb3。该文件没有被后来的修改覆盖。"
+    },
+    {
+      "executionClass": "cursor-assisted-with-tools",
+      "label": "Cursor辅助执行/含工具",
+      "provider": "Cursor Cloud Agent",
+      "model": "grok-4.7-high-fast",
+      "modelVersion": "Cursor run-info.originalModelName=grok-4.7-high-fast。没有供应商 HTTP 响应体，没有 token 统计。",
+      "context": "会话 https://cursor.com/agents/bc-df9f393a-ecdc-5142-98e1-44f568293069 已加载 AI-TASKS-TAXONOMY 仓库和先前对话。这不是隔离盲测，也不是裸 API 单轮。",
+      "environment": "Cursor Cloud Agent，Linux。检查用本机 Google Chrome headless。未调用外部模型 API，未使用密钥，未打开摄像头。",
+      "parameters": "无温度、无 max_tokens。执行中可以读写本仓库，并用浏览器查看产物。",
+      "startedAt": "2026-11-22T02:49:50Z",
+      "endedAt": "2026-11-22T02:49:58Z",
+      "repairs": [],
+      "revision": "v1",
+      "status": "success",
+      "checks": [
+        {
+          "name": "数得清四盏灯笼和两团倒影",
+          "pass": true,
+          "evidence": "灯笼元素 4 个，倒影 2 个。三盏沿桥从左到右，第四盏在右侧屋檐下。倒影在水面更低的位置。"
+        },
+        {
+          "name": "灯笼在摇",
+          "pass": true,
+          "evidence": "动画名是 sway。400 毫秒后四盏的 transform 与起始不同。"
+        },
+        {
+          "name": "倒影比灯笼淡",
+          "pass": true,
+          "evidence": "倒影不透明度 0.28，灯笼是 1。画面里倒影是两小团淡色。"
+        },
+        {
+          "name": "断网打开仍然能看",
+          "pass": true,
+          "evidence": "页面没有外链脚本、样式、图片或字体。"
+        }
+      ],
+      "id": "cursor-orig-lantern-bridge-v1",
+      "taskId": "orig-lantern-bridge",
+      "promptSha256": "0b008829ab294f2540dda3fe025cd1826e4f8778bdeabb9a71a1ea162245bfcb",
+      "artifact": "runs/2026-11-22-cursor/orig-lantern-bridge/v1.html",
+      "artifactSha256": "632bb5c0a239afdfcc9e9143036c47c4b30ce064fd42cf392aa3900d56c36a3c",
+      "rawOutput": "首次完整产物是 runs/2026-11-22-cursor/orig-lantern-bridge/v1.html，SHA-256 632bb5c0a239afdfcc9e9143036c47c4b30ce064fd42cf392aa3900d56c36a3c。该文件没有被后来的修改覆盖。"
+    },
+    {
+      "executionClass": "cursor-assisted-with-tools",
+      "label": "Cursor辅助执行/含工具",
+      "provider": "Cursor Cloud Agent",
+      "model": "grok-4.7-high-fast",
+      "modelVersion": "Cursor run-info.originalModelName=grok-4.7-high-fast。没有供应商 HTTP 响应体，没有 token 统计。",
+      "context": "会话 https://cursor.com/agents/bc-df9f393a-ecdc-5142-98e1-44f568293069 已加载 AI-TASKS-TAXONOMY 仓库和先前对话。这不是隔离盲测，也不是裸 API 单轮。",
+      "environment": "Cursor Cloud Agent，Linux。检查用本机 Google Chrome headless。未调用外部模型 API，未使用密钥，未打开摄像头。",
+      "parameters": "无温度、无 max_tokens。执行中可以读写本仓库，并用浏览器查看产物。",
+      "startedAt": "2026-11-22T02:49:59Z",
+      "endedAt": "2026-11-22T02:50:02Z",
+      "repairs": [],
+      "revision": "v1",
+      "status": "success",
+      "checks": [
+        {
+          "name": "打开时三盏都灭",
+          "pass": true,
+          "evidence": "初始状态是灭、灭、灭。"
+        },
+        {
+          "name": "只按 A 后第一和第二盏亮",
+          "pass": true,
+          "evidence": "按 A 后是亮、亮、灭。"
+        },
+        {
+          "name": "在此基础上按 C 后，亮着的是第二和第三盏",
+          "pass": true,
+          "evidence": "再按 C 后是灭、亮、亮。亮的灯是黄底，灭的灯是深底。"
+        },
+        {
+          "name": "再按一次 A 能把第二盏关掉",
+          "pass": true,
+          "evidence": "再按 A 后是亮、灭、亮，第二盏从亮变成灭。另开一页只按 B，结果是灭、亮、亮。没有外部脚本。"
+        }
+      ],
+      "id": "cursor-orig-three-lamps-v1",
+      "taskId": "orig-three-lamps",
+      "promptSha256": "b22a09957cbb47dd93676a47cac883d611c9e4b53b4558cb2ada4ae6b8164411",
+      "artifact": "runs/2026-11-22-cursor/orig-three-lamps/v1.html",
+      "artifactSha256": "8780b503c8f0169bfdc658d4a121ae14af8393437684a0ebe866f748c0d8b0f2",
+      "rawOutput": "首次完整产物是 runs/2026-11-22-cursor/orig-three-lamps/v1.html，SHA-256 8780b503c8f0169bfdc658d4a121ae14af8393437684a0ebe866f748c0d8b0f2。该文件没有被后来的修改覆盖。"
+    },
+    {
+      "executionClass": "cursor-assisted-with-tools",
+      "label": "Cursor辅助执行/含工具",
+      "provider": "Cursor Cloud Agent",
+      "model": "grok-4.7-high-fast",
+      "modelVersion": "Cursor run-info.originalModelName=grok-4.7-high-fast。没有供应商 HTTP 响应体，没有 token 统计。",
+      "context": "会话 https://cursor.com/agents/bc-df9f393a-ecdc-5142-98e1-44f568293069 已加载 AI-TASKS-TAXONOMY 仓库和先前对话。这不是隔离盲测，也不是裸 API 单轮。",
+      "environment": "Cursor Cloud Agent，Linux。检查用本机 Google Chrome headless。未调用外部模型 API，未使用密钥，未打开摄像头。",
+      "parameters": "无温度、无 max_tokens。执行中可以读写本仓库，并用浏览器查看产物。",
+      "startedAt": "2026-11-22T02:50:04Z",
+      "endedAt": "2026-11-22T02:50:08Z",
+      "repairs": [],
+      "revision": "v1",
+      "status": "success",
+      "checks": [
+        {
+          "name": "看得到城市",
+          "pass": true,
+          "evidence": "72 栋楼。截图是一片高低不同的楼群。"
+        },
+        {
+          "name": "看得到陨石接近",
+          "pass": true,
+          "evidence": "0.7 秒时陨石在高处 [14.1, 22.5, -6.3]，2.1 秒时落到 [6.0, 11.3, -2.7]，还没有撞击。"
+        },
+        {
+          "name": "发生一次看得见的撞击",
+          "pass": true,
+          "evidence": "4.2 秒时陨石停在 [0, 3, 0]，撞击标记为真，中心 9 栋楼被压低并变暗。"
+        },
+        {
+          "name": "撞击后城市或天空有变化",
+          "pass": true,
+          "evidence": "天空从 #8fb4d4 变成 #6a4638，中心楼群变矮变暗。"
+        }
+      ],
+      "id": "cursor-ref-meteor-city-v1",
+      "taskId": "ref-meteor-city",
+      "promptSha256": "0fb19e70ab933417b0e8a56268e57c677974a3b93acd2deac34c8f7c774ee6db",
+      "artifact": "runs/2026-11-22-cursor/ref-meteor-city/v1.html",
+      "artifactSha256": "3e604f5cf62f0bc19022db6a27fef12aa7d98eaec1be54a2716a07c437a01db2",
+      "rawOutput": "首次完整产物是 runs/2026-11-22-cursor/ref-meteor-city/v1.html，SHA-256 3e604f5cf62f0bc19022db6a27fef12aa7d98eaec1be54a2716a07c437a01db2。该文件没有被后来的修改覆盖。"
+    },
+    {
+      "executionClass": "cursor-assisted-with-tools",
+      "label": "Cursor辅助执行/含工具",
+      "provider": "Cursor Cloud Agent",
+      "model": "grok-4.7-high-fast",
+      "modelVersion": "Cursor run-info.originalModelName=grok-4.7-high-fast。没有供应商 HTTP 响应体，没有 token 统计。",
+      "context": "会话 https://cursor.com/agents/bc-df9f393a-ecdc-5142-98e1-44f568293069 已加载 AI-TASKS-TAXONOMY 仓库和先前对话。这不是隔离盲测，也不是裸 API 单轮。",
+      "environment": "Cursor Cloud Agent，Linux。检查用本机 Google Chrome headless。未调用外部模型 API，未使用密钥，未打开摄像头。",
+      "parameters": "无温度、无 max_tokens。执行中可以读写本仓库，并用浏览器查看产物。",
+      "startedAt": "2026-11-22T02:50:15Z",
+      "endedAt": "2026-11-22T02:50:26Z",
+      "repairs": [],
+      "revision": "v1",
+      "status": "partial",
+      "checks": [
+        {
+          "name": "页面能进入第一人称或等价的可移动视角",
+          "pass": true,
+          "evidence": "落地后按前进，z 从 12.2 走到 14.3，高度停在方块上。转身让 yaw 从 0 变到 -0.64。"
+        },
+        {
+          "name": "能看见不同方块或地形",
+          "pass": true,
+          "evidence": "画面里有草绿顶、黄色沙地和石块。计数为草 128、石 464、沙 168。土这一层被石头覆盖，数量是 0。"
+        },
+        {
+          "name": "能看见沙和水一类环境",
+          "pass": false,
+          "evidence": "部分：沙在第一人称画面里看得见。水有 25 个方块，计数也显示 25，但转头和走动抽到的画面没有拍到水面，这一条不能算看见了水。"
+        },
+        {
+          "name": "没有必须播放的声音文件",
+          "pass": true,
+          "evidence": "页面里没有 audio 元素，也没有外链声音。贴图来自页面里的画布，不是外链图片。对准实心草块时草从 128 减到 127；放下后沙从 168 增到 169。没有生物、合成或大地图。"
+        }
+      ],
+      "id": "cursor-ref-minecraft-web-v1",
+      "taskId": "ref-minecraft-web",
+      "promptSha256": "e2f509879019426cd15f3890875d8d5462911f985d35c7bdfdd15cb89610ac40",
+      "artifact": "runs/2026-11-22-cursor/ref-minecraft-web/v1.html",
+      "artifactSha256": "5350bf3d7239b3dc8512fa77ab46fbf0300f94bafe36b5ca7f4dc34a9c8b5531",
+      "rawOutput": "首次完整产物是 runs/2026-11-22-cursor/ref-minecraft-web/v1.html，SHA-256 5350bf3d7239b3dc8512fa77ab46fbf0300f94bafe36b5ca7f4dc34a9c8b5531。该文件没有被后来的修改覆盖。"
+    },
+    {
+      "executionClass": "cursor-assisted-with-tools",
+      "label": "Cursor辅助执行/含工具",
+      "provider": "Cursor Cloud Agent",
+      "model": "grok-4.7-high-fast",
+      "modelVersion": "Cursor run-info.originalModelName=grok-4.7-high-fast。没有供应商 HTTP 响应体，没有 token 统计。",
+      "context": "会话 https://cursor.com/agents/bc-df9f393a-ecdc-5142-98e1-44f568293069 已加载 AI-TASKS-TAXONOMY 仓库和先前对话。这不是隔离盲测，也不是裸 API 单轮。",
+      "environment": "Cursor Cloud Agent，Linux。检查用本机 Google Chrome headless。未调用外部模型 API，未使用密钥，未打开摄像头。",
+      "parameters": "无温度、无 max_tokens。执行中可以读写本仓库，并用浏览器查看产物。",
+      "startedAt": "2026-11-22T02:50:28Z",
+      "endedAt": "2026-11-22T02:50:35Z",
+      "repairs": [],
+      "revision": "v1",
+      "status": "partial",
+      "checks": [
+        {
+          "name": "有桌面和可点击的图标或菜单",
+          "pass": true,
+          "evidence": "桌面左侧有文本、文件、画板、影像，底栏也能打开同一批窗口。"
+        },
+        {
+          "name": "文本编辑里打出的字还在",
+          "pass": true,
+          "evidence": "输入「河灯还在」后关闭再打开，文本仍是这四个字。"
+        },
+        {
+          "name": "文件列表或画布至少有一个能实际操作",
+          "pass": true,
+          "evidence": "新建文件后列表从 2 项变成 3 项。画板在按下后出现非白像素。"
+        },
+        {
+          "name": "不是只有一张桌面截图式的静态图",
+          "pass": true,
+          "evidence": "窗口能打开和关闭，文本、文件和画板都会变。"
+        },
+        {
+          "name": "原题里的影像编辑",
+          "pass": false,
+          "evidence": "部分：影像窗口只有入点滑块，从 20 调到 55。页面写明不能导入或导出真实影片。"
+        },
+        {
+          "name": "原题里的全套预装软件",
+          "pass": false,
+          "evidence": "部分：没有浏览器、邮件、日历、照片库。不能把这个文件当成完整桌面系统。"
+        }
+      ],
+      "id": "cursor-ref-web-os-desktop-v1",
+      "taskId": "ref-web-os-desktop",
+      "promptSha256": "49de34b2eb918e1960ed68ca1c0e670e5f40b068948dc92362bf398b4ea0c869",
+      "artifact": "runs/2026-11-22-cursor/ref-web-os-desktop/v1.html",
+      "artifactSha256": "504e1c1b4fc65acc82388fdf46323425659948aea7284c2211669cddc44a6a36",
+      "rawOutput": "首次完整产物是 runs/2026-11-22-cursor/ref-web-os-desktop/v1.html，SHA-256 504e1c1b4fc65acc82388fdf46323425659948aea7284c2211669cddc44a6a36。该文件没有被后来的修改覆盖。"
+    },
+    {
+      "executionClass": "cursor-assisted-with-tools",
+      "label": "Cursor辅助执行/含工具",
+      "provider": "Cursor Cloud Agent",
+      "model": "grok-4.7-high-fast",
+      "modelVersion": "Cursor run-info.originalModelName=grok-4.7-high-fast。没有供应商 HTTP 响应体，没有 token 统计。",
+      "context": "会话 https://cursor.com/agents/bc-df9f393a-ecdc-5142-98e1-44f568293069 已加载 AI-TASKS-TAXONOMY 仓库和先前对话。这不是隔离盲测，也不是裸 API 单轮。",
+      "environment": "Cursor Cloud Agent，Linux。检查用本机 Google Chrome headless。未调用外部模型 API，未使用密钥，未打开摄像头。",
+      "parameters": "无温度、无 max_tokens。执行中可以读写本仓库，并用浏览器查看产物。",
+      "startedAt": "2026-11-22T02:50:40Z",
+      "endedAt": "2026-11-22T02:50:48Z",
+      "repairs": [],
+      "revision": "v1",
+      "status": "partial",
+      "checks": [
+        {
+          "name": "能切换至少两种形状",
+          "pass": true,
+          "evidence": "爱心和土星的粒子坐标签名不同。爱心、花、土星、坐像、烟花五个按钮都在。"
+        },
+        {
+          "name": "改颜色后粒子颜色改变",
+          "pass": true,
+          "evidence": "颜色从 #e7c56a 改为 #3366ff，材质颜色跟着变，截图里粒子是蓝色。"
+        },
+        {
+          "name": "摄像头可用时，双手动作会改变粒子展开程度",
+          "pass": false,
+          "evidence": "未验证：测试没有点击打开摄像头，也没有调用 getUserMedia。真实 Hands 检测器已初始化。把一张合成肤色圆斑送进去，返回 0 只手。鼠标移动没有改变展开程度。这不代替真人双手。"
+        }
+      ],
+      "id": "cursor-ref-hand-gesture-particles-v1",
+      "taskId": "ref-hand-gesture-particles",
+      "promptSha256": "84a0734fa50e8585ce7294ad7c118d446fab7c0969c89ce69df0888d0065a763",
+      "artifact": "runs/2026-11-22-cursor/ref-hand-gesture-particles/v1.html",
+      "artifactSha256": "e644ed1f840d0486290ff0877f6ecf69341d0f268efd3203937fdb71738908af",
+      "rawOutput": "首次完整产物是 runs/2026-11-22-cursor/ref-hand-gesture-particles/v1.html，SHA-256 e644ed1f840d0486290ff0877f6ecf69341d0f268efd3203937fdb71738908af。该文件没有被后来的修改覆盖。"
     }
   ]
 }

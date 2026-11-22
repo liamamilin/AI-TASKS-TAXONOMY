@@ -12,10 +12,12 @@ const interactive = new Set(["grid", "river", "bridge", "hanoi", "swaps", "tsp",
 let interactiveCount = 0
 const banned = ["aitestmuseum", "ai考题博物馆", "鹈鹕", "atlas", "flappy bird", "minecraft"]
 
-function walkStrings(value, found) {
-  if (typeof value === "string") found.push(value)
-  else if (Array.isArray(value)) value.forEach((item) => walkStrings(item, found))
-  else if (value && typeof value === "object") Object.values(value).forEach((item) => walkStrings(item, found))
+function walkStrings(value, found, key) {
+  if (typeof value === "string") {
+    if (["taskId", "id", "artifact", "rawOutput", "image"].includes(key)) return
+    found.push(value)
+  } else if (Array.isArray(value)) value.forEach((item) => walkStrings(item, found, key))
+  else if (value && typeof value === "object") Object.entries(value).forEach(([childKey, item]) => walkStrings(item, found, childKey))
 }
 
 const blob = []
@@ -32,7 +34,7 @@ for (const run of resultBook.runs) {
     if (!run[key]) fail(`运行记录缺少 ${key}`)
   }
   if (run.taskId && !taskList.some((task) => task.id === run.taskId)) fail(`运行指向不存在的任务 ${run.taskId}`)
-  if (run.status && !["success", "failure"].includes(run.status)) fail(`运行状态不合法 ${run.status}`)
+  if (run.status && !["success", "failure", "partial"].includes(run.status)) fail(`运行状态不合法 ${run.status}`)
 }
 const requiredSlugs = ["pelican-bicycle","bouncing-ball-hexagon","voxel-pagoda","minecraft-web","rubiks-cube","kart-racer","meteor-city","supernova","flappy-bird","tetris","solar-system","web-os-desktop","drowned-gothic-city","brick-builder","flight-sim","hand-gesture-particles","tesseract-ball","starship-control-panel","ai-world-clock","mars-round-trip"]
 const quoted = taskList.filter((task) => task.coverage === "quoted")

@@ -51,7 +51,7 @@ function previewArt(task, eager) {
   if (!preview) {
     return `<div class="art art-untested"><strong>未测</strong><p>还没有可展示的产物</p></div>`
   }
-  const tag = `<span class="preview-tag">${esc(preview.label)} · ${preview.status === "success" ? "成功" : "失败"}</span>`
+  const tag = `<span class="preview-tag">${esc(preview.label)} · ${esc(statusWord(preview.status))}</span>`
   if (preview.text) {
     return `<div class="art art-text"><pre>${esc(preview.text)}</pre>${tag}</div>`
   }
@@ -66,13 +66,29 @@ function previewLine(task) {
   return `<p class="quiet">首页卡片展示的是 ${esc(preview.label)}，对应文件 ${esc(preview.artifact)}。${esc(preview.note || "")}</p>`
 }
 
+function checkWord(item) {
+  if (item.pass) return "通过"
+  const evidence = String(item.evidence || "")
+  if (evidence.startsWith("未验证")) return "未验证"
+  if (evidence.startsWith("部分")) return "部分"
+  return "未通过"
+}
+
+function statusWord(status) {
+  if (status === "failure") return "失败"
+  if (status === "partial") return "部分验证"
+  return "成功"
+}
+
 function statusText(task) {
   const runs = (resultBook.runs || []).filter((run) => run.taskId === task.id)
   if (!runs.length) return "未测"
-  const ok = runs.some((run) => run.status === "success")
-  const bad = runs.some((run) => run.status === "failure")
-  if (ok && bad) return "有成功也有失败"
-  return ok ? "Cursor运行成功" : "Cursor运行失败"
+  const ranks = new Set(runs.map((run) => run.status))
+  if (ranks.has("success") && ranks.has("failure")) return "有成功也有失败"
+  if (ranks.has("success") && ranks.has("partial")) return "有通过也有未完成"
+  if (ranks.size === 1 && ranks.has("success")) return "Cursor运行成功"
+  if (ranks.has("partial")) return "部分验证"
+  return "Cursor运行失败"
 }
 
 export function taskHome(params, featuredId) {
@@ -216,14 +232,14 @@ function renderRun(run) {
     ? `<iframe sandbox="allow-scripts" src="${esc(run.artifact)}" title="首次产物预览，已隔离脚本"></iframe>`
     : `<p><a href="${esc(run.artifact)}">打开首次产物</a></p>`
   return `<article class="run">
-    <h3>${esc(run.label || "运行")} · ${esc(run.status === "failure" ? "失败" : "成功")} · ${esc(run.revision || "v1")}</h3>
+    <h3>${esc(run.label || "运行")} · ${esc(statusWord(run.status))} · ${esc(run.revision || "v1")}</h3>
     <p>${esc(run.provider || "")} · 平台记录的模型名：${esc(run.model || "底层模型未提供")}</p>
     <p>${esc(run.startedAt || "")} 至 ${esc(run.endedAt || "")}</p>
     <p>${esc(run.context || "")}</p>
     <p>${esc(run.environment || "")}</p>
     <p>题面 SHA-256 ${esc(run.promptSha256 || "")}</p>
     <p>产物 SHA-256 ${esc(run.artifactSha256 || "")}</p>
-    <ul>${(run.checks || []).map((item) => `<li>${item.pass ? "通过" : "未通过"}：${esc(item.name)}。${esc(item.evidence || "")}</li>`).join("")}</ul>
+    <ul>${(run.checks || []).map((item) => `<li>${esc(checkWord(item))}：${esc(item.name)}。${esc(item.evidence || "")}</li>`).join("")}</ul>
     ${(run.repairs || []).length ? `<p>另有后续版本，不替代这一次：${esc(run.repairs.join("、"))}</p>` : `<p>没有后续修复版。这一次的文件没有被覆盖。</p>`}
     ${preview}
     <p><a href="${esc(run.artifact)}">单独打开首次产物</a></p>
