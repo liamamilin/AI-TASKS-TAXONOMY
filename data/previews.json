@@ -100,5 +100,48 @@
     "image": "previews/ref-flight-sim.jpg",
     "label": "展示 v2",
     "note": "v1 开局卡在楼里没有飞起来，卡片不用那一版。"
+  },
+  "ref-rubiks-cube": {
+    "revision": "v1",
+    "status": "success",
+    "artifact": "runs/2026-11-22-cursor/ref-rubiks-cube/v1.html",
+    "image": "previews/ref-rubiks-cube.jpg",
+    "label": "展示 v1"
+  },
+  "ref-kart-racer": {
+    "revision": "v1",
+    "status": "success",
+    "artifact": "runs/2026-11-22-cursor/ref-kart-racer/v1.html",
+    "image": "previews/ref-kart-racer.jpg",
+    "label": "展示 v1"
+  },
+  "ref-tesseract-ball": {
+    "revision": "v1",
+    "status": "success",
+    "artifact": "runs/2026-11-22-cursor/ref-tesseract-ball/v1.html",
+    "image": "previews/ref-tesseract-ball.jpg",
+    "label": "展示 v1"
+  },
+  "ref-mars-round-trip": {
+    "revision": "v1",
+    "status": "success",
+    "artifact": "runs/2026-11-22-cursor/ref-mars-round-trip/v1.html",
+    "image": "previews/ref-mars-round-trip.jpg",
+    "label": "展示 v1"
+  },
+  "ref-supernova": {
+    "revision": "v1",
+    "status": "success",
+    "artifact": "runs/2026-11-22-cursor/ref-supernova/v1.html",
+    "image": "previews/ref-supernova.jpg",
+    "label": "展示 v1"
+  },
+  "ref-starship-control-panel": {
+    "revision": "v1",
+    "status": "success",
+    "artifact": "runs/2026-11-22-cursor/ref-starship-control-panel/v1.html",
+    "image": "previews/ref-starship-control-panel.jpg",
+    "label": "展示 v1",
+    "note": "卡片是运行中的控制台。可粘贴的草图在同目录 v1.js，页面只加载 p5 和这份草图。"
   }
 }

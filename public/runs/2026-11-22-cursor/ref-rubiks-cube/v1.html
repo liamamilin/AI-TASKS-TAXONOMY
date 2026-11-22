@@ -1,0 +1,243 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Rubik</title>
+<style>
+  html, body { margin: 0; background: #111418; color: #f4efe6; font-family: Georgia, "Songti SC", serif; }
+  canvas { width: 100%; height: 68vh; display: block; touch-action: none; }
+  .bar { display: flex; flex-wrap: wrap; gap: 0.35rem; align-items: center; padding: 0.55rem; }
+  button { font: inherit; background: #f4efe6; color: #1c1915; border: 0; padding: 0.4rem 0.65rem; }
+  #state { margin: 0; min-width: 8rem; }
+</style>
+</head>
+<body>
+<canvas id="c"></canvas>
+<div class="bar">
+  <p id="state">已还原</p>
+  <button type="button" data-move="U">U</button>
+  <button type="button" data-move="U'">U′</button>
+  <button type="button" data-move="D">D</button>
+  <button type="button" data-move="D'">D′</button>
+  <button type="button" data-move="L">L</button>
+  <button type="button" data-move="L'">L′</button>
+  <button type="button" data-move="R">R</button>
+  <button type="button" data-move="R'">R′</button>
+  <button type="button" data-move="F">F</button>
+  <button type="button" data-move="F'">F′</button>
+  <button type="button" data-move="B">B</button>
+  <button type="button" data-move="B'">B′</button>
+  <button type="button" id="scramble">打乱</button>
+  <button type="button" id="solve">按记录还原</button>
+</div>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/controls/OrbitControls.js"></script>
+<script>
+const RY = {
+  pos: [[0, 0, 1], [0, 1, 0], [-1, 0, 0]],
+  neg: [[0, 0, -1], [0, 1, 0], [1, 0, 0]]
+};
+const RX = {
+  pos: [[1, 0, 0], [0, 0, -1], [0, 1, 0]],
+  neg: [[1, 0, 0], [0, 0, 1], [0, -1, 0]]
+};
+const RZ = {
+  pos: [[0, -1, 0], [1, 0, 0], [0, 0, 1]],
+  neg: [[0, 1, 0], [-1, 0, 0], [0, 0, 1]]
+};
+const MOVES = {
+  U: { axis: 1, layer: 1, mat: RY.neg },
+  "U'": { axis: 1, layer: 1, mat: RY.pos },
+  D: { axis: 1, layer: -1, mat: RY.pos },
+  "D'": { axis: 1, layer: -1, mat: RY.neg },
+  R: { axis: 0, layer: 1, mat: RX.pos },
+  "R'": { axis: 0, layer: 1, mat: RX.neg },
+  L: { axis: 0, layer: -1, mat: RX.neg },
+  "L'": { axis: 0, layer: -1, mat: RX.pos },
+  F: { axis: 2, layer: 1, mat: RZ.pos },
+  "F'": { axis: 2, layer: 1, mat: RZ.neg },
+  B: { axis: 2, layer: -1, mat: RZ.neg },
+  "B'": { axis: 2, layer: -1, mat: RZ.pos }
+};
+function mulMatVec(m, v) {
+  return [0, 1, 2].map((i) => Math.round(m[i][0] * v[0] + m[i][1] * v[1] + m[i][2] * v[2]));
+}
+function mulMat(a, b) {
+  return [0, 1, 2].map((i) => [0, 1, 2].map((j) => Math.round(a[i][0] * b[0][j] + a[i][1] * b[1][j] + a[i][2] * b[2][j])));
+}
+function cloneMat(m) { return m.map((row) => row.slice()); }
+function sameMat(a, b) { return a.every((row, i) => row.every((n, j) => n === b[i][j])); }
+function inverseName(name) { return name.endsWith("'") ? name.slice(0, -1) : name + "'"; }
+
+const canvas = document.getElementById("c");
+const renderer = new THREE.WebGLRenderer({ canvas, antialias: true });
+renderer.setPixelRatio(Math.min(2, window.devicePixelRatio || 1));
+const scene = new THREE.Scene();
+scene.background = new THREE.Color(0x1a1e24);
+const camera = new THREE.PerspectiveCamera(42, 1, 0.1, 50);
+camera.position.set(4.2, 3.4, 5.2);
+const controls = new THREE.OrbitControls(camera, canvas);
+controls.enableDamping = false;
+controls.target.set(0, 0, 0);
+scene.add(new THREE.AmbientLight(0xffffff, 0.45));
+const key = new THREE.DirectionalLight(0xfff4e5, 0.95);
+key.position.set(4, 6, 3);
+scene.add(key);
+const fill = new THREE.DirectionalLight(0x9db7d6, 0.35);
+fill.position.set(-4, 2, -3);
+scene.add(fill);
+
+const COLORS = { x: 0xb71234, nx: 0xff5800, y: 0xffffff, ny: 0xffd500, z: 0x009b48, nz: 0x0046ad };
+const cubies = [];
+for (let x = -1; x <= 1; x++) {
+  for (let y = -1; y <= 1; y++) {
+    for (let z = -1; z <= 1; z++) {
+      const group = new THREE.Group();
+      const core = new THREE.Mesh(new THREE.BoxGeometry(0.9, 0.9, 0.9), new THREE.MeshPhongMaterial({ color: 0x1a1a1a }));
+      group.add(core);
+      const sticker = (px, py, pz, color) => {
+        const mesh = new THREE.Mesh(new THREE.PlaneGeometry(0.78, 0.78), new THREE.MeshPhongMaterial({ color, shininess: 30 }));
+        mesh.position.set(px, py, pz);
+        if (px) mesh.rotation.y = px > 0 ? Math.PI / 2 : -Math.PI / 2;
+        if (py) mesh.rotation.x = py > 0 ? -Math.PI / 2 : Math.PI / 2;
+        group.add(mesh);
+      };
+      if (x === 1) sticker(0.46, 0, 0, COLORS.x);
+      if (x === -1) sticker(-0.46, 0, 0, COLORS.nx);
+      if (y === 1) sticker(0, 0.46, 0, COLORS.y);
+      if (y === -1) sticker(0, -0.46, 0, COLORS.ny);
+      if (z === 1) sticker(0, 0, 0.46, COLORS.z);
+      if (z === -1) sticker(0, 0, -0.46, COLORS.nz);
+      const home = [x, y, z];
+      const ident = [[1, 0, 0], [0, 1, 0], [0, 0, 1]];
+      const cubie = { pos: home.slice(), rot: cloneMat(ident), home: home.slice(), homeRot: cloneMat(ident), mesh: group };
+      cubies.push(cubie);
+      scene.add(group);
+      place(cubie);
+    }
+  }
+}
+function matrixOf(rot) {
+  const m = new THREE.Matrix4();
+  m.set(
+    rot[0][0], rot[0][1], rot[0][2], 0,
+    rot[1][0], rot[1][1], rot[1][2], 0,
+    rot[2][0], rot[2][1], rot[2][2], 0,
+    0, 0, 0, 1
+  );
+  return m;
+}
+function place(cubie) {
+  cubie.mesh.position.set(cubie.pos[0] * 1.02, cubie.pos[1] * 1.02, cubie.pos[2] * 1.02);
+  cubie.mesh.quaternion.setFromRotationMatrix(matrixOf(cubie.rot));
+}
+let history = [];
+let applied = [];
+let queue = [];
+let tween = null;
+let solving = false;
+function solvedNow() {
+  return cubies.every((cubie) => cubie.pos.every((n, i) => n === cubie.home[i]) && sameMat(cubie.rot, cubie.homeRot));
+}
+function worldClose() {
+  return cubies.every((cubie) => {
+    const home = new THREE.Vector3(cubie.home[0] * 1.02, cubie.home[1] * 1.02, cubie.home[2] * 1.02);
+    const q = new THREE.Quaternion().setFromRotationMatrix(matrixOf(cubie.homeRot));
+    return cubie.mesh.position.distanceTo(home) < 0.08 && cubie.mesh.quaternion.angleTo(q) < 0.08;
+  });
+}
+function label() {
+  document.getElementById("state").textContent = solving ? "按记录还原" : (history.length && !solvedNow() ? "已打乱 " + history.length + " 步" : "已还原");
+}
+function enqueue(name, source) {
+  queue.push({ name, source });
+  pump();
+}
+function pump() {
+  if (tween || !queue.length) return;
+  const job = queue.shift();
+  const spec = MOVES[job.name];
+  const chosen = cubies.filter((cubie) => cubie.pos[spec.axis] === spec.layer);
+  const before = chosen.map((cubie) => ({ cubie, pos: cubie.pos.slice(), rot: cloneMat(cubie.rot), px: cubie.mesh.position.clone(), pq: cubie.mesh.quaternion.clone() }));
+  for (const cubie of chosen) {
+    cubie.pos = mulMatVec(spec.mat, cubie.pos);
+    cubie.rot = mulMat(spec.mat, cubie.rot);
+  }
+  if (job.source !== "solve") history.push(job.name);
+  applied.push({ name: job.name, source: job.source });
+  const started = performance.now();
+  tween = { before, started, name: job.name };
+}
+function finishTween() {
+  for (const item of tween.before) place(item.cubie);
+  tween = null;
+  label();
+  pump();
+}
+function frame(now) {
+  if (tween) {
+    const t = Math.min(1, (now - tween.started) / 280);
+    const k = t * t * (3 - 2 * t);
+    for (const item of tween.before) {
+      const cubie = item.cubie;
+      const nx = cubie.pos[0] * 1.02;
+      const ny = cubie.pos[1] * 1.02;
+      const nz = cubie.pos[2] * 1.02;
+      cubie.mesh.position.set(item.px.x + (nx - item.px.x) * k, item.px.y + (ny - item.px.y) * k, item.px.z + (nz - item.px.z) * k);
+      const nq = new THREE.Quaternion().setFromRotationMatrix(matrixOf(cubie.rot));
+      cubie.mesh.quaternion.copy(item.pq).slerp(nq, k);
+    }
+    if (t >= 1) finishTween();
+  }
+  controls.update();
+  renderer.render(scene, camera);
+  requestAnimationFrame(frame);
+}
+function resize() {
+  const width = canvas.clientWidth || innerWidth;
+  const height = canvas.clientHeight || Math.floor(innerHeight * 0.68);
+  renderer.setSize(width, height, false);
+  camera.aspect = width / height;
+  camera.updateProjectionMatrix();
+}
+window.addEventListener("resize", resize);
+resize();
+document.querySelectorAll("[data-move]").forEach((button) => {
+  button.addEventListener("click", () => {
+    solving = false;
+    enqueue(button.getAttribute("data-move"), "hand");
+  });
+});
+document.getElementById("scramble").addEventListener("click", () => {
+  solving = false;
+  const names = Object.keys(MOVES);
+  let prev = "";
+  for (let i = 0; i < 20; i++) {
+    let name = names[Math.floor(Math.random() * names.length)];
+    if (inverseName(name) === prev) name = names[(names.indexOf(name) + 1) % names.length];
+    prev = name;
+    enqueue(name, "scramble");
+  }
+});
+document.getElementById("solve").addEventListener("click", () => { solving = true; });
+setInterval(() => {
+  if (!solving || tween || queue.length) return;
+  if (!history.length) { solving = false; label(); return; }
+  const name = history.pop();
+  enqueue(inverseName(name), "solve");
+}, 500);
+label();
+requestAnimationFrame(frame);
+window.__cube = {
+  history: () => history.slice(),
+  applied: () => applied.map((item) => ({ name: item.name, source: item.source })),
+  solved: () => solvedNow() && !tween && !queue.length && worldClose(),
+  idle: () => !tween && !queue.length,
+  cubies: () => cubies.map((cubie) => ({ pos: cubie.pos.slice(), home: cubie.home.slice() })),
+  camera: () => camera.position.toArray(),
+  lights: () => scene.children.filter((obj) => obj.isLight).length
+};
+</script>
+</body>
+</html>

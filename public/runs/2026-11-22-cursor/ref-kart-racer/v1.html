@@ -1,0 +1,156 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Kart</title>
+<style>
+  html, body { margin: 0; background: #87b4d4; color: #1c1915; font-family: Georgia, "Songti SC", sans-serif; }
+  canvas { width: 100%; height: 70vh; display: block; }
+  .bar { display: flex; flex-wrap: wrap; gap: 0.4rem; align-items: center; padding: 0.5rem; }
+  button { font: inherit; background: #1c1915; color: #fff; border: 0; padding: 0.45rem 0.7rem; }
+  #hud { margin: 0; }
+</style>
+</head>
+<body>
+<canvas id="c"></canvas>
+<div class="bar">
+  <p id="hud">未开始</p>
+  <button id="start" type="button">开始</button>
+  <button id="gas" type="button">加速</button>
+  <button id="left" type="button">左转</button>
+  <button id="right" type="button">右转</button>
+  <button id="restart" type="button">重新开始</button>
+</div>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+<script>
+const canvas = document.getElementById("c");
+const renderer = new THREE.WebGLRenderer({ canvas, antialias: true });
+renderer.setPixelRatio(Math.min(2, window.devicePixelRatio || 1));
+const scene = new THREE.Scene();
+scene.background = new THREE.Color(0x8ebbd8);
+scene.fog = new THREE.Fog(0x8ebbd8, 40, 140);
+const camera = new THREE.PerspectiveCamera(60, 1, 0.1, 200);
+scene.add(new THREE.AmbientLight(0xffffff, 0.55));
+const sun = new THREE.DirectionalLight(0xfff2dd, 0.9);
+sun.position.set(20, 30, 10);
+scene.add(sun);
+const ground = new THREE.Mesh(new THREE.CircleGeometry(90, 48), new THREE.MeshLambertMaterial({ color: 0x3f7d46 }));
+ground.rotation.x = -Math.PI / 2;
+scene.add(ground);
+function point(t) {
+  return new THREE.Vector3(Math.cos(t) * 36, 0, Math.sin(t) * 22);
+}
+const trackCount = 64;
+for (let i = 0; i < trackCount; i++) {
+  const a = point((i / trackCount) * Math.PI * 2);
+  const b = point(((i + 1) / trackCount) * Math.PI * 2);
+  const mid = a.clone().add(b).multiplyScalar(0.5);
+  const len = a.distanceTo(b);
+  const mesh = new THREE.Mesh(new THREE.BoxGeometry(len + 0.4, 0.3, 7), new THREE.MeshLambertMaterial({ color: i % 8 === 0 ? 0xf4f1ea : 0x2c3138 }));
+  mesh.position.set(mid.x, 0.15, mid.z);
+  mesh.lookAt(b.x, 0.15, b.z);
+  scene.add(mesh);
+}
+const kart = new THREE.Group();
+const body = new THREE.Mesh(new THREE.BoxGeometry(1.4, 0.5, 2.2), new THREE.MeshLambertMaterial({ color: 0xd24b3a }));
+body.position.y = 0.55;
+kart.add(body);
+const nose = new THREE.Mesh(new THREE.BoxGeometry(0.8, 0.25, 0.6), new THREE.MeshLambertMaterial({ color: 0xf2e2c4 }));
+nose.position.set(0, 0.7, 0.8);
+kart.add(nose);
+scene.add(kart);
+const keys = {};
+const hold = (id, key) => {
+  const button = document.getElementById(id);
+  button.addEventListener("pointerdown", (event) => { keys[key] = true; event.preventDefault(); });
+  button.addEventListener("pointerup", () => { keys[key] = false; });
+  button.addEventListener("pointerleave", () => { keys[key] = false; });
+};
+hold("gas", "ArrowUp");
+hold("left", "ArrowLeft");
+hold("right", "ArrowRight");
+window.addEventListener("keydown", (event) => { keys[event.key] = true; });
+window.addEventListener("keyup", (event) => { keys[event.key] = false; });
+let racing = false;
+let yaw = 0;
+let speed = 0;
+let x = 36;
+let z = 0;
+let y = 0.2;
+let traveled = 0;
+let laps = 0;
+let armed = false;
+let message = "未开始";
+function reset() {
+  racing = false;
+  yaw = 0;
+  speed = 0;
+  x = 36;
+  z = 0;
+  y = 0.2;
+  traveled = 0;
+  laps = 0;
+  armed = false;
+  message = "未开始";
+  keys.ArrowUp = keys.ArrowLeft = keys.ArrowRight = false;
+}
+document.getElementById("start").onclick = () => { racing = true; message = "比赛中"; };
+document.getElementById("restart").onclick = () => { reset(); message = "已重新开始"; };
+let last = performance.now();
+function frame(now) {
+  const dt = Math.min(0.05, (now - last) / 1000);
+  last = now;
+  if (racing) {
+    if (keys.ArrowLeft) yaw += 1.7 * dt;
+    if (keys.ArrowRight) yaw -= 1.7 * dt;
+    if (keys.ArrowUp) speed = Math.min(28, speed + 18 * dt);
+    else speed = Math.max(0, speed - 10 * dt);
+    const nx = x + Math.cos(yaw) * speed * dt;
+    const nz = z + Math.sin(yaw) * speed * dt;
+    traveled += Math.hypot(nx - x, nz - z);
+    x = nx;
+    z = nz;
+    y = 0.2;
+    const radius = Math.hypot(x, z);
+    if (radius > 70) {
+      x *= 70 / radius;
+      z *= 70 / radius;
+      speed *= 0.4;
+    }
+    const startDist = Math.hypot(x - 36, z);
+    if (traveled > 80 && startDist < 6) armed = true;
+    if (armed && startDist < 3.5 && traveled > 120) {
+      laps += 1;
+      traveled = 0;
+      armed = false;
+      message = "完成 " + laps + " 圈";
+    }
+  }
+  kart.position.set(x, y, z);
+  kart.rotation.y = -yaw;
+  const back = 8;
+  camera.position.set(x - Math.cos(yaw) * back, 5.5, z - Math.sin(yaw) * back);
+  camera.lookAt(x + Math.cos(yaw) * 6, 0.6, z + Math.sin(yaw) * 6);
+  document.getElementById("hud").textContent = message + "  速度 " + speed.toFixed(0);
+  renderer.render(scene, camera);
+  requestAnimationFrame(frame);
+}
+function resize() {
+  const width = canvas.clientWidth || innerWidth;
+  const height = canvas.clientHeight || Math.floor(innerHeight * 0.7);
+  renderer.setSize(width, height, false);
+  camera.aspect = width / Math.max(1, height);
+  camera.updateProjectionMatrix();
+}
+window.addEventListener("resize", resize);
+resize();
+requestAnimationFrame(frame);
+window.__kart = {
+  trackPieces: trackCount,
+  pos: () => ({ x, y, z, yaw, speed, laps, racing, message, traveled }),
+  racing: () => racing
+};
+</script>
+</body>
+</html>

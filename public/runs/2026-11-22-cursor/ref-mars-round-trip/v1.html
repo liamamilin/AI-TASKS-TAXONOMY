@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Earth Mars</title>
+<style>
+  html, body { margin: 0; background: #070910; color: #efe8dc; font-family: Georgia, sans-serif; }
+  canvas { width: 100%; height: 78vh; display: block; }
+  p { margin: 0.6rem 0.8rem; }
+</style>
+</head>
+<body>
+<canvas id="c"></canvas>
+<p id="phase">出发准备</p>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+<script>
+const canvas = document.getElementById("c");
+const renderer = new THREE.WebGLRenderer({ canvas, antialias: true });
+renderer.setPixelRatio(Math.min(2, window.devicePixelRatio || 1));
+const scene = new THREE.Scene();
+scene.background = new THREE.Color(0x070910);
+const camera = new THREE.PerspectiveCamera(45, 1, 0.1, 200);
+camera.position.set(18, 16, 22);
+camera.lookAt(0, 0, 0);
+scene.add(new THREE.AmbientLight(0xffffff, 0.35));
+const sunLight = new THREE.PointLight(0xfff1d0, 1.3, 80);
+scene.add(sunLight);
+scene.add(new THREE.Mesh(new THREE.SphereGeometry(2.2, 24, 16), new THREE.MeshBasicMaterial({ color: 0xffc857 })));
+function orbitLine(radius, color) {
+  const pts = [];
+  for (let i = 0; i <= 96; i++) {
+    const a = (i / 96) * Math.PI * 2;
+    pts.push(new THREE.Vector3(Math.cos(a) * radius, 0, Math.sin(a) * radius));
+  }
+  const line = new THREE.Line(new THREE.BufferGeometry().setFromPoints(pts), new THREE.LineBasicMaterial({ color }));
+  scene.add(line);
+}
+orbitLine(8, 0x3d6f9a);
+orbitLine(14, 0x8a4b32);
+const earth = new THREE.Mesh(new THREE.SphereGeometry(0.7, 20, 14), new THREE.MeshLambertMaterial({ color: 0x3a7bd5 }));
+const mars = new THREE.Mesh(new THREE.SphereGeometry(0.5, 20, 14), new THREE.MeshLambertMaterial({ color: 0xc4553a }));
+const craft = new THREE.Mesh(new THREE.SphereGeometry(0.18, 12, 8), new THREE.MeshBasicMaterial({ color: 0xf7f1e4 }));
+scene.add(earth, mars, craft);
+const trailGeom = new THREE.BufferGeometry();
+const trail = new THREE.Line(trailGeom, new THREE.LineBasicMaterial({ color: 0xf2e2a0 }));
+scene.add(trail);
+const trailPts = [];
+function earthPos(t) {
+  const a = t * Math.PI * 2 / 16;
+  return { x: Math.cos(a) * 8, y: 0, z: Math.sin(a) * 8 };
+}
+function marsPos(t) {
+  const a = t * Math.PI * 2 / (16 * 1.88);
+  return { x: Math.cos(a) * 14, y: 0, z: Math.sin(a) * 14 };
+}
+function mix(a, b, k, lift) {
+  return { x: a.x + (b.x - a.x) * k, y: Math.sin(k * Math.PI) * lift, z: a.z + (b.z - a.z) * k };
+}
+function craftPos(t) {
+  if (t < 2) return earthPos(t);
+  if (t < 8) return mix(earthPos(2), marsPos(8), (t - 2) / 6, 2.4);
+  if (t < 12) return marsPos(t);
+  if (t < 18) return mix(marsPos(12), earthPos(18), (t - 12) / 6, 2.2);
+  return earthPos(t);
+}
+function phaseName(t) {
+  if (t < 2) return "还在地球";
+  if (t < 8) return "飞向火星";
+  if (t < 12) return "抵达火星，等待回程窗口";
+  if (t < 18) return "返回地球";
+  return "回到地球";
+}
+const started = performance.now();
+function resize() {
+  const width = canvas.clientWidth || innerWidth;
+  const height = canvas.clientHeight || Math.floor(innerHeight * 0.78);
+  renderer.setSize(width, height, false);
+  camera.aspect = width / Math.max(1, height);
+  camera.updateProjectionMatrix();
+}
+window.addEventListener("resize", resize);
+resize();
+function frame(now) {
+  const t = (now - started) / 1000;
+  const e = earthPos(t);
+  const m = marsPos(t);
+  const c = craftPos(Math.min(t, 18.2));
+  earth.position.set(e.x, e.y, e.z);
+  mars.position.set(m.x, m.y, m.z);
+  craft.position.set(c.x, c.y, c.z);
+  trailPts.push(new THREE.Vector3(c.x, c.y, c.z));
+  if (trailPts.length > 240) trailPts.shift();
+  trailGeom.setFromPoints(trailPts);
+  document.getElementById("phase").textContent = phaseName(Math.min(t, 18.2));
+  window.__mars = {
+    t,
+    earth: e,
+    mars: m,
+    craft: c,
+    phase: phaseName(Math.min(t, 18.2))
+  };
+  renderer.render(scene, camera);
+  requestAnimationFrame(frame);
+}
+requestAnimationFrame(frame);
+</script>
+</body>
+</html>

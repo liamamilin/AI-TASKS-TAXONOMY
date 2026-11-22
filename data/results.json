@@ -700,8 +700,8 @@
       "context": "会话 https://cursor.com/agents/bc-df9f393a-ecdc-5142-98e1-44f568293069 已加载 AI-TASKS-TAXONOMY 仓库和先前对话。这不是隔离盲测，也不是裸 API 单轮。",
       "environment": "Cursor Cloud Agent，Linux。检查用本机 Google Chrome headless 打开产物。未调用外部模型 API，未使用密钥。",
       "parameters": "无温度、无 max_tokens。执行中可以读写本仓库，并用浏览器查看产物。",
-"startedAt": "2026-11-22T02:00:20Z",
-        "endedAt": "2026-11-22T02:01:44Z",
+      "startedAt": "2026-11-22T02:00:20Z",
+      "endedAt": "2026-11-22T02:01:44Z",
       "repairs": [],
       "revision": "v2",
       "status": "success",
@@ -728,6 +728,259 @@
       "artifact": "runs/2026-11-22-cursor/ref-flight-sim/v2.html",
       "artifactSha256": "bbf5c5906215051ba1d195c78fbc69a2f263bc4647d46d6f55f0a0cb68768d1e",
       "rawOutput": "后续完整产物是 runs/2026-11-22-cursor/ref-flight-sim/v2.html，SHA-256 bbf5c5906215051ba1d195c78fbc69a2f263bc4647d46d6f55f0a0cb68768d1e。该文件没有被后来的修改覆盖。"
+    },
+    {
+      "executionClass": "cursor-assisted-with-tools",
+      "label": "Cursor辅助执行/含工具",
+      "provider": "Cursor Cloud Agent",
+      "model": "grok-4.7-high-fast",
+      "modelVersion": "Cursor run-info.originalModelName=grok-4.7-high-fast。没有供应商 HTTP 响应体，没有 token 统计。",
+      "context": "会话 https://cursor.com/agents/bc-df9f393a-ecdc-5142-98e1-44f568293069 已加载 AI-TASKS-TAXONOMY 仓库和先前对话。这不是隔离盲测，也不是裸 API 单轮。",
+      "environment": "Cursor Cloud Agent，Linux。检查用本机 Google Chrome headless 打开产物。未调用外部模型 API，未使用密钥。",
+      "parameters": "无温度、无 max_tokens。执行中可以读写本仓库，并用浏览器查看产物。",
+      "startedAt": "2026-11-22T02:30:40Z",
+      "endedAt": "2026-11-22T02:30:57Z",
+      "repairs": [],
+      "revision": "v1",
+      "status": "success",
+      "checks": [
+        {
+          "name": "能拖动视角",
+          "pass": true,
+          "evidence": "浏览器真实鼠标在画布上按下并拖动后，相机从 [4.20, 3.40, 5.20] 变为 [-6.56, -3.61, 0.41]。"
+        },
+        {
+          "name": "每个转动按钮让对应的面转 90 度",
+          "pass": true,
+          "evidence": "U、U′、D、D′、L、L′、R、R′、F、F′、B、B′ 各测一次。每次只有该层的 8 个角块和棱块换位，对面和其他层不动，再按逆操作后坐标回到原位，状态为已还原。"
+        },
+        {
+          "name": "打乱后魔方变乱，并且记下手顺",
+          "pass": true,
+          "evidence": "打乱 20 步后 solved 为 false，记录长度是 20。"
+        },
+        {
+          "name": "自动还原按记录的逆序进行，而不是重新随机",
+          "pass": true,
+          "evidence": "还原按钮之后每 500 毫秒走出的 20 步，与打乱记录逐条取逆再倒序完全相同。"
+        },
+        {
+          "name": "还原后各面颜色复原",
+          "pass": true,
+          "evidence": "走完这 20 步后，27 个块的坐标和旋转都回到初始，网格位置误差小于 0.08，旋转角误差小于 0.08。贴纸跟着块走，所以各面颜色回到原位。"
+        }
+      ],
+      "id": "cursor-ref-rubiks-cube-v1",
+      "taskId": "ref-rubiks-cube",
+      "promptSha256": "fa096edb7f49a3032029e08d2bcc156c58401437769107c7a1dbaa2cd1862461",
+      "artifact": "runs/2026-11-22-cursor/ref-rubiks-cube/v1.html",
+      "artifactSha256": "6e51a2219c519db86b6d736495a1c125274ed8169d2ae57fc2592df379ae4cb6",
+      "rawOutput": "首次完整产物是 runs/2026-11-22-cursor/ref-rubiks-cube/v1.html，SHA-256 6e51a2219c519db86b6d736495a1c125274ed8169d2ae57fc2592df379ae4cb6。该文件没有被后来的修改覆盖。"
+    },
+    {
+      "executionClass": "cursor-assisted-with-tools",
+      "label": "Cursor辅助执行/含工具",
+      "provider": "Cursor Cloud Agent",
+      "model": "grok-4.7-high-fast",
+      "modelVersion": "Cursor run-info.originalModelName=grok-4.7-high-fast。没有供应商 HTTP 响应体，没有 token 统计。",
+      "context": "会话 https://cursor.com/agents/bc-df9f393a-ecdc-5142-98e1-44f568293069 已加载 AI-TASKS-TAXONOMY 仓库和先前对话。这不是隔离盲测，也不是裸 API 单轮。",
+      "environment": "Cursor Cloud Agent，Linux。检查用本机 Google Chrome headless 打开产物。未调用外部模型 API，未使用密钥。",
+      "parameters": "无温度、无 max_tokens。执行中可以读写本仓库，并用浏览器查看产物。",
+      "startedAt": "2026-11-22T02:31:12Z",
+      "endedAt": "2026-11-22T02:31:20Z",
+      "repairs": [],
+      "revision": "v1",
+      "status": "success",
+      "checks": [
+        {
+          "name": "能开始一局并开车",
+          "pass": true,
+          "evidence": "点开始后按住加速和左转约 1.2 秒，车从 x=36 z=0 开到 x=38.2 z=11.5，速度 21.6，状态是比赛中。"
+        },
+        {
+          "name": "有可见赛道",
+          "pass": true,
+          "evidence": "赛道由 64 段铺成。截图里是一条深色弯道，中间有白色起跑线，红车停在上面。"
+        },
+        {
+          "name": "车不会一开始就掉出世界",
+          "pass": true,
+          "evidence": "未开始时等 700 毫秒，y 保持 0.2。开车之后 y 仍是 0.2，没有掉到地面以下。"
+        },
+        {
+          "name": "有重新开始或完成一圈的反馈",
+          "pass": true,
+          "evidence": "这次短途没有跑完一圈。点重新开始后坐标回到 x=36 z=0，速度为 0，文字是「已重新开始」。"
+        }
+      ],
+      "id": "cursor-ref-kart-racer-v1",
+      "taskId": "ref-kart-racer",
+      "promptSha256": "8353c7e650a2787d9ce1e16c11161e40ffdfb79794d52863596a42aac50facd6",
+      "artifact": "runs/2026-11-22-cursor/ref-kart-racer/v1.html",
+      "artifactSha256": "4326fa652140a1e574d77a86be5c00064c85a7ff7754b097d9fa8fb84a3b66f2",
+      "rawOutput": "首次完整产物是 runs/2026-11-22-cursor/ref-kart-racer/v1.html，SHA-256 4326fa652140a1e574d77a86be5c00064c85a7ff7754b097d9fa8fb84a3b66f2。该文件没有被后来的修改覆盖。"
+    },
+    {
+      "executionClass": "cursor-assisted-with-tools",
+      "label": "Cursor辅助执行/含工具",
+      "provider": "Cursor Cloud Agent",
+      "model": "grok-4.7-high-fast",
+      "modelVersion": "Cursor run-info.originalModelName=grok-4.7-high-fast。没有供应商 HTTP 响应体，没有 token 统计。",
+      "context": "会话 https://cursor.com/agents/bc-df9f393a-ecdc-5142-98e1-44f568293069 已加载 AI-TASKS-TAXONOMY 仓库和先前对话。这不是隔离盲测，也不是裸 API 单轮。",
+      "environment": "Cursor Cloud Agent，Linux。检查用本机 Google Chrome headless 打开产物。未调用外部模型 API，未使用密钥。",
+      "parameters": "无温度、无 max_tokens。执行中可以读写本仓库，并用浏览器查看产物。",
+      "startedAt": "2026-11-22T02:31:00Z",
+      "endedAt": "2026-11-22T02:31:04Z",
+      "repairs": [],
+      "revision": "v1",
+      "status": "success",
+      "checks": [
+        {
+          "name": "看得到超立方体的投影而不是普通立方体一张皮",
+          "pass": true,
+          "evidence": "16 个四维顶点、32 条棱。截图是内外两层立方和连接棱，球在里面，不是单层六个面。"
+        },
+        {
+          "name": "投影在旋转",
+          "pass": true,
+          "evidence": "XW 转角增到 2.10。顶点投影缩放比从 2.465 变为 2.577，内外层的相对大小在变。"
+        },
+        {
+          "name": "球碰到可见的边界会改变方向",
+          "pass": true,
+          "evidence": "约 2.2 秒内 x、y、z、w 四个方向都发生速度反向。球的四维坐标始终留在边长 2 的超立方体内。"
+        }
+      ],
+      "id": "cursor-ref-tesseract-ball-v1",
+      "taskId": "ref-tesseract-ball",
+      "promptSha256": "9217aaffce053d3b34bc309f3878830e75fe77887d2ec997302181cef8611a72",
+      "artifact": "runs/2026-11-22-cursor/ref-tesseract-ball/v1.html",
+      "artifactSha256": "6df7e8b0bc1fc793745c7d05d49b3bf93c648a4a6206781ad5b8e1adedf5e2e0",
+      "rawOutput": "首次完整产物是 runs/2026-11-22-cursor/ref-tesseract-ball/v1.html，SHA-256 6df7e8b0bc1fc793745c7d05d49b3bf93c648a4a6206781ad5b8e1adedf5e2e0。该文件没有被后来的修改覆盖。"
+    },
+    {
+      "executionClass": "cursor-assisted-with-tools",
+      "label": "Cursor辅助执行/含工具",
+      "provider": "Cursor Cloud Agent",
+      "model": "grok-4.7-high-fast",
+      "modelVersion": "Cursor run-info.originalModelName=grok-4.7-high-fast。没有供应商 HTTP 响应体，没有 token 统计。",
+      "context": "会话 https://cursor.com/agents/bc-df9f393a-ecdc-5142-98e1-44f568293069 已加载 AI-TASKS-TAXONOMY 仓库和先前对话。这不是隔离盲测，也不是裸 API 单轮。",
+      "environment": "Cursor Cloud Agent，Linux。检查用本机 Google Chrome headless 打开产物。未调用外部模型 API，未使用密钥。",
+      "parameters": "无温度、无 max_tokens。执行中可以读写本仓库，并用浏览器查看产物。",
+      "startedAt": "2026-11-22T02:31:21Z",
+      "endedAt": "2026-11-22T02:31:28Z",
+      "repairs": [],
+      "revision": "v1",
+      "status": "success",
+      "checks": [
+        {
+          "name": "看得到地球和火星",
+          "pass": true,
+          "evidence": "画面有蓝色地球、红色火星、两条轨道和太阳。1.1 秒时飞船距地球 0、距火星 6.4。"
+        },
+        {
+          "name": "飞行器离开地球",
+          "pass": true,
+          "evidence": "5.1 秒时阶段是飞向火星，距地球 6.4，高度 y=2.4，已离开地球轨道平面。"
+        },
+        {
+          "name": "到达火星",
+          "pass": true,
+          "evidence": "9.1 秒时阶段是抵达火星，飞船与火星距离为 0，距地球 16.9。"
+        },
+        {
+          "name": "之后又离开火星回到地球",
+          "pass": true,
+          "evidence": "13.0 秒时已离开火星 5.0，高度 1.1，阶段是返回地球。18.1 秒时与地球距离为 0，阶段是回到地球。"
+        }
+      ],
+      "id": "cursor-ref-mars-round-trip-v1",
+      "taskId": "ref-mars-round-trip",
+      "promptSha256": "a1f1a335a4e3b0e01c03e51f5195f196835275566dfcaccec82b8a20ecc8e50e",
+      "artifact": "runs/2026-11-22-cursor/ref-mars-round-trip/v1.html",
+      "artifactSha256": "81d38bf81152d97c4e6ae6bcfacf4120f885fe5ffbe84f862917bf9a9da57c23",
+      "rawOutput": "首次完整产物是 runs/2026-11-22-cursor/ref-mars-round-trip/v1.html，SHA-256 81d38bf81152d97c4e6ae6bcfacf4120f885fe5ffbe84f862917bf9a9da57c23。该文件没有被后来的修改覆盖。"
+    },
+    {
+      "executionClass": "cursor-assisted-with-tools",
+      "label": "Cursor辅助执行/含工具",
+      "provider": "Cursor Cloud Agent",
+      "model": "grok-4.7-high-fast",
+      "modelVersion": "Cursor run-info.originalModelName=grok-4.7-high-fast。没有供应商 HTTP 响应体，没有 token 统计。",
+      "context": "会话 https://cursor.com/agents/bc-df9f393a-ecdc-5142-98e1-44f568293069 已加载 AI-TASKS-TAXONOMY 仓库和先前对话。这不是隔离盲测，也不是裸 API 单轮。",
+      "environment": "Cursor Cloud Agent，Linux。检查用本机 Google Chrome headless 打开产物。未调用外部模型 API，未使用密钥。",
+      "parameters": "无温度、无 max_tokens。执行中可以读写本仓库，并用浏览器查看产物。",
+      "startedAt": "2026-11-22T02:31:05Z",
+      "endedAt": "2026-11-22T02:31:09Z",
+      "repairs": [],
+      "revision": "v1",
+      "status": "success",
+      "checks": [
+        {
+          "name": "开始时看得到恒星",
+          "pass": true,
+          "evidence": "0.85 秒时阶段是 star，金色核心半径 54，还没有碎片。"
+        },
+        {
+          "name": "随后有膨胀或坍缩",
+          "pass": true,
+          "evidence": "1.81 秒时阶段是 collapse，半径从 54 收到 37.4。"
+        },
+        {
+          "name": "然后有爆炸",
+          "pass": true,
+          "evidence": "3.13 秒时阶段是 burst，半径涨到 92.8，碎片壳层半径 116。卡片截图是这一团亮斑和飞出的碎屑。"
+        },
+        {
+          "name": "最后留下和爆炸前不同的残骸或光",
+          "pass": true,
+          "evidence": "5.23 秒时阶段是 remnant，核心半径 16，颜色从金色 #f2c14e 变成淡蓝 #d7e7ff，壳层留在 220。"
+        }
+      ],
+      "id": "cursor-ref-supernova-v1",
+      "taskId": "ref-supernova",
+      "promptSha256": "cfb8c6c0185943c303497e24c982382674102275b361570ac77a3ae256846231",
+      "artifact": "runs/2026-11-22-cursor/ref-supernova/v1.html",
+      "artifactSha256": "669fd71587bbf809da856b5fd1ac9783e62181fde86bf1e56440c091f0d88295",
+      "rawOutput": "首次完整产物是 runs/2026-11-22-cursor/ref-supernova/v1.html，SHA-256 669fd71587bbf809da856b5fd1ac9783e62181fde86bf1e56440c091f0d88295。该文件没有被后来的修改覆盖。"
+    },
+    {
+      "executionClass": "cursor-assisted-with-tools",
+      "label": "Cursor辅助执行/含工具",
+      "provider": "Cursor Cloud Agent",
+      "model": "grok-4.7-high-fast",
+      "modelVersion": "Cursor run-info.originalModelName=grok-4.7-high-fast。没有供应商 HTTP 响应体，没有 token 统计。",
+      "context": "会话 https://cursor.com/agents/bc-df9f393a-ecdc-5142-98e1-44f568293069 已加载 AI-TASKS-TAXONOMY 仓库和先前对话。这不是隔离盲测，也不是裸 API 单轮。",
+      "environment": "Cursor Cloud Agent，Linux。检查用本机 Google Chrome headless 打开产物。未调用外部模型 API，未使用密钥。",
+      "parameters": "无温度、无 max_tokens。执行中可以读写本仓库，并用浏览器查看产物。",
+      "startedAt": "2026-11-22T02:31:29Z",
+      "endedAt": "2026-11-22T02:31:33Z",
+      "repairs": [],
+      "revision": "v1",
+      "status": "success",
+      "checks": [
+        {
+          "name": "运行后有仪表、按钮或航迹一类控制台元素",
+          "pass": true,
+          "evidence": "画面有航迹数字、曲速、雷达圆、警报按钮、曲速按钮和指针。草图正文是 v1.js，SHA-256 f1d6814665b5e9b8c9be2784fbe5a026838d4ed9de38d418e488ab9c3f027dc9。"
+        },
+        {
+          "name": "有动画或可点击的反馈",
+          "pass": true,
+          "evidence": "400 毫秒内航迹从 26.2 增到 30.0。点警报后文字变为警报开，指示灯变红；再点曲速后读数变为 0.5。"
+        },
+        {
+          "name": "不是空白画布",
+          "pass": true,
+          "evidence": "画布采样到约 1.8 万个非暗像素，截图能看见雷达和控制按钮。"
+        }
+      ],
+      "id": "cursor-ref-starship-control-panel-v1",
+      "taskId": "ref-starship-control-panel",
+      "promptSha256": "a1194b641655d4524ecb939289fe06fb8ab6179f8b0465ac037133ed6d8c4799",
+      "artifact": "runs/2026-11-22-cursor/ref-starship-control-panel/v1.html",
+      "artifactSha256": "a3fbd7b0e79718d91cda0e1e6f77cf117e83dd27a99df5ad4c35b767eb98ffb3",
+      "rawOutput": "首次完整产物是 runs/2026-11-22-cursor/ref-starship-control-panel/v1.html，SHA-256 a3fbd7b0e79718d91cda0e1e6f77cf117e83dd27a99df5ad4c35b767eb98ffb3。该文件没有被后来的修改覆盖。"
     }
   ]
 }

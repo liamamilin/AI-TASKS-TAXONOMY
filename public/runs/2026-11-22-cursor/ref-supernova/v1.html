@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Supernova</title>
+<style>
+  html, body { margin: 0; background: #05060a; overflow: hidden; }
+  canvas { width: 100vw; height: 100vh; display: block; }
+</style>
+</head>
+<body>
+<canvas id="c"></canvas>
+<script>
+const canvas = document.getElementById("c");
+const ctx = canvas.getContext("2d");
+const started = performance.now();
+const debris = Array.from({ length: 80 }, (_, i) => ({
+  ang: (i / 80) * Math.PI * 2,
+  speed: 40 + (i % 7) * 18,
+  hue: i % 2 ? 28 : 200
+}));
+function resize() {
+  canvas.width = Math.max(2, innerWidth);
+  canvas.height = Math.max(2, innerHeight);
+}
+window.addEventListener("resize", resize);
+resize();
+function state(now) {
+  const t = (now - started) / 1000;
+  let stage = "star";
+  let radius = 54;
+  let core = "#f2c14e";
+  let shell = 0;
+  if (t >= 1.4 && t < 2.3) {
+    stage = "collapse";
+    radius = 54 - (t - 1.4) / 0.9 * 36;
+    core = "#fff1c9";
+  } else if (t >= 2.3 && t < 4.2) {
+    stage = "burst";
+    radius = 18 + (t - 2.3) * 90;
+    core = "#fffaf0";
+    shell = (t - 2.3) * 140;
+  } else if (t >= 4.2) {
+    stage = "remnant";
+    radius = 16;
+    core = "#d7e7ff";
+    shell = 220;
+  }
+  return { t, stage, radius, core, shell };
+}
+function frame(now) {
+  const view = state(now);
+  ctx.fillStyle = "#05060a";
+  ctx.fillRect(0, 0, canvas.width, canvas.height);
+  const cx = canvas.width / 2, cy = canvas.height / 2;
+  if (view.shell > 0) {
+    debris.forEach((bit) => {
+      const dist = view.shell * (0.45 + (bit.speed % 20) / 40);
+      ctx.fillStyle = bit.hue > 40 ? "rgba(120,180,255,0.75)" : "rgba(255,170,70,0.8)";
+      ctx.beginPath();
+      ctx.arc(cx + Math.cos(bit.ang) * dist, cy + Math.sin(bit.ang) * dist, view.stage === "remnant" ? 2.2 : 3.4, 0, Math.PI * 2);
+      ctx.fill();
+    });
+  }
+  const glow = ctx.createRadialGradient(cx, cy, view.radius * 0.2, cx, cy, view.radius * 1.8);
+  glow.addColorStop(0, view.core);
+  glow.addColorStop(1, "rgba(0,0,0,0)");
+  ctx.fillStyle = glow;
+  ctx.beginPath();
+  ctx.arc(cx, cy, view.radius * 1.8, 0, Math.PI * 2);
+  ctx.fill();
+  ctx.fillStyle = view.core;
+  ctx.beginPath();
+  ctx.arc(cx, cy, Math.max(4, view.radius), 0, Math.PI * 2);
+  ctx.fill();
+  window.__nova = view;
+  requestAnimationFrame(frame);
+}
+requestAnimationFrame(frame);
+</script>
+</body>
+</html>
