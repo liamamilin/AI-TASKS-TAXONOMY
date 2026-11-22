@@ -1,0 +1,60 @@
+{
+  "unchanged": [
+    "title",
+    "date",
+    "place",
+    "host_id"
+  ],
+  "direct": [
+    {
+      "field": "people",
+      "from": 8,
+      "to": 12,
+      "kind": "直接"
+    },
+    {
+      "field": "制作分钟",
+      "from": 40,
+      "to": 50,
+      "kind": "直接"
+    },
+    {
+      "field": "开始后移分钟",
+      "from": 0,
+      "to": 30,
+      "kind": "直接"
+    }
+  ],
+  "derived": [
+    {
+      "field": "paper_needed",
+      "from": 24,
+      "to": 36,
+      "kind": "衍生"
+    },
+    {
+      "field": "paper_shortfall",
+      "from": 14,
+      "to": 26,
+      "kind": "衍生"
+    },
+    {
+      "field": "签到时间",
+      "from": "10:00–10:10",
+      "to": "10:30–10:40",
+      "kind": "衍生"
+    },
+    {
+      "field": "制作时间",
+      "from": "10:10–10:50",
+      "to": "10:40–11:30",
+      "kind": "衍生"
+    },
+    {
+      "field": "收拾时间",
+      "from": "10:50–11:00",
+      "to": "11:30–11:40",
+      "kind": "衍生"
+    }
+  ]
+}

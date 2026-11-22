@@ -1,0 +1,193 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>小修订也得算数</title>
+<style>
+  * { box-sizing: border-box; }
+  body { margin: 0; background: #f6f1e7; color: #1c1915; font-family: Georgia, "Songti SC", "Noto Serif CJK SC", serif; }
+  main { width: min(46rem, calc(100% - 1.5rem)); margin: 0 auto; padding: 1rem 0 2rem; }
+  h1 { font-size: 1.6rem; }
+  .quiet { color: #5e564c; }
+  input, button { font: inherit; }
+  input { width: 5rem; background: #fffdf8; border: 1px solid #1c1915; padding: 0.35rem; }
+  button { background: #1c1915; color: #fffdf8; border: 0; padding: 0.45rem 0.7rem; margin: 0.3rem 0.35rem 0.3rem 0; }
+  section { background: #fffdf8; border: 1px solid #d9cbb6; padding: 0.75rem; margin: 0.6rem 0; }
+  table { width: 100%; border-collapse: collapse; }
+  th, td { border-top: 1px solid #e4d8c6; padding: 0.35rem; text-align: left; }
+  .views { display: grid; gap: 0.6rem; }
+</style>
+</head>
+<body>
+<main>
+  <p class="quiet">问笺馆原创。受公开方法资料启发，不是那些网站的官方题目，也不代表对方背书。</p>
+  <h1>小修订也得算数</h1>
+  <p>公告、流程和物资都从同一份数据画出来。地点、活动名和主持编号不跟着改。</p>
+  <p>
+    <button type="button" id="show-original">看原版</button>
+    <button type="button" id="show-revised">看修订版</button>
+  </p>
+  <p>
+    <label>修订人数 <input id="people" type="number" value="12"></label>
+    <label>每人纸张 <input id="paper" type="number" value="3"></label>
+    <button type="button" id="recalc">按这两个数重算修订版</button>
+  </p>
+  <p>
+    <button type="button" id="download-revised">下载 revised.json</button>
+    <button type="button" id="download-log">下载 change-log.json</button>
+  </p>
+  <div id="views" class="views"></div>
+  <h2>修改记录</h2>
+  <ul id="log"></ul>
+</main>
+<script>
+const ORIGINAL = {
+  title: "风筝纸工坊",
+  date: "2026-04-18",
+  place: "云尾室",
+  host_id: "HOST-SYN-01",
+  people: 8,
+  paper_per_person: 3,
+  paper_in_stock: 10,
+  schedule: [
+    { name: "签到", minutes: 10 },
+    { name: "制作", minutes: 40 },
+    { name: "收拾", minutes: 10 }
+  ],
+  first_start: "10:00"
+}
+const CHANGES = { people: 12, start_shift_minutes: 30, making_duration_minutes: 50 }
+
+function addMinutes(clock, amount) {
+  const [hour, minute] = clock.split(":").map(Number)
+  const total = hour * 60 + minute + amount
+  return `${String(Math.floor(total / 60)).padStart(2, "0")}:${String(total % 60).padStart(2, "0")}`
+}
+
+function build(seed, people, paperPerPerson, shift, makingMinutes) {
+  const schedule = []
+  let cursor = addMinutes(seed.first_start, shift)
+  for (const item of seed.schedule) {
+    const minutes = item.name === "制作" ? makingMinutes : item.minutes
+    const start = cursor
+    const end = addMinutes(start, minutes)
+    schedule.push({ name: item.name, start, end, minutes })
+    cursor = end
+  }
+  const paperNeeded = people * paperPerPerson
+  return {
+    title: seed.title,
+    date: seed.date,
+    place: seed.place,
+    host_id: seed.host_id,
+    people,
+    paper_per_person: paperPerPerson,
+    paper_in_stock: seed.paper_in_stock,
+    paper_needed: paperNeeded,
+    paper_shortfall: Math.max(0, paperNeeded - seed.paper_in_stock),
+    schedule
+  }
+}
+
+function originalModel() {
+  return build(ORIGINAL, ORIGINAL.people, ORIGINAL.paper_per_person, 0, ORIGINAL.schedule[1].minutes)
+}
+
+function revisedModel() {
+  const people = Number(document.getElementById("people").value)
+  const paper = Number(document.getElementById("paper").value)
+  return build(ORIGINAL, people, paper, CHANGES.start_shift_minutes, CHANGES.making_duration_minutes)
+}
+
+let mode = "revised"
+
+function active() {
+  return mode === "original" ? originalModel() : revisedModel()
+}
+
+function logOf(revised) {
+  const base = originalModel()
+  const direct = [
+    { field: "people", from: base.people, to: revised.people, kind: "直接" },
+    { field: "制作分钟", from: base.schedule[1].minutes, to: revised.schedule[1].minutes, kind: "直接" },
+    { field: "开始后移分钟", from: 0, to: CHANGES.start_shift_minutes, kind: "直接" }
+  ]
+  if (revised.paper_per_person !== base.paper_per_person) {
+    direct.push({ field: "paper_per_person", from: base.paper_per_person, to: revised.paper_per_person, kind: "直接" })
+  }
+  const derived = [
+    { field: "paper_needed", from: base.paper_needed, to: revised.paper_needed, kind: "衍生" },
+    { field: "paper_shortfall", from: base.paper_shortfall, to: revised.paper_shortfall, kind: "衍生" }
+  ]
+  base.schedule.forEach((item, index) => {
+    const next = revised.schedule[index]
+    if (item.start !== next.start || item.end !== next.end) {
+      derived.push({ field: `${item.name}时间`, from: `${item.start}–${item.end}`, to: `${next.start}–${next.end}`, kind: "衍生" })
+    }
+  })
+  return {
+    unchanged: ["title", "date", "place", "host_id"],
+    direct: direct.filter((item) => item.from !== item.to),
+    derived
+  }
+}
+
+function render() {
+  const model = active()
+  const revised = revisedModel()
+  window.__revised = revised
+  window.__log = logOf(revised)
+  window.__original = originalModel()
+  const box = document.getElementById("views")
+  box.textContent = ""
+  const notice = document.createElement("section")
+  notice.dataset.view = "公告"
+  notice.innerHTML = ""
+  const h = document.createElement("h2")
+  h.textContent = model.title
+  const p = document.createElement("p")
+  p.textContent = `${model.date} · ${model.place} · 主持 ${model.host_id} · ${model.people} 人`
+  notice.append(h, p)
+  const tableWrap = document.createElement("section")
+  tableWrap.dataset.view = "流程"
+  const tableTitle = document.createElement("h2")
+  tableTitle.textContent = "流程"
+  const table = document.createElement("table")
+  const body = model.schedule.map((item) => `<tr><td>${item.name}</td><td>${item.start}–${item.end}</td><td>${item.minutes} 分钟</td></tr>`).join("")
+  table.innerHTML = `<tbody>${body}</tbody>`
+  tableWrap.append(tableTitle, table)
+  const stock = document.createElement("section")
+  stock.dataset.view = "物资"
+  const stockTitle = document.createElement("h2")
+  stockTitle.textContent = "物资"
+  const stockText = document.createElement("p")
+  stockText.textContent = `每人 ${model.paper_per_person} 张，共需 ${model.paper_needed} 张，已有 ${model.paper_in_stock} 张，需补 ${model.paper_shortfall} 张。`
+  stock.append(stockTitle, stockText)
+  box.append(notice, tableWrap, stock)
+  const log = document.getElementById("log")
+  log.textContent = ""
+  for (const item of window.__log.direct.concat(window.__log.derived)) {
+    const li = document.createElement("li")
+    li.textContent = `${item.kind} · ${item.field}：${item.from} → ${item.to}`
+    log.append(li)
+  }
+}
+
+document.getElementById("show-original").addEventListener("click", () => { mode = "original"; render() })
+document.getElementById("show-revised").addEventListener("click", () => { mode = "revised"; render() })
+document.getElementById("recalc").addEventListener("click", () => { mode = "revised"; render() })
+function download(name, data) {
+  const blob = new Blob([JSON.stringify(data, null, 2) + "\n"], { type: "application/json" })
+  const link = document.createElement("a")
+  link.href = URL.createObjectURL(blob)
+  link.download = name
+  link.click()
+  URL.revokeObjectURL(link.href)
+}
+document.getElementById("download-revised").addEventListener("click", () => download("revised.json", window.__revised))
+document.getElementById("download-log").addEventListener("click", () => download("change-log.json", window.__log))
+render()
+</script>
+</body>
+</html>

@@ -145,12 +145,12 @@
     "note": "卡片是运行中的控制台。可粘贴的草图在同目录 v1.js，页面只加载 p5 和这份草图。"
   },
   "ref-minecraft-web": {
-    "revision": "v1",
-    "status": "partial",
+    "revision": "复查",
+    "status": "success",
     "artifact": "runs/2026-11-22-cursor/ref-minecraft-web/v1.html",
-    "image": "previews/ref-minecraft-web.jpg",
-    "label": "展示 v1",
-    "note": "能走、能转、能挖到实心块，沙看得见。水方块已生成，抽查镜头没有拍到水面。"
+    "image": "previews/ref-minecraft-web-water.jpg",
+    "label": "展示 v1 复查",
+    "note": "文件仍是首次那一版。第一次记录没拍到水。这次走进角落并低头后看见水面。首次的部分记录还在。"
   },
   "ref-meteor-city": {
     "revision": "v1",
@@ -258,6 +258,27 @@
     "status": "success",
     "artifact": "runs/2026-11-22-cursor/orig-n10-midnight-post/index.html",
     "image": "previews/orig-n10-midnight-post.jpg",
+    "label": "展示 v1"
+  },
+  "orig-n15-pocket-notes": {
+    "revision": "v1",
+    "status": "success",
+    "artifact": "runs/2026-11-22-cursor/orig-n15-pocket-notes/index.html",
+    "image": "previews/orig-n15-pocket-notes.jpg",
+    "label": "展示 v1"
+  },
+  "orig-n16-revision": {
+    "revision": "v1",
+    "status": "success",
+    "artifact": "runs/2026-11-22-cursor/orig-n16-revision/change.html",
+    "image": "previews/orig-n16-revision.jpg",
+    "label": "展示 v1"
+  },
+  "orig-n14-sound-postcard": {
+    "revision": "v1",
+    "status": "success",
+    "artifact": "runs/2026-11-22-cursor/orig-n14-sound-postcard/index.html",
+    "image": "previews/orig-n14-sound-postcard.jpg",
     "label": "展示 v1"
   }
 }

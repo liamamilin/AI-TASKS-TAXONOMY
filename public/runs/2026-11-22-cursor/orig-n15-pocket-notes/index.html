@@ -1,0 +1,154 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>口袋资料夹找回器</title>
+<style>
+  * { box-sizing: border-box; }
+  body { margin: 0; background: #f6f1e7; color: #1c1915; font-family: Georgia, "Songti SC", "Noto Serif CJK SC", serif; }
+  main { width: min(52rem, calc(100% - 1.5rem)); margin: 0 auto; padding: 1rem 0 2rem; }
+  h1 { font-size: 1.6rem; }
+  .quiet { color: #5e564c; }
+  input, select, button { font: inherit; }
+  input, select { background: #fffdf8; border: 1px solid #1c1915; padding: 0.4rem; max-width: 100%; }
+  button { background: #1c1915; color: #fffdf8; border: 0; padding: 0.45rem 0.7rem; margin: 0.3rem 0.35rem 0.3rem 0; }
+  .row { display: flex; flex-wrap: wrap; gap: 0.5rem; align-items: end; }
+  article, .pin { background: #fffdf8; border: 1px solid #d9cbb6; padding: 0.7rem; margin: 0.5rem 0; }
+  .pins { display: grid; grid-template-columns: repeat(auto-fit, minmax(14rem, 1fr)); gap: 0.6rem; }
+  .empty { color: #9c3b32; }
+</style>
+</head>
+<body>
+<main>
+  <p class="quiet">问笺馆原创。受公开方法资料启发，不是那些网站的官方题目，也不代表对方背书。</p>
+  <h1>口袋资料夹找回器</h1>
+  <p>全部知识只有下面六条便签。搜到的是原文和编号，不补写事实。两条便签说法不同时，并排放着，不替你选一边。</p>
+  <div class="row">
+    <label>关键词<input id="query" type="search" autocomplete="off"></label>
+    <label>标签
+      <select id="tag">
+        <option value="全部">全部</option>
+        <option value="活动">活动</option>
+        <option value="库存">库存</option>
+        <option value="规则">规则</option>
+      </select>
+    </label>
+    <button type="button" id="search">检索</button>
+    <button type="button" id="download">下载 results.json</button>
+  </div>
+  <p id="status"></p>
+  <h2>命中</h2>
+  <div id="hits"></div>
+  <h2>钉住比较</h2>
+  <div id="pins" class="pins"></div>
+  <h2>原文列表</h2>
+  <div id="corpus"></div>
+</main>
+<script>
+const NOTES = [
+  { id: "C1", tag: "活动", title: "纸船会", body: "周六 10:00 在蓝厅折纸。" },
+  { id: "C2", tag: "库存", title: "蓝纸", body: "蓝厅剩蓝纸12张，日期04-01。" },
+  { id: "C3", tag: "活动", title: "换书角", body: "周日 14:00 在黄厅交换旧书。" },
+  { id: "C4", tag: "规则", title: "纸船规则", body: "蓝厅纸船不可放入水池。" },
+  { id: "C5", tag: "库存", title: "彩笔", body: "黄厅有彩笔3盒。" },
+  { id: "C6", tag: "规则", title: "换书规则", body: "旧书不可夹带食品。" }
+]
+let pins = []
+
+function matches(note, query, tag) {
+  if (tag !== "全部" && note.tag !== tag) return false
+  const words = query.trim().toLowerCase().split(/\s+/).filter(Boolean)
+  const haystack = `${note.title}\n${note.body}`.toLowerCase()
+  return words.every((word) => haystack.includes(word))
+}
+
+function current() {
+  const query = document.getElementById("query").value
+  const tag = document.getElementById("tag").value
+  const hits = NOTES.filter((note) => matches(note, query, tag))
+  return {
+    query,
+    tag,
+    ids: hits.map((note) => note.id),
+    notes: hits.map((note) => ({ id: note.id, tag: note.tag, title: note.title, body: note.body }))
+  }
+}
+
+function card(note, extra) {
+  const article = document.createElement("article")
+  article.dataset.id = note.id
+  const title = document.createElement("h3")
+  title.textContent = `${note.id} · ${note.title}`
+  const meta = document.createElement("p")
+  meta.className = "quiet"
+  meta.textContent = `标签 ${note.tag}`
+  const body = document.createElement("p")
+  body.textContent = note.body
+  article.append(title, meta, body)
+  if (extra) article.append(extra)
+  return article
+}
+
+function render() {
+  const result = current()
+  window.__results = result
+  const status = document.getElementById("status")
+  status.textContent = result.ids.length ? `命中 ${result.ids.join("、")}。片段来自便签原文。` : "没有命中。资料夹里没有补上一条答案。"
+  const hits = document.getElementById("hits")
+  hits.textContent = ""
+  if (!result.notes.length) {
+    const empty = document.createElement("p")
+    empty.className = "empty"
+    empty.textContent = "空结果。"
+    hits.append(empty)
+  }
+  for (const note of result.notes) {
+    const button = document.createElement("button")
+    button.type = "button"
+    button.textContent = pins.includes(note.id) ? "取下" : "钉住"
+    button.addEventListener("click", () => togglePin(note.id))
+    hits.append(card(note, button))
+  }
+  const pinBox = document.getElementById("pins")
+  pinBox.textContent = ""
+  for (const id of pins) {
+    const note = NOTES.find((item) => item.id === id)
+    const button = document.createElement("button")
+    button.type = "button"
+    button.textContent = "取下"
+    button.addEventListener("click", () => togglePin(id))
+    pinBox.append(card(note, button))
+  }
+  document.getElementById("query").dataset.shown = result.query
+}
+
+function togglePin(id) {
+  if (pins.includes(id)) pins = pins.filter((item) => item !== id)
+  else if (pins.length >= 2) {
+    document.getElementById("status").textContent = "已经钉了两条。先取下一条，才能换。"
+    return
+  } else pins = pins.concat(id)
+  render()
+}
+
+document.getElementById("search").addEventListener("click", render)
+document.getElementById("query").addEventListener("keydown", (event) => {
+  if (event.key === "Enter") render()
+})
+document.getElementById("tag").addEventListener("change", render)
+document.getElementById("download").addEventListener("click", () => {
+  const blob = new Blob([JSON.stringify(window.__results, null, 2) + "\n"], { type: "application/json" })
+  const link = document.createElement("a")
+  link.href = URL.createObjectURL(blob)
+  link.download = "results.json"
+  link.click()
+  URL.revokeObjectURL(link.href)
+})
+
+const corpus = document.getElementById("corpus")
+for (const note of NOTES) corpus.append(card(note))
+render()
+</script>
+</body>
+</html>

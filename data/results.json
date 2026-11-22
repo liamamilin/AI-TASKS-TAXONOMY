@@ -1754,6 +1754,183 @@
       "artifact": "runs/2026-11-22-cursor/orig-n10-midnight-post/index.html",
       "artifactSha256": "8340168ce96eb2c5a72e90d32d1b07afdff9fd2933b2d462e208999dd85c0757",
       "rawOutput": "这一版产物是 runs/2026-11-22-cursor/orig-n10-midnight-post/index.html，SHA-256 8340168ce96eb2c5a72e90d32d1b07afdff9fd2933b2d462e208999dd85c0757。文件按这次写入保留。"
+    },
+    {
+      "executionClass": "cursor-assisted-with-tools",
+      "label": "Cursor辅助执行/含工具",
+      "provider": "Cursor Cloud Agent",
+      "model": "grok-4.7-high-fast",
+      "modelVersion": "Cursor run-info.originalModelName=grok-4.7-high-fast。没有供应商 HTTP 响应体，没有 token 统计。",
+      "context": "会话 https://cursor.com/agents/bc-df9f393a-ecdc-5142-98e1-44f568293069 已加载 AI-TASKS-TAXONOMY 仓库和先前对话。这不是隔离盲测，也不是裸 API 单轮。",
+      "environment": "Cursor Cloud Agent，Linux，本机 Google Chrome headless。未使用密钥或付费接口，未打开摄像头。",
+      "parameters": "无温度、无 max_tokens。在未改文件的前提下用键盘走近并低头。",
+      "startedAt": "2026-11-22T04:47:00Z",
+      "endedAt": "2026-11-22T04:52:00Z",
+      "repairs": [],
+      "revision": "复查",
+      "status": "success",
+      "checks": [
+        {
+          "name": "页面能进入第一人称或等价的可移动视角",
+          "pass": true,
+          "evidence": "从 12.2,12.2 转身并前进。没有跳跃键，被高一格的草挡住后，用挖掉前方打出通道，最后走到大约 x=1.9、z=6.0。"
+        },
+        {
+          "name": "能看见不同方块或地形",
+          "pass": true,
+          "evidence": "途中画面有草绿、黄色沙地和石头。计数仍是沙 168、水 25。"
+        },
+        {
+          "name": "能看见沙和水一类环境",
+          "pass": true,
+          "evidence": "同一份 v1。低头后的画面右上方有一块偏深的蓝色半透明表面，像素里有大约 (64,115,144) 这一类颜色，比天空的 (98,173,214) 更暗。水方块没有被挖掉。这不是改地图换来的。"
+        },
+        {
+          "name": "没有必须播放的声音文件",
+          "pass": true,
+          "evidence": "页面仍没有 audio 元素。地图仍是 24×24，没有生物和合成。"
+        }
+      ],
+      "id": "cursor-ref-minecraft-web-recheck",
+      "taskId": "ref-minecraft-web",
+      "promptSha256": "e2f509879019426cd15f3890875d8d5462911f985d35c7bdfdd15cb89610ac40",
+      "artifact": "runs/2026-11-22-cursor/ref-minecraft-web/v1.html",
+      "artifactSha256": "5350bf3d7239b3dc8512fa77ab46fbf0300f94bafe36b5ca7f4dc34a9c8b5531",
+      "rawOutput": "这次没有新文件版本。看的仍是 runs/2026-11-22-cursor/ref-minecraft-web/v1.html，SHA-256 与首次记录相同。走近后的画面另存在 recheck-water.png。"
+    },
+    {
+      "executionClass": "cursor-assisted-with-tools",
+      "label": "Cursor辅助执行/含工具",
+      "provider": "Cursor Cloud Agent",
+      "model": "grok-4.7-high-fast",
+      "modelVersion": "Cursor run-info.originalModelName=grok-4.7-high-fast。没有供应商 HTTP 响应体，没有 token 统计。",
+      "context": "会话 https://cursor.com/agents/bc-df9f393a-ecdc-5142-98e1-44f568293069 已加载本仓库。这不是隔离盲测，也不是裸接口单轮。",
+      "environment": "Cursor Cloud Agent，Linux，本机 Google Chrome headless。未使用密钥或付费接口。",
+      "parameters": "无温度、无 max_tokens。用浏览器操作页面，并用 Python 标准库核对导出和 WAV。",
+      "startedAt": "2026-11-22T04:46:14Z",
+      "endedAt": "2026-11-22T04:52:44Z",
+      "repairs": [],
+      "revision": "v1",
+      "status": "success",
+      "checks": [
+        {
+          "name": "三个探针的编号正确",
+          "pass": true,
+          "evidence": "「蓝厅 纸船」命中 C1、C4。「蓝厅」加库存只剩 C2。「绿厅」为空。空查询是 C1 到 C6。只选活动是 C1、C3。「蓝厅」加活动只剩 C1，说明标签和搜索是交集。"
+        },
+        {
+          "name": "片段能回到原便签",
+          "pass": true,
+          "evidence": "命中卡片写着编号、标签和原文。C1 是「周六 10:00 在蓝厅折纸。」C4 是「蓝厅纸船不可放入水池。」没有把两条合成一个答案。原文列表一直有 6 条。"
+        },
+        {
+          "name": "钉住、导出和 HTML 都按规则",
+          "pass": true,
+          "evidence": "钉住 C1 和 C4 后再钉 C2，页面说已经钉了两条。取下 C1 后可以钉上 C2。results.json 的 query、tag、ids 是「蓝厅 纸船」、全部、C1 和 C4。输入尖括号后没有出现 img，script 仍是原来的 1 个。"
+        },
+        {
+          "name": "390 宽没有横向溢出",
+          "pass": true,
+          "evidence": "390×844 下 documentElement 的 scrollWidth 与 clientWidth 都是 390。"
+        }
+      ],
+      "id": "cursor-orig-n15-pocket-notes-v1",
+      "taskId": "orig-n15-pocket-notes",
+      "promptSha256": "56b8a3995ee1b931c22abf8e18d39b2cd63f0e43483bdf2b787258eb67d452c4",
+      "artifact": "runs/2026-11-22-cursor/orig-n15-pocket-notes/index.html",
+      "artifactSha256": "84cbe4490b5bee6ffd05794b2c3d4916a5adb591670fcb91302c7b668deeff1d",
+      "rawOutput": "这一版产物是 runs/2026-11-22-cursor/orig-n15-pocket-notes/index.html，SHA-256 84cbe4490b5bee6ffd05794b2c3d4916a5adb591670fcb91302c7b668deeff1d。文件按这次写入保留。"
+    },
+    {
+      "executionClass": "cursor-assisted-with-tools",
+      "label": "Cursor辅助执行/含工具",
+      "provider": "Cursor Cloud Agent",
+      "model": "grok-4.7-high-fast",
+      "modelVersion": "Cursor run-info.originalModelName=grok-4.7-high-fast。没有供应商 HTTP 响应体，没有 token 统计。",
+      "context": "会话 https://cursor.com/agents/bc-df9f393a-ecdc-5142-98e1-44f568293069 已加载本仓库。这不是隔离盲测，也不是裸接口单轮。",
+      "environment": "Cursor Cloud Agent，Linux，本机 Google Chrome headless。未使用密钥或付费接口。",
+      "parameters": "无温度、无 max_tokens。用浏览器操作页面，并用 Python 标准库核对导出和 WAV。",
+      "startedAt": "2026-11-22T04:46:14Z",
+      "endedAt": "2026-11-22T04:52:44Z",
+      "repairs": [],
+      "revision": "v1",
+      "status": "success",
+      "checks": [
+        {
+          "name": "修订后的三段时间首尾相接",
+          "pass": true,
+          "evidence": "修订版是签到 10:30–10:40、制作 10:40–11:30、收拾 11:30–11:40。三段首尾相接，没有重叠。"
+        },
+        {
+          "name": "纸张数量在三个视图里一致",
+          "pass": true,
+          "evidence": "公告写 12 人，物资写每人 3 张、共需 36、已有 10、需补 26。流程表是同一套时间。原版是 8 人、共需 24、需补 14。"
+        },
+        {
+          "name": "非目标字段不改",
+          "pass": true,
+          "evidence": "修订前后标题都是风筝纸工坊，日期 2026-04-18，地点云尾室，主持 HOST-SYN-01。修改记录把人数、制作分钟和开始后移标成直接变化，把纸张和三段时间标成衍生变化。"
+        },
+        {
+          "name": "人数改成 2 时不出现负补货",
+          "pass": true,
+          "evidence": "人数改成 2 后共需 6、需补 0。再看原版，仍是 8 人和 10:00 的流程，没有被这个输入改掉。"
+        },
+        {
+          "name": "390 宽没有横向溢出",
+          "pass": true,
+          "evidence": "390×844 下 documentElement 的 scrollWidth 与 clientWidth 都是 390。"
+        }
+      ],
+      "id": "cursor-orig-n16-revision-v1",
+      "taskId": "orig-n16-revision",
+      "promptSha256": "4bc25a7dd8ac9af021a55a5f565f3e05582f6e075a433ba539160552286b231d",
+      "artifact": "runs/2026-11-22-cursor/orig-n16-revision/change.html",
+      "artifactSha256": "46e2d0720f78e9a411dbae9d6ad00aa8ae677bfa812c1cc620d7a90ba58564bd",
+      "rawOutput": "这一版产物是 runs/2026-11-22-cursor/orig-n16-revision/change.html，SHA-256 46e2d0720f78e9a411dbae9d6ad00aa8ae677bfa812c1cc620d7a90ba58564bd。文件按这次写入保留。"
+    },
+    {
+      "executionClass": "cursor-assisted-with-tools",
+      "label": "Cursor辅助执行/含工具",
+      "provider": "Cursor Cloud Agent",
+      "model": "grok-4.7-high-fast",
+      "modelVersion": "Cursor run-info.originalModelName=grok-4.7-high-fast。没有供应商 HTTP 响应体，没有 token 统计。",
+      "context": "会话 https://cursor.com/agents/bc-df9f393a-ecdc-5142-98e1-44f568293069 已加载本仓库。这不是隔离盲测，也不是裸接口单轮。",
+      "environment": "Cursor Cloud Agent，Linux，本机 Google Chrome headless。未使用密钥或付费接口。",
+      "parameters": "无温度、无 max_tokens。用浏览器操作页面，并用 Python 标准库核对导出和 WAV。",
+      "startedAt": "2026-11-22T04:46:14Z",
+      "endedAt": "2026-11-22T04:52:44Z",
+      "repairs": [],
+      "revision": "v1",
+      "status": "success",
+      "checks": [
+        {
+          "name": "WAV 格式和峰值符合要求",
+          "pass": true,
+          "evidence": "wave 模块读到单声道、16-bit、22050 Hz、176400 帧。峰值 15300，低于 26214。"
+        },
+        {
+          "name": "声段位置正确且两次字节相同",
+          "pass": true,
+          "evidence": "0–0.5、1.3–2、4–5、7–8 秒的样本都是 0。门铃区间、5–7 秒拆信区间有能量。脚步在 2.0、2.5、3.0、3.5 秒各有 0.2 秒，间隔为 0。连续运行两次，SHA-256 都是 edd7fd658c0082a7 开头的同一份。"
+        },
+        {
+          "name": "播放页不自动开始",
+          "pass": true,
+          "evidence": "没有 autoplay。三段说明在点击前就在页面上。点击播放会调用 audio.play()，调用前 paused 为 true。这个无声环境里 currentTime 仍是 0，没有把听感算成通过。没有麦克风请求。"
+        },
+        {
+          "name": "390 宽没有横向溢出",
+          "pass": true,
+          "evidence": "390×844 下 documentElement 的 scrollWidth 与 clientWidth 都是 390。"
+        }
+      ],
+      "id": "cursor-orig-n14-sound-postcard-v1",
+      "taskId": "orig-n14-sound-postcard",
+      "promptSha256": "736f5983b854004693fcb27f2997fffa3a3cd90616cd127cf462216a131e871c",
+      "artifact": "runs/2026-11-22-cursor/orig-n14-sound-postcard/index.html",
+      "artifactSha256": "14aa0a5ea076110ccd99ec95c0066158a53ee46bf28749c6ca57f36417ad82d0",
+      "rawOutput": "这一版产物是 runs/2026-11-22-cursor/orig-n14-sound-postcard/index.html，SHA-256 14aa0a5ea076110ccd99ec95c0066158a53ee46bf28749c6ca57f36417ad82d0。文件按这次写入保留。"
     }
   ]
 }
