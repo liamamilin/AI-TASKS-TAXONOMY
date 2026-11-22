@@ -1466,6 +1466,150 @@
       "artifact": "runs/2026-11-22-cursor/orig-n05-subtitle/index.html",
       "artifactSha256": "a2119f717f179be1415adec8fbe314cd91079ce39a7c8a008b1738a462331731",
       "rawOutput": "这一版产物是 runs/2026-11-22-cursor/orig-n05-subtitle/index.html，SHA-256 a2119f717f179be1415adec8fbe314cd91079ce39a7c8a008b1738a462331731。文件按这次写入保留。"
+    },
+    {
+      "executionClass": "cursor-assisted-with-tools",
+      "label": "Cursor辅助执行/含工具",
+      "provider": "Cursor Cloud Agent",
+      "model": "grok-4.7-high-fast",
+      "modelVersion": "Cursor run-info.originalModelName=grok-4.7-high-fast。没有供应商 HTTP 响应体，没有 token 统计。",
+      "context": "会话 https://cursor.com/agents/bc-df9f393a-ecdc-5142-98e1-44f568293069 已加载本仓库。这不是隔离盲测，也不是裸接口单轮。",
+      "environment": "Cursor Cloud Agent，Linux，本机 Google Chrome headless。未使用密钥或付费接口。",
+      "parameters": "无温度、无 max_tokens。用浏览器操作页面，并用 Python 标准库核对导出和文件哈希。",
+      "startedAt": "2026-11-22T04:01:51Z",
+      "endedAt": "2026-11-22T04:18:07Z",
+      "repairs": [],
+      "revision": "v1",
+      "status": "success",
+      "checks": [
+        {
+          "name": "全量月牙饼剩余 5，分母是 20 不是 32",
+          "pass": true,
+          "evidence": "卡片写制作 32、已知售出 15、可计算剩余 5 个、剩余率 25%（分母 20），5/20、缺测 1 行。页面正文没有 17。按四行独立重算也是剩余 5、分母 20。"
+        },
+        {
+          "name": "星星酥剩余 4/26，合计可计算剩余 9",
+          "pass": true,
+          "evidence": "星星酥制作 26、已知售出 22、剩余 4、剩余率 4/26（分母 26）、缺测 0 行。合计可计算剩余 9 个，缺测 1 行。"
+        },
+        {
+          "name": "4 月 2 日月牙饼显示未知",
+          "pass": true,
+          "evidence": "筛到 2026-04-02 后，月牙饼剩余和剩余率都是未知，该行没有条形矩形，文字是「未知，不画条」。星星酥剩余 4 个，剩余率 25%（分母 16），4/16。"
+        },
+        {
+          "name": "条形图从 0 起，导出与页面一致",
+          "pass": true,
+          "evidence": "图的刻度从 0 起，单位是个。当天导出的 filter、未知和 4/16 与卡片一致。把 4 月 2 日月牙饼售出改成 0 后剩余变为 17/32，改回空值后又是剩余 5、缺测 1。summary.json 是筛选全部时的导出。"
+        },
+        {
+          "name": "390 宽没有横向溢出",
+          "pass": true,
+          "evidence": "390×844 下 documentElement 的 scrollWidth 和 clientWidth 都是 390。1280 宽下两者都是 1265。"
+        }
+      ],
+      "id": "cursor-orig-n02-pastry-waste-v1",
+      "taskId": "orig-n02-pastry-waste",
+      "promptSha256": "7705f0fcacd6c7b4e460696235802c6ec02e15685e4142fdab72a8890098ba7a",
+      "artifact": "runs/2026-11-22-cursor/orig-n02-pastry-waste/index.html",
+      "artifactSha256": "b76ac57d5dd6c87c7b6c3f84ab5cbb32d15701087585ce48f62a92fd9cdf6e55",
+      "rawOutput": "这一版产物是 runs/2026-11-22-cursor/orig-n02-pastry-waste/index.html，SHA-256 b76ac57d5dd6c87c7b6c3f84ab5cbb32d15701087585ce48f62a92fd9cdf6e55。文件按这次写入保留。"
+    },
+    {
+      "executionClass": "cursor-assisted-with-tools",
+      "label": "Cursor辅助执行/含工具",
+      "provider": "Cursor Cloud Agent",
+      "model": "grok-4.7-high-fast",
+      "modelVersion": "Cursor run-info.originalModelName=grok-4.7-high-fast。没有供应商 HTTP 响应体，没有 token 统计。",
+      "context": "会话 https://cursor.com/agents/bc-df9f393a-ecdc-5142-98e1-44f568293069 已加载本仓库。这不是隔离盲测，也不是裸接口单轮。",
+      "environment": "Cursor Cloud Agent，Linux，本机 Google Chrome headless。未使用密钥或付费接口。",
+      "parameters": "无温度、无 max_tokens。用浏览器操作页面，并用 Python 标准库核对导出和文件哈希。",
+      "startedAt": "2026-11-22T04:01:51Z",
+      "endedAt": "2026-11-22T04:18:07Z",
+      "repairs": [],
+      "revision": "v1",
+      "status": "success",
+      "checks": [
+        {
+          "name": "冲突计划拦住且三个文件哈希不变",
+          "pass": true,
+          "evidence": "plan.json 同时记下 duplicate-target 和 occupied，目标都是 2026-04-01_cloud.jpg。apply 退出码 3。冲突前后三份文件哈希不变：IMG_01 是 2a191a15a62a8dbc363e560a3de8801905e31681df8ca59e9ddec99f687c5d6b，IMG_02 是 3168bffb0b2ac59970f8ee6af97de08c1b37a13897ea396ff60700a2ae2bcabf，cloud 是 61b822fd86521785323f342ba64b7e48ed727123a8486592315829c3135f78a1。"
+        },
+        {
+          "name": "修复后只改红蓝，cloud 字节不变",
+          "pass": true,
+          "evidence": "按 fixes 应用后，IMG_01 成为 2026-04-01_red.jpg，IMG_02 成为 2026-04-01_blue.jpg，哈希仍是原来的红和蓝。cloud 哈希未变。"
+        },
+        {
+          "name": "撤销后路径和字节恢复",
+          "pass": true,
+          "evidence": "原路径被占位文件挡住时，undo 退出码 6，不覆盖。去掉占位后再撤销，三个原始路径和字节回到初始快照。交稿时 sandbox 仍是这三份。"
+        },
+        {
+          "name": "拒绝目录外路径，不用今天补日期",
+          "pass": true,
+          "evidence": "from=../outside.jpg 被拒绝，随后 apply 未改文件。空日期、昨天和 2026-04-31 都标为日期无效。计划和日志里没有 2026-11-22。slug 为 Blue Moon 时目标是 2026-04-01_Blue_Moon.jpg，试完已撤销。"
+        },
+        {
+          "name": "390 宽没有横向溢出",
+          "pass": true,
+          "evidence": "390×844 下 documentElement 的 scrollWidth 和 clientWidth 都是 390。1280 宽下两者都是 1265。"
+        }
+      ],
+      "id": "cursor-orig-n06-rename-v1",
+      "taskId": "orig-n06-rename",
+      "promptSha256": "96be29e3dc7bc2871faa6bfaa55cc81998a948941352de40498c13f873fc5c2f",
+      "artifact": "runs/2026-11-22-cursor/orig-n06-rename/index.html",
+      "artifactSha256": "0234d7558c85f12c5d5e9f3977ada16e3831084761cefce09511d33f34b48b68",
+      "rawOutput": "这一版产物是 runs/2026-11-22-cursor/orig-n06-rename/index.html，SHA-256 0234d7558c85f12c5d5e9f3977ada16e3831084761cefce09511d33f34b48b68。文件按这次写入保留。"
+    },
+    {
+      "executionClass": "cursor-assisted-with-tools",
+      "label": "Cursor辅助执行/含工具",
+      "provider": "Cursor Cloud Agent",
+      "model": "grok-4.7-high-fast",
+      "modelVersion": "Cursor run-info.originalModelName=grok-4.7-high-fast。没有供应商 HTTP 响应体，没有 token 统计。",
+      "context": "会话 https://cursor.com/agents/bc-df9f393a-ecdc-5142-98e1-44f568293069 已加载本仓库。这不是隔离盲测，也不是裸接口单轮。",
+      "environment": "Cursor Cloud Agent，Linux，本机 Google Chrome headless。未使用密钥或付费接口。",
+      "parameters": "无温度、无 max_tokens。用浏览器操作页面，并用 Python 标准库核对导出和文件哈希。",
+      "startedAt": "2026-11-22T04:01:51Z",
+      "endedAt": "2026-11-22T04:18:07Z",
+      "repairs": [],
+      "revision": "v1",
+      "status": "success",
+      "checks": [
+        {
+          "name": "第二次借出被拒绝且不记事件",
+          "pass": true,
+          "evidence": "演示 1 后豆星库存 1，有效事件 1 条。演示 2 提示库存不够，豆星仍是 1，月瓜仍是 1，事件数仍是 1。"
+        },
+        {
+          "name": "撤销只收回还，库存回到 1 和 1",
+          "pass": true,
+          "evidence": "演示 3 后月瓜为 3。演示 4 只把归还标成已撤销，借出豆星 2 还在列表里。库存回到豆星 1、月瓜 1。"
+        },
+        {
+          "name": "刷新保持，重置恢复，非法数量不入账",
+          "pass": true,
+          "evidence": "刷新后仍是豆星 1、月瓜 1，两条事件还在。重置后是 3 和 1、事件 0，再刷新保持。数量 0、-1、1.5 和空都提示未写入。月瓜库存 1 时借 2 被拒绝。"
+        },
+        {
+          "name": "导出事件重放与页面一致",
+          "pass": true,
+          "evidence": "ledger.json 的 current 是豆星 1、月瓜 1。按事件做完再按撤销标记回放，中途没有负库存，结果与 current 一致。事件筛选月瓜时只剩那条已撤销的归还。"
+        },
+        {
+          "name": "390 宽没有横向溢出",
+          "pass": true,
+          "evidence": "390×844 下 documentElement 的 scrollWidth 和 clientWidth 都是 390。1280 宽下两者都是 1265。"
+        }
+      ],
+      "id": "cursor-orig-n07-seed-ledger-v1",
+      "taskId": "orig-n07-seed-ledger",
+      "promptSha256": "83ed4b184e9de2613c69997131951e515386be3f389ab843a4f5267a27db0302",
+      "artifact": "runs/2026-11-22-cursor/orig-n07-seed-ledger/index.html",
+      "artifactSha256": "e7821496eabc3f359c9774369988ec158a4ae968ae8fc11836e5f80bc8874855",
+      "rawOutput": "这一版产物是 runs/2026-11-22-cursor/orig-n07-seed-ledger/index.html，SHA-256 e7821496eabc3f359c9774369988ec158a4ae968ae8fc11836e5f80bc8874855。文件按这次写入保留。"
     }
   ]
 }

@@ -1,0 +1,273 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>点心摊别再做多了</title>
+<style>
+  :root { color-scheme: light; }
+  * { box-sizing: border-box; }
+  body { margin: 0; background: #f6f1e7; color: #1c1915; font-family: Georgia, "Songti SC", "Noto Serif CJK SC", serif; }
+  main { width: min(48rem, calc(100% - 1.5rem)); margin: 0 auto; padding: 1rem 0 2rem; }
+  h1 { font-size: 1.7rem; line-height: 1.25; margin: 0.2rem 0; }
+  h2 { font-size: 1.15rem; margin: 1.2rem 0 0.4rem; }
+  .quiet { color: #5e564c; }
+  .banner { background: #efe2c9; padding: 0.6rem 0.75rem; }
+  .controls { display: flex; flex-wrap: wrap; gap: 0.5rem; align-items: end; margin: 0.8rem 0; }
+  label { display: grid; gap: 0.2rem; font-size: 0.95rem; }
+  select, button, textarea { font: inherit; color: inherit; }
+  select, button { background: #fffdf8; border: 1px solid #1c1915; padding: 0.45rem 0.7rem; }
+  button { background: #1c1915; color: #fffdf8; cursor: pointer; }
+  .cards { display: grid; grid-template-columns: repeat(auto-fit, minmax(14rem, 1fr)); gap: 0.7rem; }
+  .card { background: #fffdf8; border: 1px solid #d9cbb6; padding: 0.75rem; }
+  .card b { font-size: 1.35rem; }
+  .unknown { background: #f3d7c8; }
+  svg { width: 100%; height: auto; display: block; background: #fffdf8; border: 1px solid #d9cbb6; }
+  table { width: 100%; border-collapse: collapse; background: #fffdf8; }
+  th, td { border-top: 1px solid #e4d8c6; padding: 0.4rem; text-align: left; vertical-align: top; }
+  textarea { width: 100%; min-height: 12rem; }
+  .bad { color: #9c3b32; }
+  @media (max-width: 640px) {
+    table, thead, tbody, tr, th, td { display: block; }
+    thead { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); }
+    tr { border-top: 1px solid #e4d8c6; padding: 0.35rem 0; }
+    td { border: 0; padding: 0.15rem 0.4rem; }
+    td::before { content: attr(data-label); display: block; color: #5e564c; font-size: 0.85rem; }
+  }
+</style>
+</head>
+<body>
+<main>
+  <p class="quiet">问笺馆原创。受公开方法资料启发，不是那些网站的官方题目，也不代表对方背书。</p>
+  <h1>点心摊别再做多了</h1>
+  <p class="banner">合成数据。售出为空是缺测，不是卖掉 0 个。这里只描述剩余，不解释为什么，也不把缺的数补上。</p>
+  <div class="controls">
+    <label>日期
+      <select id="day"></select>
+    </label>
+    <button id="download" type="button">下载 summary.json</button>
+  </div>
+  <p id="totals"></p>
+  <div id="cards" class="cards"></div>
+  <h2>剩余量</h2>
+  <p class="quiet">横向条形从 0 起算，单位是个。缺测不画成 0。</p>
+  <div id="chart"></div>
+  <h2>原始数据表</h2>
+  <div class="wrap"><table id="rows"></table></div>
+  <h2>换成另一份数据</h2>
+  <p class="quiet">改完按文本重算。页面、图和下载都走同一份汇总，不另写死结果。</p>
+  <textarea id="source" spellcheck="false"></textarea>
+  <p><button id="recalc" type="button">按文本重算</button></p>
+  <p id="error" class="bad"></p>
+</main>
+<script>
+const INPUT = {
+  rows: [
+    { day: "2026-04-01", item: "月牙饼", made: 20, sold: 15 },
+    { day: "2026-04-01", item: "星星酥", made: 10, sold: 10 },
+    { day: "2026-04-02", item: "月牙饼", made: 12, sold: null },
+    { day: "2026-04-02", item: "星星酥", made: 16, sold: 12 }
+  ]
+}
+
+let currentRows = INPUT.rows.map((row) => ({ ...row }))
+let summary = null
+
+function soldKnown(value) {
+  return typeof value === "number" && Number.isInteger(value) && value >= 0
+}
+
+function percentText(numerator, denominator) {
+  if (!denominator || numerator === null) return null
+  if ((numerator * 100) % denominator !== 0) return null
+  return `${(numerator * 100) / denominator}%`
+}
+
+function rateLabel(item) {
+  if (!item.remainderKnown) return "未知"
+  const fraction = `${item.rateNumerator}/${item.rateDenominator}`
+  const percent = percentText(item.rateNumerator, item.rateDenominator)
+  if (percent) return `${percent}（分母 ${item.rateDenominator}），${fraction}`
+  return `${fraction}（分母 ${item.rateDenominator}）`
+}
+
+function build(rows, filter) {
+  const shown = filter === "all" ? rows : rows.filter((row) => row.day === filter)
+  const order = []
+  const groups = new Map()
+  for (const row of shown) {
+    if (!groups.has(row.item)) {
+      groups.set(row.item, {
+        item: row.item,
+        made: 0,
+        knownSold: 0,
+        missingRows: 0,
+        computableMade: 0,
+        computableRemainder: 0,
+        hasKnown: false
+      })
+      order.push(row.item)
+    }
+    const group = groups.get(row.item)
+    group.made += row.made
+    if (!soldKnown(row.sold)) {
+      group.missingRows += 1
+    } else {
+      group.knownSold += row.sold
+      group.computableMade += row.made
+      group.computableRemainder += row.made - row.sold
+      group.hasKnown = true
+    }
+  }
+  const items = order.map((name) => {
+    const group = groups.get(name)
+    const known = group.hasKnown
+    return {
+      item: group.item,
+      made: group.made,
+      knownSold: known ? group.knownSold : null,
+      missingRows: group.missingRows,
+      computableMade: known ? group.computableMade : null,
+      computableRemainder: known ? group.computableRemainder : null,
+      remainderKnown: known,
+      rateNumerator: known ? group.computableRemainder : null,
+      rateDenominator: known ? group.computableMade : null,
+      rateText: known ? `${group.computableRemainder}/${group.computableMade}` : "未知"
+    }
+  })
+  const missingRows = items.reduce((sum, item) => sum + item.missingRows, 0)
+  const knownItems = items.filter((item) => item.remainderKnown)
+  return {
+    filter,
+    unit: "个",
+    missingRows,
+    computableRemainder: knownItems.length ? knownItems.reduce((sum, item) => sum + item.computableRemainder, 0) : null,
+    items,
+    rows: shown.map((row) => {
+      const known = soldKnown(row.sold)
+      return {
+        day: row.day,
+        item: row.item,
+        made: row.made,
+        sold: known ? row.sold : null,
+        soldKnown: known,
+        remainder: known ? row.made - row.sold : null,
+        rateText: known ? `${row.made - row.sold}/${row.made}` : "未知"
+      }
+    })
+  }
+}
+
+function renderChart(data) {
+  const knownValues = data.items.filter((item) => item.remainderKnown).map((item) => item.computableRemainder)
+  const scale = Math.max(1, ...knownValues, 0)
+  const width = 640
+  const rowH = 58
+  const height = 46 + data.items.length * rowH
+  const left = 96
+  const right = 520
+  const x = (value) => left + (value / scale) * (right - left)
+  const parts = []
+  parts.push(`<line x1="${x(0)}" y1="28" x2="${x(0)}" y2="${height - 8}" stroke="#1c1915" stroke-width="2"/>`)
+  parts.push(`<line x1="${x(0)}" y1="${height - 18}" x2="${x(scale)}" y2="${height - 18}" stroke="#1c1915" stroke-width="2"/>`)
+  parts.push(`<text x="${x(0)}" y="18" font-size="14" fill="#1c1915">0</text>`)
+  parts.push(`<text x="${x(scale) - 8}" y="18" font-size="14" fill="#1c1915">${scale}</text>`)
+  parts.push(`<text x="${right + 8}" y="18" font-size="14" fill="#1c1915">个</text>`)
+  data.items.forEach((item, index) => {
+    const y = 36 + index * rowH
+    parts.push(`<text x="8" y="${y + 24}" font-size="16" fill="#1c1915">${item.item}</text>`)
+    if (!item.remainderKnown) {
+      parts.push(`<g data-item="${item.item}" data-known="false" data-value="">`)
+      parts.push(`<text x="${left + 8}" y="${y + 26}" font-size="16" fill="#9c3b32">未知，不画条</text>`)
+      parts.push(`</g>`)
+    } else if (item.computableRemainder === 0) {
+      parts.push(`<g data-item="${item.item}" data-known="true" data-value="0">`)
+      parts.push(`<line x1="${x(0)}" y1="${y + 8}" x2="${x(0)}" y2="${y + 32}" stroke="#8c5434" stroke-width="4"/>`)
+      parts.push(`<text x="${x(0) + 8}" y="${y + 26}" font-size="16" fill="#1c1915">0 个（测得）</text>`)
+      parts.push(`</g>`)
+    } else {
+      const bar = Math.max(2, x(item.computableRemainder) - x(0))
+      parts.push(`<g data-item="${item.item}" data-known="true" data-value="${item.computableRemainder}">`)
+      parts.push(`<rect x="${x(0)}" y="${y + 8}" width="${bar}" height="22" fill="#8c5434"/>`)
+      parts.push(`<text x="${x(0) + bar + 6}" y="${y + 25}" font-size="16" fill="#1c1915">${item.computableRemainder} 个</text>`)
+      parts.push(`</g>`)
+    }
+  })
+  return `<svg viewBox="0 0 ${width} ${height}" role="img" aria-label="剩余量条形图，零点在左侧，单位个" data-scale-min="0" data-scale-max="${scale}" data-unit="个">${parts.join("")}</svg>`
+}
+
+function render(data) {
+  summary = data
+  window.__summary = data
+  const total = data.computableRemainder === null ? "未知" : `${data.computableRemainder} 个`
+  document.getElementById("totals").textContent = `可计算剩余 ${total}。缺测 ${data.missingRows} 行。分母只计有售出记录的制作量。`
+  document.getElementById("cards").innerHTML = data.items.map((item) => {
+    const remainder = item.remainderKnown ? `${item.computableRemainder} 个` : "未知"
+    const sold = item.knownSold === null ? "未知" : `${item.knownSold} 个`
+    return `<article class="card${item.remainderKnown ? "" : " unknown"}" data-item="${item.item}" data-known="${item.remainderKnown}" data-remainder="${item.remainderKnown ? item.computableRemainder : ""}" data-rate="${item.rateText}" data-denominator="${item.rateDenominator ?? ""}" data-made="${item.made}" data-sold="${item.knownSold ?? ""}" data-missing="${item.missingRows}">
+      <h3>${item.item}</h3>
+      <p>制作 ${item.made} 个</p>
+      <p>已知售出 ${sold}</p>
+      <p>可计算剩余 <b>${remainder}</b></p>
+      <p>剩余率 ${rateLabel(item)}</p>
+      <p>缺测 ${item.missingRows} 行</p>
+    </article>`
+  }).join("")
+  document.getElementById("chart").innerHTML = renderChart(data)
+  const body = data.rows.map((row) => `<tr>
+    <td data-label="日期">${row.day}</td>
+    <td data-label="品类">${row.item}</td>
+    <td data-label="制作">${row.made}</td>
+    <td data-label="售出">${row.soldKnown ? row.sold : "缺测"}</td>
+    <td data-label="剩余">${row.remainder === null ? "未知" : row.remainder}</td>
+    <td data-label="剩余率">${row.rateText}</td>
+  </tr>`).join("")
+  document.getElementById("rows").innerHTML = `<thead><tr><th>日期</th><th>品类</th><th>制作</th><th>售出</th><th>剩余</th><th>剩余率</th></tr></thead><tbody>${body}</tbody>`
+}
+
+function fillDays() {
+  const select = document.getElementById("day")
+  const previous = select.value || "all"
+  const days = [...new Set(currentRows.map((row) => row.day))]
+  select.innerHTML = [`<option value="all">全部</option>`].concat(days.map((day) => `<option value="${day}">${day}</option>`)).join("")
+  select.value = [...select.options].some((option) => option.value === previous) ? previous : "all"
+}
+
+function draw() {
+  render(build(currentRows, document.getElementById("day").value || "all"))
+}
+
+document.getElementById("day").addEventListener("change", draw)
+document.getElementById("download").addEventListener("click", () => {
+  const blob = new Blob([JSON.stringify(summary, null, 2) + "\n"], { type: "application/json" })
+  const link = document.createElement("a")
+  link.href = URL.createObjectURL(blob)
+  link.download = "summary.json"
+  link.click()
+  URL.revokeObjectURL(link.href)
+})
+document.getElementById("recalc").addEventListener("click", () => {
+  const error = document.getElementById("error")
+  let data
+  try {
+    data = JSON.parse(document.getElementById("source").value)
+  } catch (problem) {
+    error.textContent = "这份文本不是 JSON，画面保持原样。"
+    return
+  }
+  if (!data || !Array.isArray(data.rows)) {
+    error.textContent = "需要 rows 数组，画面保持原样。"
+    return
+  }
+  currentRows = data.rows.map((row) => ({ ...row }))
+  error.textContent = ""
+  fillDays()
+  draw()
+})
+
+document.getElementById("source").value = JSON.stringify(INPUT, null, 2)
+fillDays()
+draw()
+</script>
+</body>
+</html>

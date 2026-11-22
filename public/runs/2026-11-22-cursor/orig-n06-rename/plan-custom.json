@@ -1,0 +1,22 @@
+{
+  "ok": true,
+  "issues": [],
+  "moves": [
+    {
+      "from": "IMG_01.jpg",
+      "to": "2026-04-01_Blue_Moon.jpg",
+      "date": "2026-04-01",
+      "slug": "Blue Moon"
+    }
+  ],
+  "proposed": [
+    {
+      "from": "IMG_01.jpg",
+      "to": "2026-04-01_Blue_Moon.jpg",
+      "date": "2026-04-01",
+      "slug": "Blue Moon"
+    }
+  ],
+  "blocked": false,
+  "set": "custom"
+}

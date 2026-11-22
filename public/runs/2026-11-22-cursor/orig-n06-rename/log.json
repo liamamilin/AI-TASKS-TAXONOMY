@@ -1,0 +1,513 @@
+{
+  "steps": [
+    {
+      "op": "init",
+      "ok": true,
+      "snapshot": [
+        {
+          "name": "2026-04-01_cloud.jpg",
+          "sha256": "61b822fd86521785323f342ba64b7e48ed727123a8486592315829c3135f78a1",
+          "text": "SYNTHETIC_EXISTING"
+        },
+        {
+          "name": "IMG_01.jpg",
+          "sha256": "2a191a15a62a8dbc363e560a3de8801905e31681df8ca59e9ddec99f687c5d6b",
+          "text": "SYNTHETIC_RED"
+        },
+        {
+          "name": "IMG_02.jpg",
+          "sha256": "3168bffb0b2ac59970f8ee6af97de08c1b37a13897ea396ff60700a2ae2bcabf",
+          "text": "SYNTHETIC_BLUE"
+        }
+      ]
+    },
+    {
+      "op": "plan",
+      "set": "conflict",
+      "ok": false,
+      "issues": [
+        {
+          "kind": "duplicate-target",
+          "target": "2026-04-01_cloud.jpg",
+          "sources": [
+            "IMG_01.jpg",
+            "IMG_02.jpg"
+          ],
+          "message": "两个来源指向同一目标"
+        },
+        {
+          "kind": "occupied",
+          "target": "2026-04-01_cloud.jpg",
+          "sources": [
+            "IMG_01.jpg",
+            "IMG_02.jpg"
+          ],
+          "message": "目标已被另一文件占用"
+        }
+      ],
+      "proposed": [
+        {
+          "from": "IMG_01.jpg",
+          "to": "2026-04-01_cloud.jpg",
+          "date": "2026-04-01",
+          "slug": "cloud"
+        },
+        {
+          "from": "IMG_02.jpg",
+          "to": "2026-04-01_cloud.jpg",
+          "date": "2026-04-01",
+          "slug": "cloud"
+        }
+      ],
+      "snapshot": [
+        {
+          "name": "2026-04-01_cloud.jpg",
+          "sha256": "61b822fd86521785323f342ba64b7e48ed727123a8486592315829c3135f78a1",
+          "text": "SYNTHETIC_EXISTING"
+        },
+        {
+          "name": "IMG_01.jpg",
+          "sha256": "2a191a15a62a8dbc363e560a3de8801905e31681df8ca59e9ddec99f687c5d6b",
+          "text": "SYNTHETIC_RED"
+        },
+        {
+          "name": "IMG_02.jpg",
+          "sha256": "3168bffb0b2ac59970f8ee6af97de08c1b37a13897ea396ff60700a2ae2bcabf",
+          "text": "SYNTHETIC_BLUE"
+        }
+      ]
+    },
+    {
+      "op": "apply",
+      "set": "conflict",
+      "ok": false,
+      "reason": "计划未通过，未改任何文件",
+      "snapshot": [
+        {
+          "name": "2026-04-01_cloud.jpg",
+          "sha256": "61b822fd86521785323f342ba64b7e48ed727123a8486592315829c3135f78a1",
+          "text": "SYNTHETIC_EXISTING"
+        },
+        {
+          "name": "IMG_01.jpg",
+          "sha256": "2a191a15a62a8dbc363e560a3de8801905e31681df8ca59e9ddec99f687c5d6b",
+          "text": "SYNTHETIC_RED"
+        },
+        {
+          "name": "IMG_02.jpg",
+          "sha256": "3168bffb0b2ac59970f8ee6af97de08c1b37a13897ea396ff60700a2ae2bcabf",
+          "text": "SYNTHETIC_BLUE"
+        }
+      ]
+    },
+    {
+      "op": "plan",
+      "set": "fixes",
+      "ok": true,
+      "issues": [],
+      "proposed": [
+        {
+          "from": "IMG_01.jpg",
+          "to": "2026-04-01_red.jpg",
+          "date": "2026-04-01",
+          "slug": "red"
+        },
+        {
+          "from": "IMG_02.jpg",
+          "to": "2026-04-01_blue.jpg",
+          "date": "2026-04-01",
+          "slug": "blue"
+        }
+      ],
+      "snapshot": [
+        {
+          "name": "2026-04-01_cloud.jpg",
+          "sha256": "61b822fd86521785323f342ba64b7e48ed727123a8486592315829c3135f78a1",
+          "text": "SYNTHETIC_EXISTING"
+        },
+        {
+          "name": "IMG_01.jpg",
+          "sha256": "2a191a15a62a8dbc363e560a3de8801905e31681df8ca59e9ddec99f687c5d6b",
+          "text": "SYNTHETIC_RED"
+        },
+        {
+          "name": "IMG_02.jpg",
+          "sha256": "3168bffb0b2ac59970f8ee6af97de08c1b37a13897ea396ff60700a2ae2bcabf",
+          "text": "SYNTHETIC_BLUE"
+        }
+      ]
+    },
+    {
+      "op": "apply",
+      "set": "fixes",
+      "ok": true,
+      "moves": [
+        {
+          "from": "IMG_01.jpg",
+          "to": "2026-04-01_red.jpg",
+          "date": "2026-04-01",
+          "slug": "red",
+          "sha256": "2a191a15a62a8dbc363e560a3de8801905e31681df8ca59e9ddec99f687c5d6b"
+        },
+        {
+          "from": "IMG_02.jpg",
+          "to": "2026-04-01_blue.jpg",
+          "date": "2026-04-01",
+          "slug": "blue",
+          "sha256": "3168bffb0b2ac59970f8ee6af97de08c1b37a13897ea396ff60700a2ae2bcabf"
+        }
+      ],
+      "before": [
+        {
+          "name": "2026-04-01_cloud.jpg",
+          "sha256": "61b822fd86521785323f342ba64b7e48ed727123a8486592315829c3135f78a1",
+          "text": "SYNTHETIC_EXISTING"
+        },
+        {
+          "name": "IMG_01.jpg",
+          "sha256": "2a191a15a62a8dbc363e560a3de8801905e31681df8ca59e9ddec99f687c5d6b",
+          "text": "SYNTHETIC_RED"
+        },
+        {
+          "name": "IMG_02.jpg",
+          "sha256": "3168bffb0b2ac59970f8ee6af97de08c1b37a13897ea396ff60700a2ae2bcabf",
+          "text": "SYNTHETIC_BLUE"
+        }
+      ],
+      "snapshot": [
+        {
+          "name": "2026-04-01_blue.jpg",
+          "sha256": "3168bffb0b2ac59970f8ee6af97de08c1b37a13897ea396ff60700a2ae2bcabf",
+          "text": "SYNTHETIC_BLUE"
+        },
+        {
+          "name": "2026-04-01_cloud.jpg",
+          "sha256": "61b822fd86521785323f342ba64b7e48ed727123a8486592315829c3135f78a1",
+          "text": "SYNTHETIC_EXISTING"
+        },
+        {
+          "name": "2026-04-01_red.jpg",
+          "sha256": "2a191a15a62a8dbc363e560a3de8801905e31681df8ca59e9ddec99f687c5d6b",
+          "text": "SYNTHETIC_RED"
+        }
+      ]
+    },
+    {
+      "op": "undo",
+      "ok": false,
+      "reason": "原路径已被占用 IMG_01.jpg，不覆盖",
+      "snapshot": [
+        {
+          "name": "2026-04-01_blue.jpg",
+          "sha256": "3168bffb0b2ac59970f8ee6af97de08c1b37a13897ea396ff60700a2ae2bcabf",
+          "text": "SYNTHETIC_BLUE"
+        },
+        {
+          "name": "2026-04-01_cloud.jpg",
+          "sha256": "61b822fd86521785323f342ba64b7e48ed727123a8486592315829c3135f78a1",
+          "text": "SYNTHETIC_EXISTING"
+        },
+        {
+          "name": "2026-04-01_red.jpg",
+          "sha256": "2a191a15a62a8dbc363e560a3de8801905e31681df8ca59e9ddec99f687c5d6b",
+          "text": "SYNTHETIC_RED"
+        },
+        {
+          "name": "IMG_01.jpg",
+          "sha256": "a5f69c1354b5eba9d2ebbf90a47c581ef363a5b1f9ae82f26c293e124fd9791d",
+          "text": "OCCUPIER"
+        }
+      ]
+    },
+    {
+      "op": "undo",
+      "ok": true,
+      "restored": [
+        {
+          "from": "2026-04-01_red.jpg",
+          "to": "IMG_01.jpg",
+          "sha256": "2a191a15a62a8dbc363e560a3de8801905e31681df8ca59e9ddec99f687c5d6b"
+        },
+        {
+          "from": "2026-04-01_blue.jpg",
+          "to": "IMG_02.jpg",
+          "sha256": "3168bffb0b2ac59970f8ee6af97de08c1b37a13897ea396ff60700a2ae2bcabf"
+        }
+      ],
+      "snapshot": [
+        {
+          "name": "2026-04-01_cloud.jpg",
+          "sha256": "61b822fd86521785323f342ba64b7e48ed727123a8486592315829c3135f78a1",
+          "text": "SYNTHETIC_EXISTING"
+        },
+        {
+          "name": "IMG_01.jpg",
+          "sha256": "2a191a15a62a8dbc363e560a3de8801905e31681df8ca59e9ddec99f687c5d6b",
+          "text": "SYNTHETIC_RED"
+        },
+        {
+          "name": "IMG_02.jpg",
+          "sha256": "3168bffb0b2ac59970f8ee6af97de08c1b37a13897ea396ff60700a2ae2bcabf",
+          "text": "SYNTHETIC_BLUE"
+        }
+      ]
+    },
+    {
+      "op": "plan",
+      "set": "custom",
+      "ok": false,
+      "issues": [
+        {
+          "index": 0,
+          "from": "../outside.jpg",
+          "kind": "path",
+          "message": "拒绝目录外或带路径的来源"
+        }
+      ],
+      "proposed": [],
+      "snapshot": [
+        {
+          "name": "2026-04-01_cloud.jpg",
+          "sha256": "61b822fd86521785323f342ba64b7e48ed727123a8486592315829c3135f78a1",
+          "text": "SYNTHETIC_EXISTING"
+        },
+        {
+          "name": "IMG_01.jpg",
+          "sha256": "2a191a15a62a8dbc363e560a3de8801905e31681df8ca59e9ddec99f687c5d6b",
+          "text": "SYNTHETIC_RED"
+        },
+        {
+          "name": "IMG_02.jpg",
+          "sha256": "3168bffb0b2ac59970f8ee6af97de08c1b37a13897ea396ff60700a2ae2bcabf",
+          "text": "SYNTHETIC_BLUE"
+        }
+      ]
+    },
+    {
+      "op": "apply",
+      "set": "custom",
+      "ok": false,
+      "reason": "计划未通过，未改任何文件",
+      "snapshot": [
+        {
+          "name": "2026-04-01_cloud.jpg",
+          "sha256": "61b822fd86521785323f342ba64b7e48ed727123a8486592315829c3135f78a1",
+          "text": "SYNTHETIC_EXISTING"
+        },
+        {
+          "name": "IMG_01.jpg",
+          "sha256": "2a191a15a62a8dbc363e560a3de8801905e31681df8ca59e9ddec99f687c5d6b",
+          "text": "SYNTHETIC_RED"
+        },
+        {
+          "name": "IMG_02.jpg",
+          "sha256": "3168bffb0b2ac59970f8ee6af97de08c1b37a13897ea396ff60700a2ae2bcabf",
+          "text": "SYNTHETIC_BLUE"
+        }
+      ]
+    },
+    {
+      "op": "plan",
+      "set": "custom",
+      "ok": false,
+      "issues": [
+        {
+          "index": 0,
+          "from": "IMG_01.jpg",
+          "kind": "date",
+          "message": "日期无效，不从今天补齐",
+          "date": ""
+        }
+      ],
+      "proposed": [],
+      "snapshot": [
+        {
+          "name": "2026-04-01_cloud.jpg",
+          "sha256": "61b822fd86521785323f342ba64b7e48ed727123a8486592315829c3135f78a1",
+          "text": "SYNTHETIC_EXISTING"
+        },
+        {
+          "name": "IMG_01.jpg",
+          "sha256": "2a191a15a62a8dbc363e560a3de8801905e31681df8ca59e9ddec99f687c5d6b",
+          "text": "SYNTHETIC_RED"
+        },
+        {
+          "name": "IMG_02.jpg",
+          "sha256": "3168bffb0b2ac59970f8ee6af97de08c1b37a13897ea396ff60700a2ae2bcabf",
+          "text": "SYNTHETIC_BLUE"
+        }
+      ]
+    },
+    {
+      "op": "plan",
+      "set": "custom",
+      "ok": false,
+      "issues": [
+        {
+          "index": 0,
+          "from": "IMG_01.jpg",
+          "kind": "date",
+          "message": "日期无效，不从今天补齐",
+          "date": "昨天"
+        }
+      ],
+      "proposed": [],
+      "snapshot": [
+        {
+          "name": "2026-04-01_cloud.jpg",
+          "sha256": "61b822fd86521785323f342ba64b7e48ed727123a8486592315829c3135f78a1",
+          "text": "SYNTHETIC_EXISTING"
+        },
+        {
+          "name": "IMG_01.jpg",
+          "sha256": "2a191a15a62a8dbc363e560a3de8801905e31681df8ca59e9ddec99f687c5d6b",
+          "text": "SYNTHETIC_RED"
+        },
+        {
+          "name": "IMG_02.jpg",
+          "sha256": "3168bffb0b2ac59970f8ee6af97de08c1b37a13897ea396ff60700a2ae2bcabf",
+          "text": "SYNTHETIC_BLUE"
+        }
+      ]
+    },
+    {
+      "op": "plan",
+      "set": "custom",
+      "ok": false,
+      "issues": [
+        {
+          "index": 0,
+          "from": "IMG_01.jpg",
+          "kind": "date",
+          "message": "日期无效，不从今天补齐",
+          "date": "2026-04-31"
+        }
+      ],
+      "proposed": [],
+      "snapshot": [
+        {
+          "name": "2026-04-01_cloud.jpg",
+          "sha256": "61b822fd86521785323f342ba64b7e48ed727123a8486592315829c3135f78a1",
+          "text": "SYNTHETIC_EXISTING"
+        },
+        {
+          "name": "IMG_01.jpg",
+          "sha256": "2a191a15a62a8dbc363e560a3de8801905e31681df8ca59e9ddec99f687c5d6b",
+          "text": "SYNTHETIC_RED"
+        },
+        {
+          "name": "IMG_02.jpg",
+          "sha256": "3168bffb0b2ac59970f8ee6af97de08c1b37a13897ea396ff60700a2ae2bcabf",
+          "text": "SYNTHETIC_BLUE"
+        }
+      ]
+    },
+    {
+      "op": "plan",
+      "set": "custom",
+      "ok": true,
+      "issues": [],
+      "proposed": [
+        {
+          "from": "IMG_01.jpg",
+          "to": "2026-04-01_Blue_Moon.jpg",
+          "date": "2026-04-01",
+          "slug": "Blue Moon"
+        }
+      ],
+      "snapshot": [
+        {
+          "name": "2026-04-01_cloud.jpg",
+          "sha256": "61b822fd86521785323f342ba64b7e48ed727123a8486592315829c3135f78a1",
+          "text": "SYNTHETIC_EXISTING"
+        },
+        {
+          "name": "IMG_01.jpg",
+          "sha256": "2a191a15a62a8dbc363e560a3de8801905e31681df8ca59e9ddec99f687c5d6b",
+          "text": "SYNTHETIC_RED"
+        },
+        {
+          "name": "IMG_02.jpg",
+          "sha256": "3168bffb0b2ac59970f8ee6af97de08c1b37a13897ea396ff60700a2ae2bcabf",
+          "text": "SYNTHETIC_BLUE"
+        }
+      ]
+    },
+    {
+      "op": "apply",
+      "set": "custom",
+      "ok": true,
+      "moves": [
+        {
+          "from": "IMG_01.jpg",
+          "to": "2026-04-01_Blue_Moon.jpg",
+          "date": "2026-04-01",
+          "slug": "Blue Moon",
+          "sha256": "2a191a15a62a8dbc363e560a3de8801905e31681df8ca59e9ddec99f687c5d6b"
+        }
+      ],
+      "before": [
+        {
+          "name": "2026-04-01_cloud.jpg",
+          "sha256": "61b822fd86521785323f342ba64b7e48ed727123a8486592315829c3135f78a1",
+          "text": "SYNTHETIC_EXISTING"
+        },
+        {
+          "name": "IMG_01.jpg",
+          "sha256": "2a191a15a62a8dbc363e560a3de8801905e31681df8ca59e9ddec99f687c5d6b",
+          "text": "SYNTHETIC_RED"
+        },
+        {
+          "name": "IMG_02.jpg",
+          "sha256": "3168bffb0b2ac59970f8ee6af97de08c1b37a13897ea396ff60700a2ae2bcabf",
+          "text": "SYNTHETIC_BLUE"
+        }
+      ],
+      "snapshot": [
+        {
+          "name": "2026-04-01_Blue_Moon.jpg",
+          "sha256": "2a191a15a62a8dbc363e560a3de8801905e31681df8ca59e9ddec99f687c5d6b",
+          "text": "SYNTHETIC_RED"
+        },
+        {
+          "name": "2026-04-01_cloud.jpg",
+          "sha256": "61b822fd86521785323f342ba64b7e48ed727123a8486592315829c3135f78a1",
+          "text": "SYNTHETIC_EXISTING"
+        },
+        {
+          "name": "IMG_02.jpg",
+          "sha256": "3168bffb0b2ac59970f8ee6af97de08c1b37a13897ea396ff60700a2ae2bcabf",
+          "text": "SYNTHETIC_BLUE"
+        }
+      ]
+    },
+    {
+      "op": "undo",
+      "ok": true,
+      "restored": [
+        {
+          "from": "2026-04-01_Blue_Moon.jpg",
+          "to": "IMG_01.jpg",
+          "sha256": "2a191a15a62a8dbc363e560a3de8801905e31681df8ca59e9ddec99f687c5d6b"
+        }
+      ],
+      "snapshot": [
+        {
+          "name": "2026-04-01_cloud.jpg",
+          "sha256": "61b822fd86521785323f342ba64b7e48ed727123a8486592315829c3135f78a1",
+          "text": "SYNTHETIC_EXISTING"
+        },
+        {
+          "name": "IMG_01.jpg",
+          "sha256": "2a191a15a62a8dbc363e560a3de8801905e31681df8ca59e9ddec99f687c5d6b",
+          "text": "SYNTHETIC_RED"
+        },
+        {
+          "name": "IMG_02.jpg",
+          "sha256": "3168bffb0b2ac59970f8ee6af97de08c1b37a13897ea396ff60700a2ae2bcabf",
+          "text": "SYNTHETIC_BLUE"
+        }
+      ]
+    }
+  ]
+}

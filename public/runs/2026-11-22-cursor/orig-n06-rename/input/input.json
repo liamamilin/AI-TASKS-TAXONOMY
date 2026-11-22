@@ -1,0 +1,31 @@
+{
+  "files": {
+    "IMG_01.jpg": "SYNTHETIC_RED",
+    "IMG_02.jpg": "SYNTHETIC_BLUE",
+    "2026-04-01_cloud.jpg": "SYNTHETIC_EXISTING"
+  },
+  "manifest": [
+    {
+      "from": "IMG_01.jpg",
+      "date": "2026-04-01",
+      "slug": "cloud"
+    },
+    {
+      "from": "IMG_02.jpg",
+      "date": "2026-04-01",
+      "slug": "cloud"
+    }
+  ],
+  "fixes": [
+    {
+      "from": "IMG_01.jpg",
+      "date": "2026-04-01",
+      "slug": "red"
+    },
+    {
+      "from": "IMG_02.jpg",
+      "date": "2026-04-01",
+      "slug": "blue"
+    }
+  ]
+}

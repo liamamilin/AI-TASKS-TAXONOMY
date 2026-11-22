@@ -217,5 +217,26 @@
     "artifact": "runs/2026-11-22-cursor/orig-n05-subtitle/index.html",
     "image": "previews/orig-n05-subtitle.jpg",
     "label": "展示 v1"
+  },
+  "orig-n02-pastry-waste": {
+    "revision": "v1",
+    "status": "success",
+    "artifact": "runs/2026-11-22-cursor/orig-n02-pastry-waste/index.html",
+    "image": "previews/orig-n02-pastry-waste.jpg",
+    "label": "展示 v1"
+  },
+  "orig-n06-rename": {
+    "revision": "v1",
+    "status": "success",
+    "artifact": "runs/2026-11-22-cursor/orig-n06-rename/index.html",
+    "image": "previews/orig-n06-rename.jpg",
+    "label": "展示 v1"
+  },
+  "orig-n07-seed-ledger": {
+    "revision": "v1",
+    "status": "success",
+    "artifact": "runs/2026-11-22-cursor/orig-n07-seed-ledger/index.html",
+    "image": "previews/orig-n07-seed-ledger.jpg",
+    "label": "展示 v1"
   }
 }

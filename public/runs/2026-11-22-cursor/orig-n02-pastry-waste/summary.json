@@ -1,0 +1,70 @@
+{
+  "filter": "all",
+  "unit": "个",
+  "missingRows": 1,
+  "computableRemainder": 9,
+  "items": [
+    {
+      "item": "月牙饼",
+      "made": 32,
+      "knownSold": 15,
+      "missingRows": 1,
+      "computableMade": 20,
+      "computableRemainder": 5,
+      "remainderKnown": true,
+      "rateNumerator": 5,
+      "rateDenominator": 20,
+      "rateText": "5/20"
+    },
+    {
+      "item": "星星酥",
+      "made": 26,
+      "knownSold": 22,
+      "missingRows": 0,
+      "computableMade": 26,
+      "computableRemainder": 4,
+      "remainderKnown": true,
+      "rateNumerator": 4,
+      "rateDenominator": 26,
+      "rateText": "4/26"
+    }
+  ],
+  "rows": [
+    {
+      "day": "2026-04-01",
+      "item": "月牙饼",
+      "made": 20,
+      "sold": 15,
+      "soldKnown": true,
+      "remainder": 5,
+      "rateText": "5/20"
+    },
+    {
+      "day": "2026-04-01",
+      "item": "星星酥",
+      "made": 10,
+      "sold": 10,
+      "soldKnown": true,
+      "remainder": 0,
+      "rateText": "0/10"
+    },
+    {
+      "day": "2026-04-02",
+      "item": "月牙饼",
+      "made": 12,
+      "sold": null,
+      "soldKnown": false,
+      "remainder": null,
+      "rateText": "未知"
+    },
+    {
+      "day": "2026-04-02",
+      "item": "星星酥",
+      "made": 16,
+      "sold": 12,
+      "soldKnown": true,
+      "remainder": 4,
+      "rateText": "4/16"
+    }
+  ]
+}

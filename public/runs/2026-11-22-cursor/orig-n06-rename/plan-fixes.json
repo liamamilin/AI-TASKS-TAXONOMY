@@ -1,0 +1,34 @@
+{
+  "ok": true,
+  "issues": [],
+  "moves": [
+    {
+      "from": "IMG_01.jpg",
+      "to": "2026-04-01_red.jpg",
+      "date": "2026-04-01",
+      "slug": "red"
+    },
+    {
+      "from": "IMG_02.jpg",
+      "to": "2026-04-01_blue.jpg",
+      "date": "2026-04-01",
+      "slug": "blue"
+    }
+  ],
+  "proposed": [
+    {
+      "from": "IMG_01.jpg",
+      "to": "2026-04-01_red.jpg",
+      "date": "2026-04-01",
+      "slug": "red"
+    },
+    {
+      "from": "IMG_02.jpg",
+      "to": "2026-04-01_blue.jpg",
+      "date": "2026-04-01",
+      "slug": "blue"
+    }
+  ],
+  "blocked": false,
+  "set": "fixes"
+}

@@ -1,0 +1,26 @@
+{
+  "initial": {
+    "豆星": 3,
+    "月瓜": 1
+  },
+  "demo_actions": [
+    {
+      "type": "borrow",
+      "item": "豆星",
+      "qty": 2
+    },
+    {
+      "type": "borrow",
+      "item": "豆星",
+      "qty": 2
+    },
+    {
+      "type": "return",
+      "item": "月瓜",
+      "qty": 2
+    },
+    {
+      "type": "undo"
+    }
+  ]
+}
