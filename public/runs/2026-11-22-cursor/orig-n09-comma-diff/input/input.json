@@ -1,0 +1,13 @@
+{
+  "old": "星港📮开门了\n周六 10:00见。\n请带纸船。",
+  "new": "星港📮开门啦\n周日 10:30见。\n请带纸船！",
+  "security_probe": {
+    "old": "<b>纸船</b>",
+    "new": "<script>合成文本</script>"
+  },
+  "tiny_oracle": {
+    "old": "纸船",
+    "new": "小纸船",
+    "cost": 1
+  }
+}

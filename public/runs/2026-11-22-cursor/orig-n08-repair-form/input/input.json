@@ -1,0 +1,28 @@
+{
+  "cases": [
+    {
+      "item": "折角书签",
+      "category": "纸品",
+      "hazard": "否",
+      "expected": "纸艺桌"
+    },
+    {
+      "item": "布袋",
+      "category": "布艺",
+      "hazard": "否",
+      "expected": "缝补桌"
+    },
+    {
+      "item": "发热装置模型",
+      "category": "纸品",
+      "hazard": "是",
+      "expected": "不接收"
+    },
+    {
+      "item": "木片",
+      "category": "其他",
+      "hazard": "否",
+      "expected": "咨询桌"
+    }
+  ]
+}

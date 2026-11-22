@@ -238,5 +238,26 @@
     "artifact": "runs/2026-11-22-cursor/orig-n07-seed-ledger/index.html",
     "image": "previews/orig-n07-seed-ledger.jpg",
     "label": "展示 v1"
+  },
+  "orig-n08-repair-form": {
+    "revision": "v1",
+    "status": "success",
+    "artifact": "runs/2026-11-22-cursor/orig-n08-repair-form/index.html",
+    "image": "previews/orig-n08-repair-form.jpg",
+    "label": "展示 v1"
+  },
+  "orig-n09-comma-diff": {
+    "revision": "v1",
+    "status": "success",
+    "artifact": "runs/2026-11-22-cursor/orig-n09-comma-diff/index.html",
+    "image": "previews/orig-n09-comma-diff.jpg",
+    "label": "展示 v1"
+  },
+  "orig-n10-midnight-post": {
+    "revision": "v1",
+    "status": "success",
+    "artifact": "runs/2026-11-22-cursor/orig-n10-midnight-post/index.html",
+    "image": "previews/orig-n10-midnight-post.jpg",
+    "label": "展示 v1"
   }
 }

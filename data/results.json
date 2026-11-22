@@ -1610,6 +1610,150 @@
       "artifact": "runs/2026-11-22-cursor/orig-n07-seed-ledger/index.html",
       "artifactSha256": "e7821496eabc3f359c9774369988ec158a4ae968ae8fc11836e5f80bc8874855",
       "rawOutput": "这一版产物是 runs/2026-11-22-cursor/orig-n07-seed-ledger/index.html，SHA-256 e7821496eabc3f359c9774369988ec158a4ae968ae8fc11836e5f80bc8874855。文件按这次写入保留。"
+    },
+    {
+      "executionClass": "cursor-assisted-with-tools",
+      "label": "Cursor辅助执行/含工具",
+      "provider": "Cursor Cloud Agent",
+      "model": "grok-4.7-high-fast",
+      "modelVersion": "Cursor run-info.originalModelName=grok-4.7-high-fast。没有供应商 HTTP 响应体，没有 token 统计。",
+      "context": "会话 https://cursor.com/agents/bc-df9f393a-ecdc-5142-98e1-44f568293069 已加载本仓库。这不是隔离盲测，也不是裸接口单轮。",
+      "environment": "Cursor Cloud Agent，Linux，本机 Google Chrome headless。未使用密钥或付费接口。",
+      "parameters": "无温度、无 max_tokens。用浏览器操作页面，并用 Python 标准库重算差异、回放日志。",
+      "startedAt": "2026-11-22T04:24:04Z",
+      "endedAt": "2026-11-22T04:29:39Z",
+      "repairs": [],
+      "revision": "v1",
+      "status": "success",
+      "id": "cursor-orig-n08-repair-form-v1",
+      "taskId": "orig-n08-repair-form",
+      "checks": [
+        {
+          "name": "四个样例按优先级分流",
+          "pass": true,
+          "evidence": "折角书签到纸艺桌 paper-desk，布袋到缝补桌，木片到咨询桌。发热装置模型类别是纸品、危险为是，分流是不接收，rule_id 为 hazard-first，没有被纸品盖过。"
+        },
+        {
+          "name": "空值、未选和超长被拒绝且原值还在",
+          "pass": true,
+          "evidence": "空提交后焦点在错误汇总，链接指向 #item 和 #hazard-no。物品 aria-invalid 为 true，aria-describedby 含 item-error。41 个字符和 101 个字符被拒绝，输入框里的字还在，结果区仍隐藏。"
+        },
+        {
+          "name": "键盘能完成填写、提交、返回和下载",
+          "pass": true,
+          "evidence": "Tab 顺序是物品、类别、危险、备注、分诊、清空重填。空格选中「否」。回车提交后焦点在返回修改，再回车后「折角书签」还在。Tab 能到下载按钮。点「布艺」两个字会选中并聚焦该单选。焦点环为 3px 实线。没有使用读屏，不能把这次说成无障碍规范全部通过。"
+        },
+        {
+          "name": "回执与输入一致，没有外发",
+          "pass": true,
+          "evidence": "receipt.json 的 input 是折角书签、纸品、否、空备注，route 为纸艺桌，rule_id 为 paper-desk。表单字段只有物品、类别、危险和备注。操作期间的网络请求只有页面自身和 favicon。"
+        },
+        {
+          "name": "390 宽没有横向溢出",
+          "pass": true,
+          "evidence": "390×844 下 documentElement 的 scrollWidth 与 clientWidth 都是 390。"
+        }
+      ],
+      "promptSha256": "69055853894a468c8c9c25f1e5f074eaa3d3e143fd32ceb7de551dceef74d0ca",
+      "artifact": "runs/2026-11-22-cursor/orig-n08-repair-form/index.html",
+      "artifactSha256": "d6608c0e3ab14f5d8fb4d1b3eb9dace28ec6eee5375e4458ee94514f57f11275",
+      "rawOutput": "这一版产物是 runs/2026-11-22-cursor/orig-n08-repair-form/index.html，SHA-256 d6608c0e3ab14f5d8fb4d1b3eb9dace28ec6eee5375e4458ee94514f57f11275。文件按这次写入保留。"
+    },
+    {
+      "executionClass": "cursor-assisted-with-tools",
+      "label": "Cursor辅助执行/含工具",
+      "provider": "Cursor Cloud Agent",
+      "model": "grok-4.7-high-fast",
+      "modelVersion": "Cursor run-info.originalModelName=grok-4.7-high-fast。没有供应商 HTTP 响应体，没有 token 统计。",
+      "context": "会话 https://cursor.com/agents/bc-df9f393a-ecdc-5142-98e1-44f568293069 已加载本仓库。这不是隔离盲测，也不是裸接口单轮。",
+      "environment": "Cursor Cloud Agent，Linux，本机 Google Chrome headless。未使用密钥或付费接口。",
+      "parameters": "无温度、无 max_tokens。用浏览器操作页面，并用 Python 标准库重算差异、回放日志。",
+      "startedAt": "2026-11-22T04:24:04Z",
+      "endedAt": "2026-11-22T04:29:39Z",
+      "repairs": [],
+      "revision": "v1",
+      "status": "success",
+      "id": "cursor-orig-n09-comma-diff-v1",
+      "taskId": "orig-n09-comma-diff",
+      "checks": [
+        {
+          "name": "差异能拼回原文和改文",
+          "pass": true,
+          "evidence": "equal 加 delete 拼回原文，equal 加 insert 拼回改文，包含换行、空格和完整的📮。独立动态规划的代价也是 8。"
+        },
+        {
+          "name": "默认代价 8，短例子代价 1",
+          "pass": true,
+          "evidence": "默认总代价 8，对应了、啦，六、日，0、3，。、！四处替换。纸船到小纸船的代价是 1。互换前后代价都是 1，换回后仍是 1。空串到「纸」的代价是 1。"
+        },
+        {
+          "name": "安全探针保持为文字",
+          "pass": true,
+          "evidence": "比较区文字里能看见 <script> 和合成文本，该区域的 b 元素和 script 元素数量都是 0。独立重算这两段的代价是 20，与页面一致。"
+        },
+        {
+          "name": "改字后导出跟着变",
+          "pass": true,
+          "evidence": "把改文换成「完全不同」后，导出对象和纯文本都变了，代价变成 27。页面除底色外有〔删除〕和〔插入〕字样。diff.json 是默认比较的那一份。"
+        },
+        {
+          "name": "390 宽没有横向溢出",
+          "pass": true,
+          "evidence": "390×844 下 documentElement 的 scrollWidth 与 clientWidth 都是 390。"
+        }
+      ],
+      "promptSha256": "7c5ddc48d48653a27fd04be0324905cd112d642fdec2cd638710b149fe13ad2d",
+      "artifact": "runs/2026-11-22-cursor/orig-n09-comma-diff/index.html",
+      "artifactSha256": "69631ec2c552633c17ef5b26e0127b4ba52866d8f778bbada03c9dbaf17fcb11",
+      "rawOutput": "这一版产物是 runs/2026-11-22-cursor/orig-n09-comma-diff/index.html，SHA-256 69631ec2c552633c17ef5b26e0127b4ba52866d8f778bbada03c9dbaf17fcb11。文件按这次写入保留。"
+    },
+    {
+      "executionClass": "cursor-assisted-with-tools",
+      "label": "Cursor辅助执行/含工具",
+      "provider": "Cursor Cloud Agent",
+      "model": "grok-4.7-high-fast",
+      "modelVersion": "Cursor run-info.originalModelName=grok-4.7-high-fast。没有供应商 HTTP 响应体，没有 token 统计。",
+      "context": "会话 https://cursor.com/agents/bc-df9f393a-ecdc-5142-98e1-44f568293069 已加载本仓库。这不是隔离盲测，也不是裸接口单轮。",
+      "environment": "Cursor Cloud Agent，Linux，本机 Google Chrome headless。未使用密钥或付费接口。",
+      "parameters": "无温度、无 max_tokens。用浏览器操作页面，并用 Python 标准库重算差异、回放日志。",
+      "startedAt": "2026-11-22T04:24:04Z",
+      "endedAt": "2026-11-22T04:29:39Z",
+      "repairs": [],
+      "revision": "v1",
+      "status": "success",
+      "id": "cursor-orig-n10-midnight-post-v1",
+      "taskId": "orig-n10-midnight-post",
+      "checks": [
+        {
+          "name": "七节点和三条结局都可达",
+          "pass": true,
+          "evidence": "故事恰好是 A、B、C、D、E1、E2、E3。浏览器里走到守候时邮票为 1，走到放下时邮票为 0，走到送达时邮票为 0。三则正文的意思分别是留下守夜、把信交给明天、把信读给风。好不好读是主观意见，没有算进这次通过。"
+        },
+        {
+          "name": "花掉邮票后不能寄给明天",
+          "pass": true,
+          "evidence": "寄出第一封信后邮票为 0，「寄给明天」按钮禁用，原因是「邮票已经用过，不能再寄给明天。」不花邮票时该按钮可用。过程中邮票只有 0 或 1。"
+        },
+        {
+          "name": "后退恢复邮票，重读回到初态",
+          "pass": true,
+          "evidence": "寄出后邮票为 0，后退回到柜台且邮票恢复为 1，没有再扣一次。接着把邮票留着，就能寄给明天。重读后门厅、邮票 1、步骤 0、路径只剩门厅。"
+        },
+        {
+          "name": "正文长度合格，日志能重放",
+          "pass": true,
+          "evidence": "七段正文的汉字数是 94、96、90、98、91、93、86，都在 60 到 120。reading-log.json 按图重放，结束在 E2，邮票 0，与日志记录的结局一致。"
+        },
+        {
+          "name": "390 宽没有横向溢出",
+          "pass": true,
+          "evidence": "390×844 下 documentElement 的 scrollWidth 与 clientWidth 都是 390。"
+        }
+      ],
+      "promptSha256": "7f8575d0a5c356606b3ddab5dd7684bf83c2d2574ccd5fc80e8b03b4dc2def6c",
+      "artifact": "runs/2026-11-22-cursor/orig-n10-midnight-post/index.html",
+      "artifactSha256": "8340168ce96eb2c5a72e90d32d1b07afdff9fd2933b2d462e208999dd85c0757",
+      "rawOutput": "这一版产物是 runs/2026-11-22-cursor/orig-n10-midnight-post/index.html，SHA-256 8340168ce96eb2c5a72e90d32d1b07afdff9fd2933b2d462e208999dd85c0757。文件按这次写入保留。"
     }
   ]
 }

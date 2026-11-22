@@ -1,0 +1,239 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>维修咖啡馆分诊单</title>
+<style>
+  * { box-sizing: border-box; }
+  body { margin: 0; background: #f6f1e7; color: #1c1915; font-family: Georgia, "Songti SC", "Noto Serif CJK SC", serif; }
+  main { width: min(40rem, calc(100% - 1.5rem)); margin: 0 auto; padding: 1rem 0 2rem; }
+  h1 { font-size: 1.6rem; line-height: 1.3; }
+  .quiet { color: #5e564c; }
+  form, .result { background: #fffdf8; border: 1px solid #d9cbb6; padding: 0.9rem; }
+  label, legend { font-weight: 700; }
+  .field { margin: 0.8rem 0; }
+  input[type="text"], textarea, button { font: inherit; color: inherit; }
+  input[type="text"], textarea { width: 100%; background: #fff; border: 1px solid #1c1915; padding: 0.45rem; }
+  textarea { min-height: 5rem; }
+  fieldset { border: 1px solid #d9cbb6; margin: 0.8rem 0; }
+  .choice { display: block; font-weight: 400; margin: 0.35rem 0; }
+  button { background: #1c1915; color: #fffdf8; border: 0; padding: 0.5rem 0.75rem; margin: 0.3rem 0.4rem 0.3rem 0; }
+  :focus { outline: 3px solid #9c3b32; outline-offset: 2px; }
+  .error { color: #9c3b32; margin: 0.3rem 0 0; }
+  #summary { background: #f3d7c8; padding: 0.6rem 0.8rem; margin-bottom: 0.8rem; }
+  #summary a { color: #9c3b32; }
+  .result p { font-size: 1.25rem; }
+</style>
+</head>
+<body>
+<main>
+  <p class="quiet">问笺馆原创。受公开方法资料启发，不是那些网站的官方题目，也不代表对方背书。</p>
+  <h1>维修咖啡馆分诊单</h1>
+  <p>合成登记。这里不接收真实维修，不收集姓名或联系方式，也不把表送到任何服务器。危险物品优先于类别。</p>
+  <form id="form" novalidate>
+    <div id="summary" role="alert" aria-live="assertive" tabindex="-1" hidden></div>
+    <div class="field">
+      <label for="item">物品</label>
+      <input id="item" name="item" type="text" autocomplete="off" aria-describedby="item-hint">
+      <p id="item-hint" class="quiet">必填，最多 40 个字符。</p>
+      <p id="item-error" class="error" hidden></p>
+    </div>
+    <fieldset>
+      <legend>类别</legend>
+      <label class="choice"><input type="radio" name="category" value="纸品" checked> 纸品</label>
+      <label class="choice"><input type="radio" name="category" value="布艺"> 布艺</label>
+      <label class="choice"><input type="radio" name="category" value="其他"> 其他</label>
+    </fieldset>
+    <fieldset id="hazard-set">
+      <legend>有没有危险</legend>
+      <label class="choice"><input id="hazard-no" type="radio" name="hazard" value="否"> 否</label>
+      <label class="choice"><input id="hazard-yes" type="radio" name="hazard" value="是"> 是</label>
+      <p id="hazard-hint" class="quiet">必选。选「是」时不再按类别分桌。</p>
+      <p id="hazard-error" class="error" hidden></p>
+    </fieldset>
+    <div class="field">
+      <label for="note">备注</label>
+      <textarea id="note" name="note" aria-describedby="note-hint"></textarea>
+      <p id="note-hint" class="quiet">选填，最多 100 个字符。</p>
+      <p id="note-error" class="error" hidden></p>
+    </div>
+    <button type="submit">分诊</button>
+    <button type="button" id="reset">清空重填</button>
+  </form>
+  <div id="result" class="result" hidden>
+    <p id="route"></p>
+    <p id="rule" class="quiet"></p>
+    <button type="button" id="back">返回修改</button>
+    <button type="button" id="download">下载 receipt.json</button>
+  </div>
+</main>
+<script>
+const RULES = {
+  "hazard-first": {
+    route: "不接收",
+    detail: "不接收：此演示只处理无危险手工物品",
+    explain: "hazard 为「是」，优先于类别，不接收。"
+  },
+  "paper-desk": {
+    route: "纸艺桌",
+    detail: "纸艺桌",
+    explain: "没有危险，类别是纸品，分到纸艺桌。"
+  },
+  "cloth-desk": {
+    route: "缝补桌",
+    detail: "缝补桌",
+    explain: "没有危险，类别是布艺，分到缝补桌。"
+  },
+  "consult-desk": {
+    route: "咨询桌",
+    detail: "咨询桌",
+    explain: "没有危险，类别是其他，分到咨询桌。"
+  }
+}
+
+function lengthOf(value) {
+  return Array.from(value).length
+}
+
+function readInput() {
+  const hazard = document.querySelector("input[name=hazard]:checked")
+  const category = document.querySelector("input[name=category]:checked")
+  return {
+    item: document.getElementById("item").value,
+    category: category ? category.value : "",
+    hazard: hazard ? hazard.value : "",
+    note: document.getElementById("note").value
+  }
+}
+
+function clearErrors() {
+  for (const id of ["item", "hazard", "note"]) {
+    const box = document.getElementById(`${id}-error`)
+    box.hidden = true
+    box.textContent = ""
+  }
+  document.getElementById("summary").hidden = true
+  document.getElementById("summary").textContent = ""
+  document.getElementById("item").removeAttribute("aria-invalid")
+  document.getElementById("item").setAttribute("aria-describedby", "item-hint")
+  document.getElementById("note").removeAttribute("aria-invalid")
+  document.getElementById("note").setAttribute("aria-describedby", "note-hint")
+  document.getElementById("hazard-set").removeAttribute("aria-invalid")
+  document.getElementById("hazard-set").removeAttribute("aria-describedby")
+  for (const radio of document.querySelectorAll("input[name=hazard]")) radio.removeAttribute("aria-describedby")
+}
+
+function showError(name, message) {
+  const box = document.getElementById(`${name}-error`)
+  box.hidden = false
+  box.textContent = message
+  if (name === "hazard") {
+    const set = document.getElementById("hazard-set")
+    set.setAttribute("aria-invalid", "true")
+    set.setAttribute("aria-describedby", "hazard-error")
+    for (const radio of document.querySelectorAll("input[name=hazard]")) radio.setAttribute("aria-describedby", "hazard-error")
+  } else {
+    const field = document.getElementById(name)
+    field.setAttribute("aria-invalid", "true")
+    field.setAttribute("aria-describedby", `${name}-hint ${name}-error`)
+  }
+}
+
+function validate(input) {
+  const errors = []
+  if (lengthOf(input.item) === 0) errors.push({ name: "item", href: "#item", message: "物品不能为空。" })
+  else if (lengthOf(input.item) > 40) errors.push({ name: "item", href: "#item", message: "物品超过 40 个字符。" })
+  if (input.hazard !== "是" && input.hazard !== "否") errors.push({ name: "hazard", href: "#hazard-no", message: "请选择有没有危险。" })
+  if (lengthOf(input.note) > 100) errors.push({ name: "note", href: "#note", message: "备注超过 100 个字符。" })
+  return errors
+}
+
+function decide(input) {
+  if (input.hazard === "是") return { rule_id: "hazard-first", ...RULES["hazard-first"] }
+  if (input.category === "纸品") return { rule_id: "paper-desk", ...RULES["paper-desk"] }
+  if (input.category === "布艺") return { rule_id: "cloth-desk", ...RULES["cloth-desk"] }
+  return { rule_id: "consult-desk", ...RULES["consult-desk"] }
+}
+
+function receiptOf(input) {
+  const decision = decide(input)
+  return {
+    input: { item: input.item, category: input.category, hazard: input.hazard, note: input.note },
+    route: decision.route,
+    detail: decision.detail,
+    rule_id: decision.rule_id,
+    rule: decision.explain
+  }
+}
+
+let receipt = null
+
+function showResult(next) {
+  receipt = next
+  window.__receipt = next
+  document.getElementById("route").textContent = next.detail
+  document.getElementById("rule").textContent = `${next.rule_id}：${next.rule}`
+  document.getElementById("form").hidden = true
+  document.getElementById("result").hidden = false
+  document.getElementById("back").focus()
+}
+
+document.getElementById("form").addEventListener("submit", (event) => {
+  event.preventDefault()
+  clearErrors()
+  const input = readInput()
+  const errors = validate(input)
+  if (errors.length) {
+    const summary = document.getElementById("summary")
+    summary.hidden = false
+    summary.innerHTML = ""
+    const title = document.createElement("p")
+    title.textContent = "还不能分诊。"
+    const list = document.createElement("ul")
+    for (const error of errors) {
+      showError(error.name, error.message)
+      const item = document.createElement("li")
+      const link = document.createElement("a")
+      link.href = error.href
+      link.textContent = error.message
+      item.append(link)
+      list.append(item)
+    }
+    summary.append(title, list)
+    summary.focus()
+    return
+  }
+  showResult(receiptOf(input))
+})
+
+document.getElementById("back").addEventListener("click", () => {
+  document.getElementById("result").hidden = true
+  document.getElementById("form").hidden = false
+  document.getElementById("item").focus()
+})
+
+document.getElementById("download").addEventListener("click", () => {
+  const blob = new Blob([JSON.stringify(receipt, null, 2) + "\n"], { type: "application/json" })
+  const link = document.createElement("a")
+  link.href = URL.createObjectURL(blob)
+  link.download = "receipt.json"
+  link.click()
+  URL.revokeObjectURL(link.href)
+})
+
+document.getElementById("reset").addEventListener("click", () => {
+  document.getElementById("item").value = ""
+  document.getElementById("note").value = ""
+  document.querySelector("input[name=category][value=纸品]").checked = true
+  for (const radio of document.querySelectorAll("input[name=hazard]")) radio.checked = false
+  clearErrors()
+  document.getElementById("result").hidden = true
+  document.getElementById("form").hidden = false
+  receipt = null
+  window.__receipt = null
+  document.getElementById("item").focus()
+})
+</script>
+</body>
+</html>

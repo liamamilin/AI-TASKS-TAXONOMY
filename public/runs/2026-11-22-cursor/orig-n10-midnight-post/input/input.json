@@ -1,0 +1,76 @@
+{
+  "title": "午夜邮局",
+  "initial": {
+    "stamps": 1
+  },
+  "nodes": {
+    "A": {
+      "label": "门厅",
+      "choices": [
+        {
+          "text": "先去柜台",
+          "to": "B"
+        },
+        {
+          "text": "先看灯塔",
+          "to": "C"
+        }
+      ]
+    },
+    "B": {
+      "label": "柜台",
+      "choices": [
+        {
+          "text": "寄出第一封信",
+          "to": "D",
+          "spend": 1
+        },
+        {
+          "text": "把邮票留着",
+          "to": "D",
+          "spend": 0
+        }
+      ]
+    },
+    "C": {
+      "label": "灯塔",
+      "choices": [
+        {
+          "text": "回柜台",
+          "to": "B"
+        },
+        {
+          "text": "陪守灯人等天亮",
+          "to": "E1"
+        }
+      ]
+    },
+    "D": {
+      "label": "分信台",
+      "choices": [
+        {
+          "text": "寄给明天",
+          "to": "E2",
+          "requires_stamps": 1,
+          "spend": 1
+        },
+        {
+          "text": "把信读给海风",
+          "to": "E3"
+        }
+      ]
+    },
+    "E1": {
+      "label": "结局：守候",
+      "choices": []
+    },
+    "E2": {
+      "label": "结局：送达",
+      "choices": []
+    },
+    "E3": {
+      "label": "结局：放下",
+      "choices": []
+    }
+  }
+}

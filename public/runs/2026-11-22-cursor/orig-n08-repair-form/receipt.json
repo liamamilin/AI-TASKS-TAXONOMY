@@ -1,0 +1,12 @@
+{
+  "input": {
+    "item": "折角书签",
+    "category": "纸品",
+    "hazard": "否",
+    "note": ""
+  },
+  "route": "纸艺桌",
+  "detail": "纸艺桌",
+  "rule_id": "paper-desk",
+  "rule": "没有危险，类别是纸品，分到纸艺桌。"
+}

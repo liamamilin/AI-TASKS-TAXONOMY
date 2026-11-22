@@ -1,4 +1,5 @@
 import { questions, resultBook, typeList, typeMap } from "./bank.js"
+import { taskList } from "./task-render.js"
 import { DIFF_LABEL, exhibitText, fullPrompt } from "./logic.js"
 import { renderArt } from "./scenes.js"
 
@@ -225,15 +226,27 @@ function openAnswer(question) {
 
 export function modelsView() {
   const lines = questions.map((question) => `${question.id}\t${question.title}\t${typeMap[question.type].label}\t${DIFF_LABEL[question.difficulty]}`).join("\n")
+  const runs = resultBook.runs || []
+  const counts = { success: 0, partial: 0, failure: 0 }
+  for (const run of runs) counts[run.status] = (counts[run.status] || 0) + 1
+  const words = { success: "成功", partial: "部分验证", failure: "失败" }
+  const runList = runs.map((run) => {
+    const title = taskList.find((task) => task.id === run.taskId)?.title || run.taskId
+    return `<li>${escapeHtml(title)} · ${escapeHtml(run.revision || "v1")} · ${words[run.status] || escapeHtml(run.status)}</li>`
+  }).join("")
   return `<section class="prose">
     <p class="kicker">模型</p>
-    <h1>尚未实测</h1>
-    <p class="lede">这里只放已经留下产物的运行。当前三类是「Cursor辅助执行/含工具」：在带有本仓库上下文的 Cursor 会话里写出首次产物，再用浏览器检查。这不是裸接口单轮，也不是把开发草稿冒充成别的模型。</p>
+    <h1>有运行，没有排名</h1>
+    <p class="lede">这里只放已经留下产物的运行。当前记录是「Cursor辅助执行/含工具」：在带有本仓库上下文的 Cursor 会话里写出首次产物，再用浏览器检查。这不是裸接口单轮，也不是把开发草稿冒充成别的模型。</p>
     <div class="stats">
-      <p><b>${resultBook.runs?.length || 0}</b><span>次已记录运行</span></p>
-      <p><b>${questions.length}</b><span>道仍可热身的短题</span></p>
+      <p><b>${runs.length}</b><span>次已记录运行</span></p>
+      <p><b>${counts.success}</b><span>次成功</span></p>
+      <p><b>${counts.partial}</b><span>次部分验证</span></p>
+      <p><b>${counts.failure}</b><span>次失败</span></p>
     </div>
-    <div class="callout">运行列表是空的。空表示还没跑，不是所有模型都失败，也不是都成功。</div>
+    <div class="callout">成功、部分验证和失败按每一次运行分开计。有成功也有失败的任务，两版都留着。这里不排模型名次。</div>
+    <h2>运行</h2>
+    <ul>${runList}</ul>
     <h2>一条记录长什么样</h2>
     <p>以后若有人实测，一条记录至少要有题号、模型、日期、逐字提示、原始输出和判定。缺原始输出的，不展示。</p>
     <pre class="prompt">{
@@ -253,8 +266,8 @@ export function modelsView() {
       <button type="button" class="btn btn-primary" data-copy="record">复制测试记录</button>
       <button type="button" class="btn btn-ghost" data-copy="list">复制待测清单</button>
     </div>
-    <h2>待测清单</h2>
-    <p>只有编号、标题、类型和难度，没有答案。</p>
+    <h2>短题清单</h2>
+    <p>下面是热身短题，不是作品任务的运行。只有编号、标题、类型和难度，没有答案。</p>
     <pre class="prompt" id="pending-list">${escapeHtml(lines)}</pre>
   </section>`
 }
@@ -301,7 +314,7 @@ export function shell() {
         <summary>模型</summary>
         <div class="menu-pop">
           <a href="#/models">实测记录</a>
-          <p>尚无模型。馆里不编造成绩。</p>
+          <p>有运行记录。馆里不编造成绩。</p>
         </div>
       </details>
       <a href="#/method" data-nav="method">测试方法</a>

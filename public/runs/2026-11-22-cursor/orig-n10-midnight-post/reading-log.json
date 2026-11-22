@@ -1,0 +1,57 @@
+{
+  "title": "午夜邮局",
+  "steps": [
+    {
+      "type": "choice",
+      "from": "A",
+      "text": "先去柜台",
+      "to": "B",
+      "spend": 0,
+      "stampsBefore": 1,
+      "stampsAfter": 1
+    },
+    {
+      "type": "choice",
+      "from": "B",
+      "text": "寄出第一封信",
+      "to": "D",
+      "spend": 1,
+      "stampsBefore": 1,
+      "stampsAfter": 0
+    },
+    {
+      "type": "back",
+      "from": "D",
+      "to": "B",
+      "stampsBefore": 0,
+      "stampsAfter": 1
+    },
+    {
+      "type": "choice",
+      "from": "B",
+      "text": "把邮票留着",
+      "to": "D",
+      "spend": 0,
+      "stampsBefore": 1,
+      "stampsAfter": 1
+    },
+    {
+      "type": "choice",
+      "from": "D",
+      "text": "寄给明天",
+      "to": "E2",
+      "spend": 1,
+      "stampsBefore": 1,
+      "stampsAfter": 0
+    }
+  ],
+  "path": [
+    "A",
+    "B",
+    "D",
+    "E2"
+  ],
+  "node": "E2",
+  "stamps": 0,
+  "ending": "E2"
+}
