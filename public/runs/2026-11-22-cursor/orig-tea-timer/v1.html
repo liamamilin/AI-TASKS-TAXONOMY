@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>泡茶计时</title>
+<style>
+  html, body { margin: 0; background: #fff; color: #1c1915; }
+  body { font-family: "Songti SC", "Noto Serif SC", Georgia, serif; }
+  main { max-width: 36rem; margin: 0 auto; padding: 1.25rem; }
+  h1 { font-size: 1.5rem; font-weight: 500; margin: 0 0 0.5rem; }
+  ul { list-style: none; margin: 0; padding: 0; }
+  li { display: flex; flex-wrap: wrap; gap: 0.75rem; align-items: center; justify-content: space-between; border-top: 1px solid #ddd; padding: 0.85rem 0; }
+  .name { min-width: 4rem; }
+  .time { font-variant-numeric: tabular-nums; font-size: 2rem; min-width: 4.5ch; }
+  button { font: inherit; background: #1c1915; color: #fff; border: 0; padding: 0.55rem 0.9rem; }
+  #done { min-height: 2rem; font-size: 1.35rem; }
+</style>
+</head>
+<body>
+<main>
+  <h1>泡茶计时</h1>
+  <ul>
+    <li><span class="name">烧水</span><span class="time" id="boil">8:00</span><button id="start-boil" type="button">开始</button></li>
+    <li><span class="name">洗杯</span><span class="time" id="cup">2:00</span><button id="start-cup" type="button">开始</button></li>
+    <li><span class="name">找茶叶</span><span class="time" id="leaf">1:00</span><button id="start-leaf" type="button">开始</button></li>
+  </ul>
+  <p id="done"></p>
+</main>
+<script>
+const SPEC = { boil: 8 * 60, cup: 2 * 60, leaf: 60 };
+const left = { boil: SPEC.boil, cup: SPEC.cup, leaf: SPEC.leaf };
+const running = { boil: false, cup: false, leaf: false };
+const finished = { boil: false, cup: false, leaf: false };
+const startedAt = { boil: 0, cup: 0, leaf: 0 };
+
+function fmt(total) {
+  const m = Math.floor(total / 60);
+  const s = total % 60;
+  return m + ":" + String(s).padStart(2, "0");
+}
+
+function render() {
+  document.getElementById("boil").textContent = fmt(left.boil);
+  document.getElementById("cup").textContent = fmt(left.cup);
+  document.getElementById("leaf").textContent = fmt(left.leaf);
+  const all = finished.boil && finished.cup && finished.leaf;
+  document.getElementById("done").textContent = all ? "可以泡了" : "";
+}
+
+function tick() {
+  const now = Date.now();
+  for (const key of Object.keys(SPEC)) {
+    if (!running[key]) continue;
+    const elapsed = Math.floor((now - startedAt[key]) / 1000);
+    const remain = SPEC[key] - elapsed;
+    if (remain <= 0) {
+      left[key] = 0;
+      running[key] = false;
+      finished[key] = true;
+    } else {
+      left[key] = remain;
+    }
+  }
+  render();
+}
+
+for (const key of Object.keys(SPEC)) {
+  document.getElementById("start-" + key).addEventListener("click", () => {
+    if (running[key] || finished[key]) return;
+    startedAt[key] = Date.now();
+    running[key] = true;
+    tick();
+  });
+}
+
+setInterval(tick, 200);
+render();
+</script>
+</body>
+</html>

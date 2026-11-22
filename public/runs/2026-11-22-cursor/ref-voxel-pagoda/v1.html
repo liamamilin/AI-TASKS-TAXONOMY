@@ -1,0 +1,186 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Voxel pagoda</title>
+<style>
+  html, body { margin: 0; background: #e7f0ea; }
+  canvas { width: min(100vw, 1100px); height: auto; display: block; margin: 0 auto; }
+</style>
+</head>
+<body>
+<canvas id="c" width="1100" height="760"></canvas>
+<script>
+const canvas = document.getElementById("c");
+const ctx = canvas.getContext("2d");
+const voxels = [];
+const seen = new Set();
+function add(x, y, z, color, tag) {
+  x = Math.round(x); y = Math.round(y); z = Math.round(z);
+  const key = x + "," + y + "," + z;
+  if (seen.has(key)) return;
+  seen.add(key);
+  voxels.push({ x, y, z, color, tag });
+}
+const greens = ["#3f6b45", "#4e7d52", "#2f5a3a", "#6a8f4a", "#345c3c", "#7d9a55"];
+for (let x = -16; x <= 16; x++) {
+  for (let z = -16; z <= 16; z++) {
+    const pond = x >= 7 && x <= 13 && z >= -6 && z <= 1;
+    const color = pond ? "#3d6f8a" : greens[(Math.abs(x * 3 + z * 5) % greens.length)];
+    add(x, 0, z, color, "garden");
+  }
+}
+for (let z = 2; z <= 15; z++) add(0, 1, z, "#b7aa96", "garden");
+for (let x = -1; x <= 1; x++) add(x, 1, 2, "#b7aa96", "garden");
+
+function tree(tx, tz, blossom) {
+  for (let y = 1; y <= 6; y++) add(tx, y, tz, "#6b4423", "tree");
+  const leaf = blossom ? ["#e7a0b4", "#f3c1d0", "#c45b78"] : ["#2f7a3a", "#3e8f48", "#1f5c2c"];
+  for (let y = 5; y <= 9; y++) {
+    const r = y < 8 ? 3 : 2;
+    for (let x = -r; x <= r; x++) {
+      for (let z = -r; z <= r; z++) {
+        if (x * x + z * z + (y - 7) * (y - 7) > r * r + 2) continue;
+        add(tx + x, y, tz + z, leaf[(Math.abs(x + z + y) % leaf.length)], blossom ? "blossom" : "tree");
+      }
+    }
+  }
+}
+tree(-11, -8, false);
+tree(-13, 7, false);
+tree(11, -9, true);
+tree(13, 8, true);
+tree(-7, 12, true);
+tree(9, 13, false);
+tree(-14, -1, true);
+
+function pagoda() {
+  const roofs = ["#9d2f2c", "#b6402e", "#c4553a", "#a3312c", "#8a2924"];
+  const levels = [
+    { y: 1, half: 6 },
+    { y: 8, half: 5 },
+    { y: 14, half: 4 },
+    { y: 19, half: 3 },
+    { y: 23, half: 2 }
+  ];
+  levels.forEach((level, index) => {
+    const h = level.half;
+    for (let x = -h; x <= h; x++) {
+      for (let z = -h; z <= h; z++) add(x, level.y, z, "#cfc3ae", "pagoda");
+    }
+    for (let t = 1; t <= 3; t++) {
+      for (let x = -h + 1; x <= h - 1; x++) {
+        for (let z = -h + 1; z <= h - 1; z++) {
+          const edge = x === -h + 1 || x === h - 1 || z === -h + 1 || z === h - 1;
+          if (!edge) continue;
+          const door = z === h - 1 && x === 0 && t <= 2;
+          if (door) continue;
+          const column = Math.abs(x) === h - 1 && Math.abs(z) === h - 1;
+          add(x, level.y + t, z, column ? "#2a2420" : "#f3ead7", "pagoda");
+        }
+      }
+    }
+    const roofY = level.y + 4;
+    for (let layer = 0; layer < 2; layer++) {
+      const rh = h + 1 - layer;
+      for (let x = -rh; x <= rh; x++) {
+        for (let z = -rh; z <= rh; z++) {
+          if (layer === 1 || Math.abs(x) === rh || Math.abs(z) === rh) {
+            add(x, roofY + layer, z, roofs[index], "pagoda");
+          }
+        }
+      }
+    }
+    add(0, roofY + 2, 0, "#d4b15a", "pagoda");
+  });
+  for (let y = 29; y <= 34; y++) add(0, y, 0, "#d4b15a", "pagoda");
+  add(0, 35, 0, "#f2e7b0", "pagoda");
+}
+pagoda();
+
+let yaw = 0.6;
+let dragging = false;
+let lastX = 0;
+canvas.addEventListener("pointerdown", (event) => {
+  dragging = true;
+  lastX = event.clientX;
+  canvas.setPointerCapture(event.pointerId);
+});
+canvas.addEventListener("pointerup", () => { dragging = false; });
+canvas.addEventListener("pointermove", (event) => {
+  if (!dragging) return;
+  yaw += (event.clientX - lastX) * 0.01;
+  lastX = event.clientX;
+});
+
+function proj(x, y, z) {
+  const c = Math.cos(yaw), s = Math.sin(yaw);
+  const rx = x * c - z * s;
+  const rz = x * s + z * c;
+  const scale = 16;
+  return {
+    x: canvas.width / 2 + rx * scale,
+    y: canvas.height * 0.78 - y * scale * 0.92 - rz * scale * 0.42,
+    depth: rz
+  };
+}
+function shade(hex, factor) {
+  const n = parseInt(hex.slice(1), 16);
+  const ch = (shift) => Math.max(0, Math.min(255, ((n >> shift) & 255) * factor | 0));
+  return "rgb(" + ch(16) + "," + ch(8) + "," + ch(0) + ")";
+}
+function face(pts, color) {
+  ctx.beginPath();
+  ctx.moveTo(pts[0].x, pts[0].y);
+  for (let i = 1; i < pts.length; i++) ctx.lineTo(pts[i].x, pts[i].y);
+  ctx.closePath();
+  ctx.fillStyle = color;
+  ctx.fill();
+}
+let last = performance.now();
+function frame(now) {
+  const dt = Math.min(0.05, (now - last) / 1000);
+  last = now;
+  if (!dragging) yaw += dt * 0.25;
+  for (const voxel of voxels) {
+    const p = proj(voxel.x, voxel.y, voxel.z);
+    voxel.depth = p.depth;
+  }
+  voxels.sort((a, b) => a.depth - b.depth);
+  ctx.clearRect(0, 0, canvas.width, canvas.height);
+  ctx.fillStyle = "#d7e6ef";
+  ctx.fillRect(0, 0, canvas.width, canvas.height);
+  ctx.fillStyle = "#e7f0ea";
+  ctx.fillRect(0, canvas.height * 0.45, canvas.width, canvas.height);
+  for (const voxel of voxels) {
+    const p000 = proj(voxel.x, voxel.y, voxel.z);
+    const p100 = proj(voxel.x + 1, voxel.y, voxel.z);
+    const p010 = proj(voxel.x, voxel.y + 1, voxel.z);
+    const p110 = proj(voxel.x + 1, voxel.y + 1, voxel.z);
+    const p001 = proj(voxel.x, voxel.y, voxel.z + 1);
+    const p101 = proj(voxel.x + 1, voxel.y, voxel.z + 1);
+    const p011 = proj(voxel.x, voxel.y + 1, voxel.z + 1);
+    const p111 = proj(voxel.x + 1, voxel.y + 1, voxel.z + 1);
+    face([p001, p101, p111, p011], shade(voxel.color, 0.72));
+    face([p100, p101, p111, p110], shade(voxel.color, 0.86));
+    face([p010, p110, p111, p011], shade(voxel.color, 1.05));
+  }
+  requestAnimationFrame(frame);
+}
+const tags = {};
+const colors = new Set();
+for (const voxel of voxels) {
+  tags[voxel.tag] = (tags[voxel.tag] || 0) + 1;
+  colors.add(voxel.color);
+}
+window.__voxel = {
+  count: voxels.length,
+  tags,
+  colors: colors.size,
+  yaw: () => yaw
+};
+requestAnimationFrame(frame);
+</script>
+</body>
+</html>

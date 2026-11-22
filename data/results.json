@@ -435,6 +435,299 @@
         }
       ],
       "rawOutput": "后续版本是 runs/2026-11-22-cursor/ref-ai-world-clock/v2.html，不替代 v1 文件。"
+    },
+    {
+      "executionClass": "cursor-assisted-with-tools",
+      "label": "Cursor辅助执行/含工具",
+      "provider": "Cursor Cloud Agent",
+      "model": "grok-4.7-high-fast",
+      "modelVersion": "Cursor run-info.originalModelName=grok-4.7-high-fast。没有供应商 HTTP 响应体，没有 token 统计。",
+      "context": "会话 https://cursor.com/agents/bc-df9f393a-ecdc-5142-98e1-44f568293069 已加载 AI-TASKS-TAXONOMY 仓库和先前对话。这不是隔离盲测，也不是裸 API 单轮。",
+      "environment": "Cursor Cloud Agent，Linux。检查用本机 Google Chrome headless 打开产物。未调用外部模型 API，未使用密钥。",
+      "parameters": "无温度、无 max_tokens。执行中可以读写本仓库，并用浏览器查看产物。",
+      "startedAt": "2026-11-22T01:44:20Z",
+      "endedAt": "2026-11-22T01:44:54Z",
+      "repairs": [],
+      "revision": "v1",
+      "status": "success",
+      "checks": [
+        {
+          "name": "六边形在转",
+          "pass": true,
+          "evidence": "220 毫秒采样后继续跑约 2.8 秒，angle 从 0.731 增到 3.597。画面是黑边六边形，一个顶点有绿色标记。"
+        },
+        {
+          "name": "球受重力下落并反复碰撞",
+          "pass": true,
+          "evidence": "前 220 毫秒 y 从 243.3 增到 357.6，vy 为 641，方向向下。随后记录到 9 次碰撞。"
+        },
+        {
+          "name": "球不会穿过边",
+          "pass": true,
+          "evidence": "整段里边的最小间隙是 0（浮点误差约 1e-14），球心没有跑到六边形外。截图里红球贴在左边内侧。"
+        },
+        {
+          "name": "碰撞后的方向看得出墙也在动，而不是只按静止墙反弹",
+          "pass": true,
+          "evidence": "9 次碰撞的墙速都大于 189，和静止墙反弹的速度差在 38 到 166 之间。差来自转动墙的切向速度。"
+        }
+      ],
+      "id": "cursor-ref-bouncing-ball-hexagon-v1",
+      "taskId": "ref-bouncing-ball-hexagon",
+      "promptSha256": "02b93878253e83e527496f95fafaffc25bf6198443562b5a2db63c171c1e5fb0",
+      "artifact": "runs/2026-11-22-cursor/ref-bouncing-ball-hexagon/v1.html",
+      "artifactSha256": "dd802f1aaacc46a991cf97d3d99fda05d303811d12305a1eb1911e04ada93e02",
+      "rawOutput": "首次完整产物是 runs/2026-11-22-cursor/ref-bouncing-ball-hexagon/v1.html，SHA-256 dd802f1aaacc46a991cf97d3d99fda05d303811d12305a1eb1911e04ada93e02。该文件没有被后来的修改覆盖。"
+    },
+    {
+      "executionClass": "cursor-assisted-with-tools",
+      "label": "Cursor辅助执行/含工具",
+      "provider": "Cursor Cloud Agent",
+      "model": "grok-4.7-high-fast",
+      "modelVersion": "Cursor run-info.originalModelName=grok-4.7-high-fast。没有供应商 HTTP 响应体，没有 token 统计。",
+      "context": "会话 https://cursor.com/agents/bc-df9f393a-ecdc-5142-98e1-44f568293069 已加载 AI-TASKS-TAXONOMY 仓库和先前对话。这不是隔离盲测，也不是裸 API 单轮。",
+      "environment": "Cursor Cloud Agent，Linux。检查用本机 Google Chrome headless 打开产物。未调用外部模型 API，未使用密钥。",
+      "parameters": "无温度、无 max_tokens。执行中可以读写本仓库，并用浏览器查看产物。",
+      "startedAt": "2026-11-22T01:44:55Z",
+      "endedAt": "2026-11-22T01:45:08Z",
+      "repairs": [],
+      "revision": "v1",
+      "status": "success",
+      "checks": [
+        {
+          "name": "方块会按格下落",
+          "pass": true,
+          "evidence": "暂停后调用同一定时器用的 step，y 从 0 到 1。恢复 500 毫秒定时器后再等 850 毫秒，y 仍只增加 1 格。"
+        },
+        {
+          "name": "旋转不会无故穿出边界",
+          "pass": true,
+          "evidence": "贴左墙和贴右墙各旋转 4 次，活动方块没有出现 x 小于 0、x 大于 9 或 y 大于 19 的格子。转不开就停在原角度。"
+        },
+        {
+          "name": "填满的一行会消失",
+          "pass": true,
+          "evidence": "用游戏自己的落子和消行，放了 9 个方块后消行从 0 变为 1，得分 100。画面底部留有未满的行。"
+        },
+        {
+          "name": "有结束或重开",
+          "pass": true,
+          "evidence": "继续硬降 12 次后状态文字是「结束」。点重新开始后结束状态消失，消行回到 0，棋盘清空。左方向键让 x 从 3 到 2，旋转按钮让 rot 从 0 到 1。"
+        }
+      ],
+      "id": "cursor-ref-tetris-v1",
+      "taskId": "ref-tetris",
+      "promptSha256": "090fdb48240363755d5c0cd5cbef842ded85507a0e06509832438d0df0c29fa1",
+      "artifact": "runs/2026-11-22-cursor/ref-tetris/v1.html",
+      "artifactSha256": "a31b1121000f08a369d467b3ded19affe3b0fba0f34fac1ecf7d102a0c19dab9",
+      "rawOutput": "首次完整产物是 runs/2026-11-22-cursor/ref-tetris/v1.html，SHA-256 a31b1121000f08a369d467b3ded19affe3b0fba0f34fac1ecf7d102a0c19dab9。该文件没有被后来的修改覆盖。"
+    },
+    {
+      "executionClass": "cursor-assisted-with-tools",
+      "label": "Cursor辅助执行/含工具",
+      "provider": "Cursor Cloud Agent",
+      "model": "grok-4.7-high-fast",
+      "modelVersion": "Cursor run-info.originalModelName=grok-4.7-high-fast。没有供应商 HTTP 响应体，没有 token 统计。",
+      "context": "会话 https://cursor.com/agents/bc-df9f393a-ecdc-5142-98e1-44f568293069 已加载 AI-TASKS-TAXONOMY 仓库和先前对话。这不是隔离盲测，也不是裸 API 单轮。",
+      "environment": "Cursor Cloud Agent，Linux。检查用本机 Google Chrome headless 打开产物。未调用外部模型 API，未使用密钥。",
+      "parameters": "无温度、无 max_tokens。执行中可以读写本仓库，并用浏览器查看产物。",
+      "startedAt": "2026-11-22T01:45:09Z",
+      "endedAt": "2026-11-22T01:45:21Z",
+      "repairs": [],
+      "revision": "v1",
+      "status": "success",
+      "checks": [
+        {
+          "name": "看得到宝塔",
+          "pass": true,
+          "evidence": "截图中央是五层红檐、白墙、金顶的塔，不是色块计数冒充。宝塔体素 1387 个。"
+        },
+        {
+          "name": "看得到树，其中有樱花",
+          "pass": true,
+          "evidence": "塔旁有绿叶树和粉色樱花树。树体素 411，樱花体素 492。"
+        },
+        {
+          "name": "场景由许多彩色方块样的体素组成",
+          "pass": true,
+          "evidence": "共 3395 个方块，25 种颜色，草地、水池和屋顶都是独立小方块。"
+        },
+        {
+          "name": "画面不是空白或报错",
+          "pass": true,
+          "evidence": "没有控制台异常。500 毫秒内画布采样签名从 74149928 变为 74357266，视角在转。拖动使 yaw 增加 1.2。"
+        }
+      ],
+      "id": "cursor-ref-voxel-pagoda-v1",
+      "taskId": "ref-voxel-pagoda",
+      "promptSha256": "ff77a19d76fa230140da967b6a0c474bac87023f333767c347e12fe529a5247b",
+      "artifact": "runs/2026-11-22-cursor/ref-voxel-pagoda/v1.html",
+      "artifactSha256": "783124f8d5c77d4d5eafacc9b2e08b8ac6fba84d046becdd0db671d1b8619ee2",
+      "rawOutput": "首次完整产物是 runs/2026-11-22-cursor/ref-voxel-pagoda/v1.html，SHA-256 783124f8d5c77d4d5eafacc9b2e08b8ac6fba84d046becdd0db671d1b8619ee2。该文件没有被后来的修改覆盖。"
+    },
+    {
+      "executionClass": "cursor-assisted-with-tools",
+      "label": "Cursor辅助执行/含工具",
+      "provider": "Cursor Cloud Agent",
+      "model": "grok-4.7-high-fast",
+      "modelVersion": "Cursor run-info.originalModelName=grok-4.7-high-fast。没有供应商 HTTP 响应体，没有 token 统计。",
+      "context": "会话 https://cursor.com/agents/bc-df9f393a-ecdc-5142-98e1-44f568293069 已加载 AI-TASKS-TAXONOMY 仓库和先前对话。这不是隔离盲测，也不是裸 API 单轮。",
+      "environment": "Cursor Cloud Agent，Linux。检查用本机 Google Chrome headless 打开产物。未调用外部模型 API，未使用密钥。",
+      "parameters": "无温度、无 max_tokens。执行中可以读写本仓库，并用浏览器查看产物。",
+      "startedAt": "2026-11-22T01:45:22Z",
+      "endedAt": "2026-11-22T01:45:31Z",
+      "repairs": [],
+      "revision": "v1",
+      "status": "success",
+      "checks": [
+        {
+          "name": "满屏是程序生成的画面",
+          "pass": true,
+          "evidence": "WebGL 编译并链接成功，画布铺满 1100×700 视口。采样到约 55 种颜色，不是纯色或浏览器错误页。"
+        },
+        {
+          "name": "看得到高塔和水面",
+          "pass": true,
+          "evidence": "截图里是一排带尖顶和窗格的深色高塔，下半部分是蓝灰水面。塔身有的浸在水里。"
+        },
+        {
+          "name": "浪或视角在变化",
+          "pass": true,
+          "evidence": "相隔 450 毫秒的像素签名从 49420175 变为 48971146。默认相机沿城市前进。"
+        },
+        {
+          "name": "拖动或默认动画至少一种在动",
+          "pass": true,
+          "evidence": "默认动画已在变。再拖动后 camx 从 0 到 0.8，像素签名再变为 46679870。"
+        }
+      ],
+      "id": "cursor-ref-drowned-gothic-city-v1",
+      "taskId": "ref-drowned-gothic-city",
+      "promptSha256": "01a25b7f67452ce839d64635f241282a346ad9a0eaaea4c81042953e826a81fa",
+      "artifact": "runs/2026-11-22-cursor/ref-drowned-gothic-city/v1.html",
+      "artifactSha256": "bfb11a35adc5080b500c4e31fd1ac6f073a2b76ae74e97976d778b3c7ac83aa2",
+      "rawOutput": "首次完整产物是 runs/2026-11-22-cursor/ref-drowned-gothic-city/v1.html，SHA-256 bfb11a35adc5080b500c4e31fd1ac6f073a2b76ae74e97976d778b3c7ac83aa2。该文件没有被后来的修改覆盖。"
+    },
+    {
+      "executionClass": "cursor-assisted-with-tools",
+      "label": "Cursor辅助执行/含工具",
+      "provider": "Cursor Cloud Agent",
+      "model": "grok-4.7-high-fast",
+      "modelVersion": "Cursor run-info.originalModelName=grok-4.7-high-fast。没有供应商 HTTP 响应体，没有 token 统计。",
+      "context": "会话 https://cursor.com/agents/bc-df9f393a-ecdc-5142-98e1-44f568293069 已加载 AI-TASKS-TAXONOMY 仓库和先前对话。这不是隔离盲测，也不是裸 API 单轮。",
+      "environment": "Cursor Cloud Agent，Linux。检查用本机 Google Chrome headless 打开产物。未调用外部模型 API，未使用密钥。",
+      "parameters": "无温度、无 max_tokens。执行中可以读写本仓库，并用浏览器查看产物。",
+      "startedAt": "2026-11-22T01:44:40Z",
+      "endedAt": "2026-11-22T01:56:33Z",
+      "repairs": [],
+      "revision": "v1",
+      "status": "success",
+      "checks": [
+        {
+          "name": "三项都有自己的剩余时间",
+          "pass": true,
+          "evidence": "打开时分别是烧水 8:00、洗杯 2:00、找茶叶 1:00。1.5 秒内不点按钮，三项都不变。"
+        },
+        {
+          "name": "同时开始时互不等待",
+          "pass": true,
+          "evidence": "只点找茶叶，2.2 秒后它变成 0:58，烧水和洗杯仍是 8:00 与 2:00。再点后两项，三项各自减少。"
+        },
+        {
+          "name": "洗杯先结束，烧水仍在走",
+          "pass": true,
+          "evidence": "找茶叶在开始后 60.3 秒到 0，当时洗杯还剩 62 秒、烧水还剩 422 秒，且没有出现完成句。洗杯在自己的开始后 120.3 秒到 0，烧水还剩 360 秒。"
+        },
+        {
+          "name": "三项都结束后出现可以泡了",
+          "pass": true,
+          "evidence": "烧水在自己的开始后 481 秒到 0，此时另两项已是 0，页面文字是「可以泡了」。此前完成句没有提前出现。390 宽没有横向溢出。"
+        }
+      ],
+      "id": "cursor-orig-tea-timer-v1",
+      "taskId": "orig-tea-timer",
+      "promptSha256": "0ff30f1b91689cef39a0fb7bb4640be8d99d2bf494ea8a68efa9e5cc0fb37181",
+      "artifact": "runs/2026-11-22-cursor/orig-tea-timer/v1.html",
+      "artifactSha256": "0d3ad3fac428fde89bb784601f6448c1d6ea0159d83bc4c23acd2c70253f9db9",
+      "rawOutput": "首次完整产物是 runs/2026-11-22-cursor/orig-tea-timer/v1.html，SHA-256 0d3ad3fac428fde89bb784601f6448c1d6ea0159d83bc4c23acd2c70253f9db9。该文件没有被后来的修改覆盖。"
+    },
+    {
+      "executionClass": "cursor-assisted-with-tools",
+      "label": "Cursor辅助执行/含工具",
+      "provider": "Cursor Cloud Agent",
+      "model": "grok-4.7-high-fast",
+      "modelVersion": "Cursor run-info.originalModelName=grok-4.7-high-fast。没有供应商 HTTP 响应体，没有 token 统计。",
+      "context": "会话 https://cursor.com/agents/bc-df9f393a-ecdc-5142-98e1-44f568293069 已加载 AI-TASKS-TAXONOMY 仓库和先前对话。这不是隔离盲测，也不是裸 API 单轮。",
+      "environment": "Cursor Cloud Agent，Linux。检查用本机 Google Chrome headless 打开产物。未调用外部模型 API，未使用密钥。",
+      "parameters": "无温度、无 max_tokens。执行中可以读写本仓库，并用浏览器查看产物。",
+      "startedAt": "2026-11-22T01:45:32Z",
+      "endedAt": "2026-11-22T01:45:43Z",
+      "repairs": [
+        "v2"
+      ],
+      "revision": "v1",
+      "status": "failure",
+      "checks": [
+        {
+          "name": "看得到高楼",
+          "pass": true,
+          "evidence": "场景有 216 栋楼。截图是多座深色高楼，不是空背景。"
+        },
+        {
+          "name": "输入能改变飞行方向或高度",
+          "pass": true,
+          "evidence": "抬头按钮让 pitch 从 0.02 增到 0.242，左转按钮让 yaw 从 0 增到 0.183，加速让速度从 18 增到 24.8。高度 y 仍停在 24，因为位移被挡住。方向变了，高度没有变。"
+        },
+        {
+          "name": "飞一会后楼还在周围，而不是立刻穿出空场景",
+          "pass": false,
+          "evidence": "约两秒后坐标仍是 x=0、y=24、z=70，nearest 为 2。出发点嵌在楼的碰撞盒里，机体没有飞起来。不能把停住当成飞过之后楼还在。"
+        }
+      ],
+      "id": "cursor-ref-flight-sim-v1",
+      "taskId": "ref-flight-sim",
+      "promptSha256": "db7a6b7ce531dfe9074a06476cd3c3e49d78c79b04dc72bf618d331f81c860c1",
+      "artifact": "runs/2026-11-22-cursor/ref-flight-sim/v1.html",
+      "artifactSha256": "9d04590c92436e0260147f121fe3d8394695945a3afa95ad11aa5334fd019103",
+      "rawOutput": "首次完整产物是 runs/2026-11-22-cursor/ref-flight-sim/v1.html，SHA-256 9d04590c92436e0260147f121fe3d8394695945a3afa95ad11aa5334fd019103。该文件没有被后来的修改覆盖。"
+    },
+    {
+      "executionClass": "cursor-assisted-with-tools",
+      "label": "Cursor辅助执行/含工具",
+      "provider": "Cursor Cloud Agent",
+      "model": "grok-4.7-high-fast",
+      "modelVersion": "Cursor run-info.originalModelName=grok-4.7-high-fast。没有供应商 HTTP 响应体，没有 token 统计。",
+      "context": "会话 https://cursor.com/agents/bc-df9f393a-ecdc-5142-98e1-44f568293069 已加载 AI-TASKS-TAXONOMY 仓库和先前对话。这不是隔离盲测，也不是裸 API 单轮。",
+      "environment": "Cursor Cloud Agent，Linux。检查用本机 Google Chrome headless 打开产物。未调用外部模型 API，未使用密钥。",
+      "parameters": "无温度、无 max_tokens。执行中可以读写本仓库，并用浏览器查看产物。",
+"startedAt": "2026-11-22T02:00:20Z",
+        "endedAt": "2026-11-22T02:01:44Z",
+      "repairs": [],
+      "revision": "v2",
+      "status": "success",
+      "checks": [
+        {
+          "name": "看得到高楼",
+          "pass": true,
+          "evidence": "仍是 216 栋楼。截图从楼群之间看出去，周围有多座不同高度的楼，高度读数 26 到 30。"
+        },
+        {
+          "name": "输入能改变飞行方向或高度",
+          "pass": true,
+          "evidence": "抬头后 pitch 升到 0.16，y 从 26.1 升到随后的 29.7。左转使 yaw 增到 0.293，右方向键再使 yaw 回到 0.238。"
+        },
+        {
+          "name": "飞一会后楼还在周围，而不是立刻穿出空场景",
+          "pass": true,
+          "evidence": "继续飞之后坐标约为 x=4.4、y=29.7、z=-29.1，离起点超过 10。最近的楼距离 8.2，仍在城区范围内，画面上的楼没有消失。"
+        }
+      ],
+      "id": "cursor-ref-flight-sim-v2",
+      "taskId": "ref-flight-sim",
+      "promptSha256": "db7a6b7ce531dfe9074a06476cd3c3e49d78c79b04dc72bf618d331f81c860c1",
+      "artifact": "runs/2026-11-22-cursor/ref-flight-sim/v2.html",
+      "artifactSha256": "bbf5c5906215051ba1d195c78fbc69a2f263bc4647d46d6f55f0a0cb68768d1e",
+      "rawOutput": "后续完整产物是 runs/2026-11-22-cursor/ref-flight-sim/v2.html，SHA-256 bbf5c5906215051ba1d195c78fbc69a2f263bc4647d46d6f55f0a0cb68768d1e。该文件没有被后来的修改覆盖。"
     }
   ]
 }

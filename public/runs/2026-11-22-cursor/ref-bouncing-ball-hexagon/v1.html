@@ -1,0 +1,153 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Spinning hexagon</title>
+<style>
+  html, body { margin: 0; background: #fff; color: #1c1915; }
+  canvas { width: min(100vw, 960px); height: auto; display: block; margin: 0 auto; }
+</style>
+</head>
+<body>
+<canvas id="c" width="960" height="640"></canvas>
+<script>
+const canvas = document.getElementById("c");
+const ctx = canvas.getContext("2d");
+const cx = 480, cy = 320;
+const radius = 230;
+const ballR = 16;
+const omega = 0.95;
+const gravity = 1250;
+const air = 0.35;
+const restitution = 0.62;
+const friction = 0.28;
+let angle = 0.4;
+let px = cx + 20;
+let py = cy - 150;
+let vx = 80;
+let vy = 0;
+const hits = [];
+let minClearance = Infinity;
+let last = performance.now();
+
+function vertices(a) {
+  const out = [];
+  for (let i = 0; i < 6; i++) {
+    const t = a + i * Math.PI / 3 - Math.PI / 2;
+    out.push([cx + Math.cos(t) * radius, cy + Math.sin(t) * radius]);
+  }
+  return out;
+}
+
+function edgeClearance(a, x, y) {
+  const v = vertices(a);
+  let best = null;
+  for (let i = 0; i < 6; i++) {
+    const ax = v[i][0], ay = v[i][1];
+    const bx = v[(i + 1) % 6][0], by = v[(i + 1) % 6][1];
+    const mx = (ax + bx) / 2, my = (ay + by) / 2;
+    let nx = cx - mx, ny = cy - my;
+    const nl = Math.hypot(nx, ny) || 1;
+    nx /= nl; ny /= nl;
+    const sd = (x - ax) * nx + (y - ay) * ny;
+    if (!best || sd < best.sd) best = { sd, nx, ny };
+  }
+  return best;
+}
+
+function resolve() {
+  for (let pass = 0; pass < 4; pass++) {
+    const best = edgeClearance(angle, px, py);
+    if (best.sd >= ballR) break;
+    const pen = ballR - best.sd;
+    px += best.nx * pen;
+    py += best.ny * pen;
+    const qx = px - best.nx * ballR;
+    const qy = py - best.ny * ballR;
+    const rx = qx - cx, ry = qy - cy;
+    const wvx = -omega * ry;
+    const wvy = omega * rx;
+    const rvx = vx - wvx;
+    const rvy = vy - wvy;
+    const vn = rvx * best.nx + rvy * best.ny;
+    if (vn < 0) {
+      const tx = rvx - vn * best.nx;
+      const ty = rvy - vn * best.ny;
+      const nvx = tx * (1 - friction) + (-restitution * vn) * best.nx + wvx;
+      const nvy = ty * (1 - friction) + (-restitution * vn) * best.ny + wvy;
+      const vnStill = vx * best.nx + vy * best.ny;
+      let svx = vx, svy = vy;
+      if (vnStill < 0) {
+        svx = vx - (1 + restitution) * vnStill * best.nx;
+        svy = vy - (1 + restitution) * vnStill * best.ny;
+      }
+      if (hits.length < 50 && vn < -30) {
+        hits.push({
+          wallSpeed: Math.hypot(wvx, wvy),
+          delta: Math.hypot(nvx - svx, nvy - svy)
+        });
+      }
+      vx = nvx;
+      vy = nvy;
+    }
+  }
+  const speed = Math.hypot(vx, vy);
+  if (speed > 1600) {
+    vx = vx / speed * 1600;
+    vy = vy / speed * 1600;
+  }
+}
+
+function step(dt) {
+  const sub = 12;
+  const h = dt / sub;
+  for (let i = 0; i < sub; i++) {
+    const drag = Math.exp(-air * h);
+    vx *= drag;
+    vy = vy * drag + gravity * h;
+    px += vx * h;
+    py += vy * h;
+    angle += omega * h;
+    resolve();
+  }
+  const clearance = edgeClearance(angle, px, py).sd - ballR;
+  if (clearance < minClearance) minClearance = clearance;
+}
+
+function frame(now) {
+  const dt = Math.min(0.033, (now - last) / 1000);
+  last = now;
+  step(dt);
+  const v = vertices(angle);
+  ctx.clearRect(0, 0, canvas.width, canvas.height);
+  ctx.fillStyle = "#fff";
+  ctx.fillRect(0, 0, canvas.width, canvas.height);
+  ctx.beginPath();
+  ctx.moveTo(v[0][0], v[0][1]);
+  for (let i = 1; i < 6; i++) ctx.lineTo(v[i][0], v[i][1]);
+  ctx.closePath();
+  ctx.lineWidth = 10;
+  ctx.strokeStyle = "#1c1915";
+  ctx.stroke();
+  ctx.fillStyle = "#2f6f4e";
+  ctx.beginPath();
+  ctx.arc(v[0][0], v[0][1], 8, 0, Math.PI * 2);
+  ctx.fill();
+  ctx.fillStyle = "#c4492c";
+  ctx.beginPath();
+  ctx.arc(px, py, ballR, 0, Math.PI * 2);
+  ctx.fill();
+  requestAnimationFrame(frame);
+}
+
+window.__hex = {
+  angle: () => angle,
+  pos: () => ({ x: px, y: py, vx, vy }),
+  hits: () => hits.map((hit) => ({ wallSpeed: hit.wallSpeed, delta: hit.delta })),
+  clearance: () => minClearance
+};
+requestAnimationFrame(frame);
+</script>
+</body>
+</html>

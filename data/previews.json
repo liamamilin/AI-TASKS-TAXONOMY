@@ -1,0 +1,104 @@
+{
+  "ref-pelican-bicycle": {
+    "revision": "v1",
+    "status": "success",
+    "artifact": "runs/2026-11-22-cursor/ref-pelican-bicycle/v1.html",
+    "image": "previews/ref-pelican-bicycle.jpg",
+    "label": "展示 v1"
+  },
+  "orig-ferry": {
+    "revision": "v1",
+    "status": "success",
+    "artifact": "runs/2026-11-22-cursor/orig-ferry/v1.html",
+    "image": "previews/orig-ferry.jpg",
+    "label": "展示 v1"
+  },
+  "orig-ticket-json": {
+    "revision": "v1",
+    "status": "success",
+    "artifact": "runs/2026-11-22-cursor/orig-ticket-json/v1.json",
+    "text": "{\"seat\":\"甲区 12 排 8 座\",\"startsAt\":\"19:30\",\"priceYuan\":40}",
+    "label": "展示 v1",
+    "note": "这是数据文件本身，不是另画的场景。"
+  },
+  "ref-ai-world-clock": {
+    "revision": "v2",
+    "status": "success",
+    "artifact": "runs/2026-11-22-cursor/ref-ai-world-clock/v2.html",
+    "image": "previews/ref-ai-world-clock.jpg",
+    "label": "展示 v2",
+    "note": "v1 数字跑到表盘外，卡片不用那一版。"
+  },
+  "ref-solar-system": {
+    "revision": "v1",
+    "status": "success",
+    "artifact": "runs/2026-11-22-cursor/ref-solar-system/v1.html",
+    "image": "previews/ref-solar-system.jpg",
+    "label": "展示 v1"
+  },
+  "ref-flappy-bird": {
+    "revision": "v2",
+    "status": "success",
+    "artifact": "runs/2026-11-22-cursor/ref-flappy-bird/v2.html",
+    "image": "previews/ref-flappy-bird.jpg",
+    "label": "展示 v2",
+    "note": "v1 在开始前不下落，卡片不用那一版。"
+  },
+  "ref-brick-builder": {
+    "revision": "v1",
+    "status": "success",
+    "artifact": "runs/2026-11-22-cursor/ref-brick-builder/v1.html",
+    "image": "previews/ref-brick-builder.jpg",
+    "label": "展示 v1"
+  },
+  "orig-plaque": {
+    "revision": "v1",
+    "status": "success",
+    "artifact": "runs/2026-11-22-cursor/orig-plaque/v1.html",
+    "image": "previews/orig-plaque.jpg",
+    "label": "展示 v1"
+  },
+  "ref-bouncing-ball-hexagon": {
+    "revision": "v1",
+    "status": "success",
+    "artifact": "runs/2026-11-22-cursor/ref-bouncing-ball-hexagon/v1.html",
+    "image": "previews/ref-bouncing-ball-hexagon.jpg",
+    "label": "展示 v1"
+  },
+  "ref-tetris": {
+    "revision": "v1",
+    "status": "success",
+    "artifact": "runs/2026-11-22-cursor/ref-tetris/v1.html",
+    "image": "previews/ref-tetris.jpg",
+    "label": "展示 v1"
+  },
+  "ref-voxel-pagoda": {
+    "revision": "v1",
+    "status": "success",
+    "artifact": "runs/2026-11-22-cursor/ref-voxel-pagoda/v1.html",
+    "image": "previews/ref-voxel-pagoda.jpg",
+    "label": "展示 v1"
+  },
+  "ref-drowned-gothic-city": {
+    "revision": "v1",
+    "status": "success",
+    "artifact": "runs/2026-11-22-cursor/ref-drowned-gothic-city/v1.html",
+    "image": "previews/ref-drowned-gothic-city.jpg",
+    "label": "展示 v1"
+  },
+  "orig-tea-timer": {
+    "revision": "v1",
+    "status": "success",
+    "artifact": "runs/2026-11-22-cursor/orig-tea-timer/v1.html",
+    "image": "previews/orig-tea-timer.jpg",
+    "label": "展示 v1"
+  },
+  "ref-flight-sim": {
+    "revision": "v2",
+    "status": "success",
+    "artifact": "runs/2026-11-22-cursor/ref-flight-sim/v2.html",
+    "image": "previews/ref-flight-sim.jpg",
+    "label": "展示 v2",
+    "note": "v1 开局卡在楼里没有飞起来，卡片不用那一版。"
+  }
+}

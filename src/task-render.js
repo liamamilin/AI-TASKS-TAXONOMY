@@ -1,4 +1,5 @@
 import tasks from "../data/tasks.json" with { type: "json" }
+import previews from "../data/previews.json" with { type: "json" }
 import { resultBook } from "./bank.js"
 
 export const taskList = tasks
@@ -45,16 +46,24 @@ function toggle(params, key, value) {
   return href("/tasks", next)
 }
 
-function motif(kind) {
-  const shapes = {
-    animation: `<circle cx="70" cy="54" r="18" fill="#e2b656"/><path d="M40 92 H120" stroke="#2a2420" stroke-width="4"/>`,
-    scene3d: `<path d="M80 28 L120 52 V100 L80 76 Z M40 52 L80 28 V76 L40 100 Z M40 52 L80 76 L120 52" fill="#c4493a" stroke="#2a2420"/>`,
-    game: `<rect x="36" y="40" width="88" height="52" rx="8" fill="#2c4a6e"/><circle cx="58" cy="66" r="8" fill="#f7f1e4"/><circle cx="102" cy="66" r="8" fill="#f7f1e4"/>`,
-    app: `<rect x="34" y="30" width="92" height="68" rx="4" fill="#f7f1e4" stroke="#2a2420"/><rect x="42" y="42" width="36" height="24" fill="#9ec9e6"/>`,
-    shader: `<path d="M30 90 Q60 20 90 90 T150 90" fill="none" stroke="#3d6f9a" stroke-width="6"/>`,
-    data: `<rect x="40" y="28" width="80" height="72" fill="#fffaf3" stroke="#2a2420"/><path d="M52 48 H108 M52 64 H96 M52 80 H88" stroke="#c4493a" stroke-width="3"/>`,
+function previewArt(task, eager) {
+  const preview = previews[task.id]
+  if (!preview) {
+    return `<div class="art art-untested"><strong>未测</strong><p>还没有可展示的产物</p></div>`
   }
-  return `<svg class="art-svg" viewBox="0 0 640 360" aria-hidden="true"><rect width="640" height="360" fill="#f6efe2"/><g transform="translate(240 110) scale(2.2)">${shapes[kind] || shapes.data}</g></svg>`
+  const tag = `<span class="preview-tag">${esc(preview.label)} · ${preview.status === "success" ? "成功" : "失败"}</span>`
+  if (preview.text) {
+    return `<div class="art art-text"><pre>${esc(preview.text)}</pre>${tag}</div>`
+  }
+  const loading = eager ? "eager" : "lazy"
+  const priority = eager ? ` fetchpriority="high"` : ""
+  return `<div class="art art-preview"><img src="${esc(preview.image)}" alt="${esc(task.title)}，${esc(preview.label)} 的产物截图" width="960" height="540" loading="${loading}" decoding="async"${priority}>${tag}</div>`
+}
+
+function previewLine(task) {
+  const preview = previews[task.id]
+  if (!preview) return ""
+  return `<p class="quiet">首页卡片展示的是 ${esc(preview.label)}，对应文件 ${esc(preview.artifact)}。${esc(preview.note || "")}</p>`
 }
 
 function statusText(task) {
@@ -91,7 +100,7 @@ export function taskHome(params, featuredId) {
     <div class="hero-exhibit">
       <a class="exhibit-link" href="#/t/${featured.id}">
         <div class="frame frame-hero">
-          <div class="mat"><div class="art">${motif(featured.kind)}</div></div>
+          <div class="mat mat-task">${previewArt(featured, true)}</div>
           <div class="plaque">
             <p class="exhibit-no">${featured.coverage === "quoted" ? "引用公开题面" : "问笺馆原创"} · ${esc(statusText(featured))}</p>
             <h2>${esc(featured.title)}</h2>
@@ -129,18 +138,19 @@ export function taskHome(params, featuredId) {
       <button type="button" class="btn btn-primary" data-random="tasks">随便看一件</button>
     </div>
     <div class="cards" id="cards">
-      ${shown.length ? shown.map((task) => taskCard(task, params)).join("") : `<p class="empty">没有对上的任务。</p>`}
+      ${shown.length ? shown.map((task, index) => taskCard(task, params, index < 8)).join("") : `<p class="empty">没有对上的任务。</p>`}
     </div>
   </section>`
 }
 
-function taskCard(task, params) {
+function taskCard(task, params, eager) {
+  const preview = previews[task.id]
   return `<a class="card" href="${href(`/t/${task.id}`, params)}">
-    <div class="frame frame-thumb"><div class="mat"><div class="art">${motif(task.kind)}</div></div></div>
+    <div class="frame frame-thumb"><div class="mat mat-task">${previewArt(task, eager)}</div></div>
     <p class="exhibit-no">${esc(kindLabel(task.kind))} · ${task.coverage === "quoted" ? "引用" : "原创"} · ${esc(statusText(task))}</p>
     <h3>${esc(task.title)}</h3>
     <p class="hook">${esc(task.summary)}</p>
-    <p class="meta">约 ${task.minutes} 分钟制作</p>
+    <p class="meta">${preview ? esc(preview.label) : "未测，没有产物图"} · 约 ${task.minutes} 分钟制作</p>
   </a>`
 }
 
@@ -158,6 +168,7 @@ export function taskDetail(id, params) {
     <p class="kicker">${esc(kindLabel(task.kind))} · ${task.coverage === "quoted" ? "引用公开题面" : "问笺馆原创"} · 约 ${task.minutes} 分钟 · ${esc(runs.length ? "见下方运行" : "未测")}</p>
     <h1>${esc(task.title)}</h1>
     <p class="hook">${esc(task.summary)}</p>
+    ${previewLine(task)}
     <div class="spec-grid">
       <section><h2>要交的产物</h2><p>${esc(task.artifact)}</p></section>
       <section><h2>怎么打开</h2><p>${esc(task.run)}</p></section>

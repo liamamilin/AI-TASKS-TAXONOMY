@@ -1,0 +1,185 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>City flight</title>
+<style>
+  html, body { margin: 0; background: #d5dde3; color: #1c1915; font-family: "Songti SC", "Noto Serif SC", Georgia, sans-serif; }
+  canvas { width: 100%; height: 72vh; display: block; background: #8aa0b3; touch-action: none; }
+  .bar { display: flex; flex-wrap: wrap; gap: 0.4rem; align-items: center; padding: 0.5rem; }
+  button { font: inherit; background: #1c1915; color: #fff; border: 0; padding: 0.45rem 0.7rem; }
+  #hud { margin: 0; }
+</style>
+</head>
+<body>
+<canvas id="c"></canvas>
+<div class="bar">
+  <p id="hud">高度 0</p>
+  <button id="up" type="button">抬头</button>
+  <button id="down" type="button">低头</button>
+  <button id="left" type="button">左转</button>
+  <button id="right" type="button">右转</button>
+  <button id="fast" type="button">加速</button>
+  <button id="slow" type="button">减速</button>
+</div>
+<script>
+const canvas = document.getElementById("c");
+const ctx = canvas.getContext("2d");
+const keys = {};
+const buildings = [];
+for (let gx = -7; gx <= 7; gx++) {
+  for (let gz = -7; gz <= 7; gz++) {
+    if (Math.abs(gx) <= 1 && Math.abs(gz) <= 1) continue;
+    const n = Math.abs((gx * 13 + gz * 7) % 17);
+    buildings.push({
+      x: gx * 18,
+      z: gz * 18,
+      w: 7,
+      h: 12 + n * 2.4,
+      color: n % 2 ? "#5c6b78" : "#3e4c59"
+    });
+  }
+}
+let yaw = 0;
+let pitch = 0.02;
+let speed = 18;
+const pos = { x: 0, y: 26, z: 0 };
+let visible = 0;
+const hold = (id, key) => {
+  const button = document.getElementById(id);
+  const on = (event) => { keys[key] = true; event.preventDefault(); };
+  const off = () => { keys[key] = false; };
+  button.addEventListener("pointerdown", on);
+  button.addEventListener("pointerup", off);
+  button.addEventListener("pointerleave", off);
+};
+hold("up", "ArrowUp");
+hold("down", "ArrowDown");
+hold("left", "ArrowLeft");
+hold("right", "ArrowRight");
+hold("fast", "w");
+hold("slow", "s");
+window.addEventListener("keydown", (event) => {
+  keys[event.key] = true;
+  if (event.key.startsWith("Arrow") || event.key === " ") event.preventDefault();
+});
+window.addEventListener("keyup", (event) => { keys[event.key] = false; });
+
+function basis() {
+  const cp = Math.cos(pitch), sp = Math.sin(pitch);
+  const cy = Math.cos(yaw), sy = Math.sin(yaw);
+  const f = { x: sy * cp, y: sp, z: -cy * cp };
+  const r = { x: cy, y: 0, z: sy };
+  let u = {
+    x: r.y * f.z - r.z * f.y,
+    y: r.z * f.x - r.x * f.z,
+    z: r.x * f.y - r.y * f.x
+  };
+  if (u.y < 0) u = { x: -u.x, y: -u.y, z: -u.z };
+  return { f, r, u };
+}
+function dot(a, b) { return a.x * b.x + a.y * b.y + a.z * b.z; }
+function project(x, y, z, cam, axes) {
+  const d = { x: x - cam.x, y: y - cam.y, z: z - cam.z };
+  const cx = dot(d, axes.r);
+  const cy = dot(d, axes.u);
+  const cz = dot(d, axes.f);
+  if (cz < 0.6) return null;
+  const s = (canvas.height * 0.85) / cz;
+  return { x: canvas.width / 2 + cx * s, y: canvas.height / 2 - cy * s, z: cz };
+}
+function hits(x, y, z) {
+  for (const b of buildings) {
+    if (Math.abs(x - b.x) < b.w * 0.5 + 1.4 && Math.abs(z - b.z) < b.w * 0.5 + 1.4 && y < b.h + 0.8) return true;
+  }
+  return false;
+}
+function resize() {
+  const rect = canvas.getBoundingClientRect();
+  canvas.width = Math.max(2, Math.floor(rect.width * (window.devicePixelRatio || 1)));
+  canvas.height = Math.max(2, Math.floor(rect.height * (window.devicePixelRatio || 1)));
+}
+window.addEventListener("resize", resize);
+resize();
+let last = performance.now();
+function frame(now) {
+  const dt = Math.min(0.05, (now - last) / 1000);
+  last = now;
+  if (keys.ArrowLeft) yaw += 1.1 * dt;
+  if (keys.ArrowRight) yaw -= 1.1 * dt;
+  if (keys.ArrowUp) pitch = Math.min(0.7, pitch + 0.7 * dt);
+  if (keys.ArrowDown) pitch = Math.max(-0.55, pitch - 0.7 * dt);
+  if (keys.w || keys.W) speed = Math.min(42, speed + 14 * dt);
+  if (keys.s || keys.S) speed = Math.max(0, speed - 14 * dt);
+  const axes = basis();
+  const nx = pos.x + axes.f.x * speed * dt;
+  const ny = Math.max(6, Math.min(64, pos.y + axes.f.y * speed * dt));
+  const nz = pos.z + axes.f.z * speed * dt;
+  if (!hits(nx, ny, nz)) { pos.x = nx; pos.y = ny; pos.z = nz; }
+  else if (!hits(nx, pos.y, nz)) { pos.x = nx; pos.z = nz; }
+  else if (!hits(nx, pos.y, pos.z)) pos.x = nx;
+  else if (!hits(pos.x, pos.y, nz)) pos.z = nz;
+  else if (!hits(pos.x, ny, pos.z)) pos.y = ny;
+  const cam = {
+    x: pos.x - axes.f.x * 18,
+    y: pos.y - axes.f.y * 18 + 4,
+    z: pos.z - axes.f.z * 18
+  };
+  const sky = ctx.createLinearGradient(0, 0, 0, canvas.height);
+  sky.addColorStop(0, "#7f93a8");
+  sky.addColorStop(0.55, "#d5dde3");
+  sky.addColorStop(1, "#8d978a");
+  ctx.fillStyle = sky;
+  ctx.fillRect(0, 0, canvas.width, canvas.height);
+  const faces = [];
+  function addBox(x, z, w, y0, y1, color, roof) {
+    const x0 = x - w / 2, x1 = x + w / 2, z0 = z - w / 2, z1 = z + w / 2;
+    const quads = [
+      [[x0, y1, z0], [x1, y1, z0], [x1, y1, z1], [x0, y1, z1], roof],
+      [[x0, y0, z0], [x0, y1, z0], [x0, y1, z1], [x0, y0, z1], color],
+      [[x1, y0, z0], [x1, y1, z0], [x1, y1, z1], [x1, y0, z1], color],
+      [[x0, y0, z0], [x1, y0, z0], [x1, y1, z0], [x0, y1, z0], "#2c3842"],
+      [[x0, y0, z1], [x1, y0, z1], [x1, y1, z1], [x0, y1, z1], "#2c3842"]
+    ];
+    for (const quad of quads) {
+      const pts = quad.slice(0, 4).map((p) => project(p[0], p[1], p[2], cam, axes));
+      if (pts.some((p) => !p)) continue;
+      const depth = pts.reduce((sum, p) => sum + p.z, 0) / 4;
+      faces.push({ pts, color: quad[4], depth });
+    }
+  }
+  for (const b of buildings) {
+    if (Math.hypot(b.x - pos.x, b.z - pos.z) > 150) continue;
+    addBox(b.x, b.z, b.w, 0, b.h, b.color, "#c6a15a");
+  }
+  addBox(pos.x + axes.f.x * 8, pos.z + axes.f.z * 8, 1.6, pos.y - 0.35, pos.y + 0.55, "#c4492c", "#f2d0c4");
+  faces.sort((a, b) => b.depth - a.depth);
+  visible = 0;
+  for (const face of faces) {
+    ctx.beginPath();
+    ctx.moveTo(face.pts[0].x, face.pts[0].y);
+    for (let i = 1; i < 4; i++) ctx.lineTo(face.pts[i].x, face.pts[i].y);
+    ctx.closePath();
+    ctx.fillStyle = face.color;
+    ctx.fill();
+    visible += 1;
+  }
+  document.getElementById("hud").textContent = "高度 " + pos.y.toFixed(0) + "  速度 " + speed.toFixed(0);
+  requestAnimationFrame(frame);
+}
+function nearest() {
+  let best = Infinity;
+  for (const b of buildings) best = Math.min(best, Math.hypot(b.x - pos.x, b.z - pos.z));
+  return best;
+}
+window.__flight = {
+  buildings: buildings.length,
+  pos: () => ({ x: pos.x, y: pos.y, z: pos.z, yaw, pitch, speed }),
+  nearest,
+  visible: () => visible
+};
+requestAnimationFrame(frame);
+</script>
+</body>
+</html>
