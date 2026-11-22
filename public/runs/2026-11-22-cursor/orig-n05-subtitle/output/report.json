@@ -1,0 +1,42 @@
+{
+  "delta_ms": -700,
+  "dropped": [
+    {
+      "originalIndex": 1,
+      "reason": "修正后结束不晚于开始",
+      "start": 0,
+      "end": 0,
+      "text": "片头"
+    }
+  ],
+  "cues": [
+    {
+      "originalIndex": 2,
+      "start": 300,
+      "end": 2300,
+      "text": "小纸船出发了",
+      "number": 1
+    },
+    {
+      "originalIndex": 3,
+      "start": 2100,
+      "end": 3300,
+      "text": "风把它吹向窗边",
+      "number": 2
+    },
+    {
+      "originalIndex": 4,
+      "start": 4300,
+      "end": 6300,
+      "text": "<i>这是原样文字</i>\n",
+      "number": 3
+    }
+  ],
+  "overlaps": [
+    {
+      "a": 2,
+      "b": 3,
+      "ms": 200
+    }
+  ]
+}

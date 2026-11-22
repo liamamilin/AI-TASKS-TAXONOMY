@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>字幕慢了半拍</title>
+<style>
+  body { margin: 0; background: #f6f1e7; color: #1c1915; font-family: Georgia, "Songti SC", sans-serif; }
+  main { max-width: 46rem; margin: 0 auto; padding: 1rem; }
+  textarea, input { font: inherit; }
+  textarea { width: 100%; min-height: 10rem; font-family: ui-monospace, monospace; }
+  button { font: inherit; background: #1c1915; color: #fff; border: 0; padding: 0.45rem 0.7rem; }
+  .cue { border-top: 1px solid #ddd; padding: 0.4rem 0; }
+  .quiet { color: #5e564c; }
+</style>
+</head>
+<body>
+<main>
+  <p class="quiet">问笺馆原创字幕练习。受公开时间轴文档启发，不是该文档里的示例，也不是官方考题。</p>
+  <h1>字幕慢了半拍</h1>
+  <label>平移毫秒 <input id="delta" type="number" value="-700"></label>
+  <textarea id="raw"></textarea>
+  <p><button id="run" type="button">重算</button></p>
+  <label>时间游标 <input id="cursor" type="range" min="0" max="8000" value="0"> <span id="clock">0.0 秒</span></label>
+  <div id="active"></div>
+  <h2>报告</h2>
+  <pre id="report"></pre>
+  <p>
+    <button id="dl-srt" type="button">下载 corrected.srt</button>
+    <button id="dl-vtt" type="button">下载 corrected.vtt</button>
+    <button id="dl-json" type="button">下载 report.json</button>
+  </p>
+</main>
+<script>
+const RAW = "1\n00:00:00,100 --> 00:00:00,500\n片头\n\n2\n00:00:01,000 --> 00:00:03,000\n小纸船出发了\n\n3\n00:00:02,800 --> 00:00:04,000\n风把它吹向窗边\n\n4\n00:00:05,000 --> 00:00:07,000\n<i>这是原样文字</i>\n"
+document.getElementById("raw").value = RAW
+
+function parseTime(text) {
+  const match = /^(\d{2}):(\d{2}):(\d{2})[,.](\d{3})$/.exec(text.trim())
+  if (!match) return null
+  return ((Number(match[1]) * 60 + Number(match[2])) * 60 + Number(match[3])) * 1000 + Number(match[4])
+}
+function pad(value, size) { return String(value).padStart(size, "0") }
+function format(ms, dot) {
+  const safe = Math.max(0, Math.round(ms))
+  const h = Math.floor(safe / 3600000)
+  const m = Math.floor(safe / 60000) % 60
+  const s = Math.floor(safe / 1000) % 60
+  const milli = safe % 1000
+  return `${pad(h, 2)}:${pad(m, 2)}:${pad(s, 2)}${dot ? "." : ","}${pad(milli, 3)}`
+}
+function parseSrt(text) {
+  return text.replace(/\r/g, "").split(/\n\n+/).map((block) => block.split("\n")).filter((lines) => lines.length >= 3 && lines[1].includes("-->")).map((lines) => {
+    const [start, end] = lines[1].split("-->").map((part) => parseTime(part))
+    return { index: Number(lines[0]), start, end, text: lines.slice(2).join("\n") }
+  })
+}
+function correct(text, delta) {
+  const parsed = parseSrt(text)
+  const dropped = []
+  const kept = []
+  for (const cue of parsed) {
+    const start = Math.max(0, cue.start + delta)
+    const end = Math.max(0, cue.end + delta)
+    if (end <= start) dropped.push({ originalIndex: cue.index, reason: "修正后结束不晚于开始", start, end, text: cue.text })
+    else kept.push({ originalIndex: cue.index, start, end, text: cue.text })
+  }
+  kept.sort((a, b) => a.start - b.start || a.originalIndex - b.originalIndex)
+  kept.forEach((cue, index) => { cue.number = index + 1 })
+  const overlaps = []
+  for (let i = 0; i < kept.length; i++) {
+    for (let j = i + 1; j < kept.length; j++) {
+      const ms = Math.min(kept[i].end, kept[j].end) - Math.max(kept[i].start, kept[j].start)
+      if (ms > 0) overlaps.push({ a: kept[i].originalIndex, b: kept[j].originalIndex, ms })
+    }
+  }
+  const srt = kept.map((cue) => `${cue.number}\n${format(cue.start, false)} --> ${format(cue.end, false)}\n${cue.text}\n`).join("\n")
+  const vtt = "WEBVTT\n\n" + kept.map((cue) => `${cue.number}\n${format(cue.start, true)} --> ${format(cue.end, true)}\n${cue.text}\n`).join("\n")
+  return { delta_ms: delta, dropped, cues: kept, overlaps, srt, vtt }
+}
+function escapeText(value) {
+  return value.replaceAll("&", "&amp;").replaceAll("<", "&lt;").replaceAll(">", "&gt;")
+}
+let current = correct(RAW, -700)
+function render() {
+  const t = Number(document.getElementById("cursor").value)
+  document.getElementById("clock").textContent = (t / 1000).toFixed(1) + " 秒"
+  const active = current.cues.filter((cue) => cue.start <= t && t < cue.end)
+  document.getElementById("active").innerHTML = active.map((cue) => `<div class="cue">${escapeText(cue.text)}</div>`).join("") || `<p>此刻没有字幕</p>`
+  document.getElementById("report").textContent = JSON.stringify({ delta_ms: current.delta_ms, dropped: current.dropped, cues: current.cues.map(({ number, originalIndex, start, end, text }) => ({ number, originalIndex, start, end, text })), overlaps: current.overlaps }, null, 2)
+}
+document.getElementById("run").onclick = () => {
+  current = correct(document.getElementById("raw").value, Number(document.getElementById("delta").value))
+  render()
+}
+document.getElementById("cursor").oninput = render
+function download(name, text, type) {
+  const link = document.createElement("a")
+  link.href = URL.createObjectURL(new Blob([text], { type }))
+  link.download = name
+  link.click()
+}
+document.getElementById("dl-srt").onclick = () => download("corrected.srt", current.srt, "text/plain")
+document.getElementById("dl-vtt").onclick = () => download("corrected.vtt", current.vtt, "text/vtt")
+document.getElementById("dl-json").onclick = () => download("report.json", document.getElementById("report").textContent + "\n", "application/json")
+render()
+window.__subs = () => current
+window.__correct = correct
+</script>
+</body>
+</html>

@@ -1,0 +1,163 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>纸船社四班排班</title>
+<style>
+  body { margin: 0; background: #f6f1e7; color: #1c1915; font-family: Georgia, "Songti SC", sans-serif; }
+  main { max-width: 52rem; margin: 0 auto; padding: 1rem; }
+  table { border-collapse: collapse; width: 100%; }
+  th, td { border-top: 1px solid #ddd; padding: 0.35rem; text-align: left; }
+  button { font: inherit; background: #1c1915; color: #fff; border: 0; padding: 0.45rem 0.7rem; margin: 0 0.3rem 0.3rem 0; }
+  .bad { color: #9c3b32; }
+  .quiet { color: #5e564c; }
+</style>
+</head>
+<body>
+<main>
+  <p class="quiet">问笺馆原创排班练习。受公开任务方法启发，不是那些网站的官方题目或背书。</p>
+  <h1>纸船社四班</h1>
+  <div id="editor"></div>
+  <p>
+    <button id="solve" type="button">生成</button>
+    <button id="clear" type="button">清空</button>
+    <button id="download" type="button">下载 roster.json</button>
+  </p>
+  <p id="status"></p>
+  <div id="board"></div>
+  <h2>约束检查</h2>
+  <ul id="checks"></ul>
+</main>
+<script>
+const SLOTS = [
+  { id: "S1", time: "09:00–10:00" },
+  { id: "S2", time: "10:00–11:00" },
+  { id: "S3", time: "11:00–12:00" },
+  { id: "S4", time: "12:00–13:00" }
+]
+const ADJ = { S1: ["S2"], S2: ["S1", "S3"], S3: ["S2", "S4"], S4: ["S3"] }
+const seed = [
+  { id: "甲", key: true, available: ["S1", "S3"] },
+  { id: "乙", key: true, available: ["S2", "S4"] },
+  { id: "丙", key: false, available: ["S1", "S4"] },
+  { id: "丁", key: false, available: ["S2", "S3"] },
+  { id: "戊", key: false, available: ["S1", "S3"] },
+  { id: "己", key: false, available: ["S2", "S4"] }
+]
+let people = seed.map((person) => ({ ...person, available: person.available.slice() }))
+let result = null
+
+function solve(list) {
+  const chosen = { S1: [], S2: [], S3: [], S4: [] }
+  function used(id) { return SLOTS.flatMap((slot) => chosen[slot.id].includes(id) ? [slot.id] : []) }
+  function can(person, slot) {
+    if (!person.available.includes(slot)) return false
+    const shifts = used(person.id)
+    if (shifts.length >= 2) return false
+    if (shifts.some((item) => ADJ[slot].includes(item))) return false
+    if (chosen[slot].includes(person.id)) return false
+    return true
+  }
+  function fill(index) {
+    if (index === 4) return SLOTS.every((slot) => chosen[slot.id].length === 2 && chosen[slot.id].some((id) => list.find((person) => person.id === id).key))
+    const slot = SLOTS[index].id
+    const candidates = list.filter((person) => can(person, slot))
+    for (let i = 0; i < candidates.length; i++) {
+      for (let j = i + 1; j < candidates.length; j++) {
+        const pair = [candidates[i], candidates[j]]
+        if (!pair.some((person) => person.key)) continue
+        chosen[slot] = pair.map((person) => person.id)
+        if (fill(index + 1)) return true
+        chosen[slot] = []
+      }
+    }
+    return false
+  }
+  if (!fill(0)) return null
+  return SLOTS.map((slot) => ({ id: slot.id, time: slot.time, people: chosen[slot.id].slice() }))
+}
+
+function explainUnsolved(list) {
+  const notes = []
+  for (const slot of SLOTS) {
+    const keys = list.filter((person) => person.key && person.available.includes(slot.id))
+    if (!keys.length) notes.push(`${slot.id} 没有可用的钥匙员`)
+    const bodies = list.filter((person) => person.available.includes(slot.id))
+    if (bodies.length < 2) notes.push(`${slot.id} 可用人数少于 2`)
+  }
+  if (!notes.length) notes.push("硬约束组合后无法排满 8 个人次")
+  return notes
+}
+
+function renderEditor() {
+  document.getElementById("editor").innerHTML = `<table><tr><th>人</th><th>钥匙</th>${SLOTS.map((slot) => `<th>${slot.id}<br>${slot.time}</th>`).join("")}</tr>` +
+    people.map((person, index) => `<tr><td>${person.id}</td><td><input data-key="${index}" type="checkbox" ${person.key ? "checked" : ""}></td>${SLOTS.map((slot) => `<td><input data-person="${index}" data-slot="${slot.id}" type="checkbox" ${person.available.includes(slot.id) ? "checked" : ""}></td>`).join("")}</tr>`).join("") +
+    `</table>`
+}
+
+function readEditor() {
+  document.querySelectorAll("[data-key]").forEach((box) => { people[Number(box.dataset.key)].key = box.checked })
+  people.forEach((person) => { person.available = [] })
+  document.querySelectorAll("[data-person]").forEach((box) => {
+    if (box.checked) people[Number(box.dataset.person)].available.push(box.dataset.slot)
+  })
+}
+
+function show(next) {
+  result = next
+  const board = document.getElementById("board")
+  const checks = document.getElementById("checks")
+  if (!next.ok) {
+    document.getElementById("status").textContent = "无解"
+    document.getElementById("status").className = "bad"
+    board.innerHTML = ""
+    checks.innerHTML = next.unmet.map((item) => `<li>${item}</li>`).join("")
+    return
+  }
+  document.getElementById("status").textContent = "有一个满足硬约束的方案"
+  document.getElementById("status").className = ""
+  board.innerHTML = `<table><tr><th>班</th><th>时间</th><th>人员</th></tr>${next.slots.map((slot) => `<tr><td>${slot.id}</td><td>${slot.time}</td><td>${slot.people.join("、")}</td></tr>`).join("")}</table>`
+  checks.innerHTML = next.checks.map((item) => `<li>${item}</li>`).join("")
+}
+
+function generate() {
+  readEditor()
+  const slots = solve(people)
+  if (!slots) {
+    show({ ok: false, slots: [], unmet: explainUnsolved(people), people: people.map((person) => ({ id: person.id, key: person.key, available: person.available.slice() })) })
+    return
+  }
+  show({
+    ok: true,
+    slots,
+    unmet: [],
+    checks: ["每班 2 人", "每班至少一名钥匙员", "每人至多 2 班", "没有相邻班", "都在可用班次内"],
+    people: people.map((person) => ({ id: person.id, key: person.key, available: person.available.slice() }))
+  })
+}
+
+document.getElementById("solve").onclick = generate
+document.getElementById("clear").onclick = () => {
+  people.forEach((person) => { person.available = []; person.key = false })
+  renderEditor()
+  result = null
+  document.getElementById("status").textContent = "已清空，还没有新方案"
+  document.getElementById("board").innerHTML = ""
+  document.getElementById("checks").innerHTML = ""
+}
+document.getElementById("download").onclick = () => {
+  const payload = result || { ok: false, slots: [], unmet: ["还没有生成"] }
+  const blob = new Blob([JSON.stringify(payload, null, 2) + "\n"], { type: "application/json" })
+  const link = document.createElement("a")
+  link.href = URL.createObjectURL(blob)
+  link.download = "roster.json"
+  link.click()
+}
+renderEditor()
+generate()
+window.__roster = () => result
+window.__people = () => people
+</script>
+</body>
+</html>

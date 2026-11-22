@@ -1,0 +1,87 @@
+{
+  "issues": [
+    {
+      "kind": "replaced",
+      "id": "A01",
+      "sourceLine": 2,
+      "keptLine": 4
+    },
+    {
+      "kind": "field",
+      "id": "A03",
+      "field": "date",
+      "value": "04/05/26",
+      "sourceLine": 5
+    },
+    {
+      "kind": "field",
+      "id": "A03",
+      "field": "count",
+      "value": "",
+      "sourceLine": 5
+    },
+    {
+      "kind": "field",
+      "id": "A04",
+      "field": "zone",
+      "value": "北门",
+      "sourceLine": 6
+    },
+    {
+      "kind": "field",
+      "id": "A04",
+      "field": "date",
+      "value": "2026-02-30",
+      "sourceLine": 6
+    },
+    {
+      "kind": "field",
+      "id": "A04",
+      "field": "count",
+      "value": "-1",
+      "sourceLine": 6
+    }
+  ],
+  "rows": [
+    {
+      "id": "A01",
+      "item": "纸伞,蓝色",
+      "date": "2026-04-03",
+      "zone": "East",
+      "zoneOriginal": "",
+      "count": "2",
+      "sourceLine": 4,
+      "firstLine": 2
+    },
+    {
+      "id": "A02",
+      "item": "手套",
+      "date": "2026-04-02",
+      "zone": "West",
+      "zoneOriginal": "",
+      "count": "0",
+      "sourceLine": 3,
+      "firstLine": 3
+    },
+    {
+      "id": "A03",
+      "item": "围巾",
+      "date": "",
+      "zone": "West",
+      "zoneOriginal": "",
+      "count": "",
+      "sourceLine": 5,
+      "firstLine": 5
+    },
+    {
+      "id": "A04",
+      "item": "帽子",
+      "date": "",
+      "zone": "unknown",
+      "zoneOriginal": "北门",
+      "count": "",
+      "sourceLine": 6,
+      "firstLine": 6
+    }
+  ]
+}

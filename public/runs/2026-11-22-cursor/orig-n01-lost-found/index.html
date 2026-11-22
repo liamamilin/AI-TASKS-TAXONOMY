@@ -1,0 +1,151 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>失物招领洗衣机</title>
+<style>
+  body { margin: 0; background: #f6f1e7; color: #1c1915; font-family: Georgia, "Songti SC", sans-serif; }
+  main { max-width: 58rem; margin: 0 auto; padding: 1rem; }
+  textarea { width: 100%; min-height: 9rem; font-family: ui-monospace, monospace; font-size: 0.9rem; }
+  button { font: inherit; background: #1c1915; color: #fff; border: 0; padding: 0.45rem 0.75rem; margin-right: 0.4rem; }
+  table { border-collapse: collapse; width: 100%; font-size: 0.92rem; }
+  th, td { border-top: 1px solid #ddd; padding: 0.35rem; text-align: left; vertical-align: top; }
+  .quiet { color: #5e564c; }
+  @media (max-width: 640px) { main { padding: 0.7rem; } }
+</style>
+</head>
+<body>
+<main>
+  <p class="quiet">问笺馆原创练习。受公开的表格与计算机任务方法启发，不是那些网站的官方题目，也不代表对方背书。</p>
+  <h1>失物招领洗衣机</h1>
+  <textarea id="raw"></textarea>
+  <p>
+    <button id="wash" type="button">清洗</button>
+    <button id="dl-csv" type="button">下载 cleaned.csv</button>
+    <button id="dl-json" type="button">下载 issues.json</button>
+  </p>
+  <h2>对照</h2>
+  <div id="tables"></div>
+  <h2>问题</h2>
+  <pre id="issues"></pre>
+</main>
+<script>
+const SAMPLE = "id,item,date,zone,count\n A01 ,\"纸伞,蓝色\",2026/04/01,东门,1\nA02,手套,2026-04-02,West,0\nA01,\"纸伞,蓝色\",2026-04-03,East,2\nA03,围巾,04/05/26,西门,\nA04,帽子,2026-02-30,北门,-1\n"
+document.getElementById("raw").value = SAMPLE
+
+function parseCsv(text) {
+  const records = []
+  let row = []
+  let field = ""
+  let quoted = false
+  let line = 1
+  let recordLine = 1
+  for (let i = 0; i < text.length; i++) {
+    const ch = text[i]
+    if (quoted) {
+      if (ch === '"') {
+        if (text[i + 1] === '"') { field += '"'; i++ } else quoted = false
+      } else {
+        if (ch === "\n") line += 1
+        field += ch
+      }
+      continue
+    }
+    if (ch === '"') quoted = true
+    else if (ch === ",") { row.push(field); field = "" }
+    else if (ch === "\n" || ch === "\r") {
+      if (ch === "\r" && text[i + 1] === "\n") i++
+      row.push(field)
+      if (row.some((cell) => cell.length) || records.length === 0) records.push({ line: recordLine, cells: row })
+      row = []
+      field = ""
+      line += 1
+      recordLine = line
+    } else field += ch
+  }
+  if (field.length || row.length) {
+    row.push(field)
+    records.push({ line: recordLine, cells: row })
+  }
+  return records
+}
+
+function validDate(value) {
+  const match = /^(\d{4})[-/](\d{2})[-/](\d{2})$/.exec(value)
+  if (!match) return ""
+  const year = Number(match[1]), month = Number(match[2]), day = Number(match[3])
+  const date = new Date(Date.UTC(year, month - 1, day))
+  if (date.getUTCFullYear() !== year || date.getUTCMonth() !== month - 1 || date.getUTCDate() !== day) return ""
+  return `${match[1]}-${match[2]}-${match[3]}`
+}
+
+function csvCell(value) {
+  const text = value == null ? "" : String(value)
+  return /[",\n\r]/.test(text) ? `"${text.replaceAll('"', '""')}"` : text
+}
+
+function cleanCsv(text) {
+  const records = parseCsv(text)
+  const header = records[0]
+  const data = records.slice(1)
+  const firstLine = new Map()
+  const last = new Map()
+  const replaced = []
+  for (const record of data) {
+    const cells = record.cells
+    const id = (cells[0] || "").trim()
+    if (!id) continue
+    if (!firstLine.has(id)) firstLine.set(id, record.line)
+    if (last.has(id)) replaced.push({ kind: "replaced", id, sourceLine: last.get(id).line, keptLine: record.line })
+    last.set(id, record)
+  }
+  const issues = []
+  const rows = []
+  for (const [id, lineNo] of firstLine) {
+    const record = last.get(id)
+    const rawItem = record.cells[1] || ""
+    const rawDate = (record.cells[2] || "").trim()
+    const rawZone = (record.cells[3] || "").trim()
+    const rawCount = (record.cells[4] || "").trim()
+    const item = rawItem.trim()
+    let zone = "unknown"
+    if (rawZone === "东门" || rawZone === "East") zone = "East"
+    else if (rawZone === "西门" || rawZone === "West") zone = "West"
+    else issues.push({ kind: "field", id, field: "zone", value: rawZone, sourceLine: record.line })
+    const date = validDate(rawDate)
+    if (!date) issues.push({ kind: "field", id, field: "date", value: rawDate, sourceLine: record.line })
+    let count = ""
+    if (/^\d+$/.test(rawCount)) count = String(Number(rawCount))
+    else issues.push({ kind: "field", id, field: "count", value: rawCount, sourceLine: record.line })
+    rows.push({ id, item, date, zone, zoneOriginal: zone === "unknown" ? rawZone : "", count, sourceLine: record.line, firstLine: lineNo })
+  }
+  const csv = ["id,item,date,zone,count", ...rows.map((row) => [row.id, row.item, row.date, row.zone, row.count].map(csvCell).join(","))].join("\n") + "\n"
+  return { rows, issues: replaced.concat(issues), csv, headerLine: header ? header.line : 1 }
+}
+
+let current = cleanCsv(SAMPLE)
+function render() {
+  const rawRows = parseCsv(document.getElementById("raw").value).slice(1)
+  const left = rawRows.map((record) => `<tr><td>${record.line}</td><td>${record.cells.map((cell) => cell.replaceAll("<", "&lt;")).join(" | ")}</td></tr>`).join("")
+  const right = current.rows.map((row) => `<tr><td>${row.id}</td><td>${row.item.replaceAll("<", "&lt;")}</td><td>${row.date}</td><td>${row.zone}</td><td>${row.count}</td><td>${row.sourceLine}</td></tr>`).join("")
+  document.getElementById("tables").innerHTML = `<table><tr><th>源行</th><th>原始</th></tr>${left}</table><table><tr><th>id</th><th>item</th><th>date</th><th>zone</th><th>count</th><th>采用源行</th></tr>${right}</table>`
+  document.getElementById("issues").textContent = JSON.stringify({ issues: current.issues, rows: current.rows }, null, 2)
+}
+function download(name, text, type) {
+  const blob = new Blob([text], { type })
+  const link = document.createElement("a")
+  link.href = URL.createObjectURL(blob)
+  link.download = name
+  link.click()
+  URL.revokeObjectURL(link.href)
+}
+document.getElementById("wash").onclick = () => { current = cleanCsv(document.getElementById("raw").value); render() }
+document.getElementById("dl-csv").onclick = () => download("cleaned.csv", current.csv, "text/csv")
+document.getElementById("dl-json").onclick = () => download("issues.json", JSON.stringify({ issues: current.issues, rows: current.rows }, null, 2) + "\n", "application/json")
+render()
+window.__wash = () => current
+window.__clean = cleanCsv
+</script>
+</body>
+</html>

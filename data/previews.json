@@ -188,5 +188,34 @@
     "artifact": "runs/2026-11-22-cursor/orig-three-lamps/v1.html",
     "image": "previews/orig-three-lamps.jpg",
     "label": "展示 v1"
+  },
+  "orig-n01-lost-found": {
+    "revision": "v1",
+    "status": "success",
+    "artifact": "runs/2026-11-22-cursor/orig-n01-lost-found/index.html",
+    "image": "previews/orig-n01-lost-found.jpg",
+    "label": "展示 v1"
+  },
+  "orig-n03-rain-booklet": {
+    "revision": "v2",
+    "status": "success",
+    "artifact": "runs/2026-11-22-cursor/orig-n03-rain-booklet/print-v2.html",
+    "image": "previews/orig-n03-rain-booklet.jpg",
+    "label": "展示 v2",
+    "note": "v1 的 PDF 已是两页 A5，但 390 宽屏幕会横向溢出。卡片用修好屏幕宽度的 v2。"
+  },
+  "orig-n04-paper-roster": {
+    "revision": "v1",
+    "status": "success",
+    "artifact": "runs/2026-11-22-cursor/orig-n04-paper-roster/index.html",
+    "image": "previews/orig-n04-paper-roster.jpg",
+    "label": "展示 v1"
+  },
+  "orig-n05-subtitle": {
+    "revision": "v1",
+    "status": "success",
+    "artifact": "runs/2026-11-22-cursor/orig-n05-subtitle/index.html",
+    "image": "previews/orig-n05-subtitle.jpg",
+    "label": "展示 v1"
   }
 }

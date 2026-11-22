@@ -1,0 +1,70 @@
+{
+  "slots": [
+    {
+      "id": "S1",
+      "time": "09:00–10:00"
+    },
+    {
+      "id": "S2",
+      "time": "10:00–11:00"
+    },
+    {
+      "id": "S3",
+      "time": "11:00–12:00"
+    },
+    {
+      "id": "S4",
+      "time": "12:00–13:00"
+    }
+  ],
+  "people": [
+    {
+      "id": "甲",
+      "key": true,
+      "available": [
+        "S1",
+        "S3"
+      ]
+    },
+    {
+      "id": "乙",
+      "key": true,
+      "available": [
+        "S2",
+        "S4"
+      ]
+    },
+    {
+      "id": "丙",
+      "key": false,
+      "available": [
+        "S1",
+        "S4"
+      ]
+    },
+    {
+      "id": "丁",
+      "key": false,
+      "available": [
+        "S2",
+        "S3"
+      ]
+    },
+    {
+      "id": "戊",
+      "key": false,
+      "available": [
+        "S1",
+        "S3"
+      ]
+    },
+    {
+      "id": "己",
+      "key": false,
+      "available": [
+        "S2",
+        "S4"
+      ]
+    }
+  ]
+}

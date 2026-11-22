@@ -1244,6 +1244,228 @@
       "artifact": "runs/2026-11-22-cursor/ref-hand-gesture-particles/v1.html",
       "artifactSha256": "e644ed1f840d0486290ff0877f6ecf69341d0f268efd3203937fdb71738908af",
       "rawOutput": "首次完整产物是 runs/2026-11-22-cursor/ref-hand-gesture-particles/v1.html，SHA-256 e644ed1f840d0486290ff0877f6ecf69341d0f268efd3203937fdb71738908af。该文件没有被后来的修改覆盖。"
+    },
+    {
+      "executionClass": "cursor-assisted-with-tools",
+      "label": "Cursor辅助执行/含工具",
+      "provider": "Cursor Cloud Agent",
+      "model": "grok-4.7-high-fast",
+      "modelVersion": "Cursor run-info.originalModelName=grok-4.7-high-fast。没有供应商 HTTP 响应体，没有 token 统计。",
+      "context": "会话 https://cursor.com/agents/bc-df9f393a-ecdc-5142-98e1-44f568293069 已加载本仓库。这不是隔离盲测，也不是裸接口单轮。",
+      "environment": "Cursor Cloud Agent，Linux，本机 Google Chrome headless。未使用密钥或付费接口。",
+      "parameters": "无温度、无 max_tokens。用浏览器操作页面，并用 Python 标准库和 poppler 核对下载物。",
+      "startedAt": "2026-11-22T03:07:40Z",
+      "endedAt": "2026-11-22T03:08:20Z",
+      "repairs": [],
+      "revision": "v1",
+      "status": "success",
+      "checks": [
+        {
+          "name": "四行按首次出现排序，A01 采用源行 4",
+          "pass": true,
+          "evidence": "浏览器点清洗后，Python csv 读到 A01、A02、A03、A04。A01 的物品是「纸伞,蓝色」，日期 2026-04-03，数量 2，采用源行 4。替代记录指向源行 2。"
+        },
+        {
+          "name": "0 被保留，坏日期和空数量被记下来",
+          "pass": true,
+          "evidence": "A02 数量是 0。A03 的日期和数量为空，问题里有 04/05/26 和空数量。A04 日期、数量为空，区域是 unknown，原值北门、-1 和 2026-02-30 都在问题里。"
+        },
+        {
+          "name": "带逗号的物品名重读仍是一格",
+          "pass": true,
+          "evidence": "导出被 Python csv 读回后，A01 仍是一个字段「纸伞,蓝色」，五行都是 5 列。"
+        },
+        {
+          "name": "改掉 A02 的数量后导出跟着变",
+          "pass": true,
+          "evidence": "把 West,0 改成 West,3 再清洗，A02 数量变成 3。另加一行 B09 坏日期后，结果多出 B09，并记下南门和 2026-13-01。"
+        }
+      ],
+      "id": "cursor-orig-n01-lost-found-v1",
+      "taskId": "orig-n01-lost-found",
+      "promptSha256": "9007e0716f2974292d82f0ec17a072d0d15a44ab0e97251f75704e649019647a",
+      "artifact": "runs/2026-11-22-cursor/orig-n01-lost-found/index.html",
+      "artifactSha256": "88a6943e26e9c0b573fab45367057d8a35ea6b43b98ae1cd65dbd9250eebb3d8",
+      "rawOutput": "这一版产物是 runs/2026-11-22-cursor/orig-n01-lost-found/index.html，SHA-256 88a6943e26e9c0b573fab45367057d8a35ea6b43b98ae1cd65dbd9250eebb3d8。文件按这次写入保留。"
+    },
+    {
+      "executionClass": "cursor-assisted-with-tools",
+      "label": "Cursor辅助执行/含工具",
+      "provider": "Cursor Cloud Agent",
+      "model": "grok-4.7-high-fast",
+      "modelVersion": "Cursor run-info.originalModelName=grok-4.7-high-fast。没有供应商 HTTP 响应体，没有 token 统计。",
+      "context": "会话 https://cursor.com/agents/bc-df9f393a-ecdc-5142-98e1-44f568293069 已加载本仓库。这不是隔离盲测，也不是裸接口单轮。",
+      "environment": "Cursor Cloud Agent，Linux，本机 Google Chrome headless。未使用密钥或付费接口。",
+      "parameters": "无温度、无 max_tokens。用浏览器操作页面，并用 Python 标准库和 poppler 核对下载物。",
+      "startedAt": "2026-11-22T03:08:30Z",
+      "endedAt": "2026-11-22T03:09:39Z",
+      "repairs": [
+        "print-v2.html"
+      ],
+      "revision": "v1",
+      "status": "partial",
+      "checks": [
+        {
+          "name": "PDF 正好两页且接近 A5",
+          "pass": true,
+          "evidence": "Chrome 打印出 booklet.pdf。pdfinfo 为 2 页，420×594.96 pt，标注 A5。与 148×210mm 相差约 0.2mm。"
+        },
+        {
+          "name": "三个站点的时间和限制都在",
+          "pass": true,
+          "evidence": "pdftotext 含修伞角 13:00–15:00、仅演示不接收真实维修、纸花桌 30 份、安静交换架不收食品、室内照常且不要在门外排队、免费不需预约。"
+        },
+        {
+          "name": "摊主四个时点在第二页",
+          "pass": true,
+          "evidence": "第二页有 12:20、12:50、17:00、17:20。公众开放 13:00–17:00 在第一页。没有编造联系人。"
+        },
+        {
+          "name": "没有网页按钮或浏览器页眉",
+          "pass": true,
+          "evidence": "抽出的文字里没有打印说明和网址。两页渲染没有看到文字被裁断或叠在一起。"
+        },
+        {
+          "name": "390 宽屏幕不横向溢出",
+          "pass": false,
+          "evidence": "部分：纸样在屏幕上宽 128mm，390 视口测得 scrollWidth 485、clientWidth 390。"
+        }
+      ],
+      "id": "cursor-orig-n03-rain-booklet-v1",
+      "taskId": "orig-n03-rain-booklet",
+      "promptSha256": "07b985cf41635377baaa3cff65de5f095b14dc0e7646e666024b66b2c6caa7d6",
+      "artifact": "runs/2026-11-22-cursor/orig-n03-rain-booklet/print.html",
+      "artifactSha256": "2abecb655ecacb07742d2ecb7163965ef01bed691e9d8c8c99aa3e9b8e08e17b",
+      "rawOutput": "这一版产物是 runs/2026-11-22-cursor/orig-n03-rain-booklet/print.html，SHA-256 2abecb655ecacb07742d2ecb7163965ef01bed691e9d8c8c99aa3e9b8e08e17b。文件按这次写入保留。"
+    },
+    {
+      "executionClass": "cursor-assisted-with-tools",
+      "label": "Cursor辅助执行/含工具",
+      "provider": "Cursor Cloud Agent",
+      "model": "grok-4.7-high-fast",
+      "modelVersion": "Cursor run-info.originalModelName=grok-4.7-high-fast。没有供应商 HTTP 响应体，没有 token 统计。",
+      "context": "会话 https://cursor.com/agents/bc-df9f393a-ecdc-5142-98e1-44f568293069 已加载本仓库。这不是隔离盲测，也不是裸接口单轮。",
+      "environment": "Cursor Cloud Agent，Linux，本机 Google Chrome headless。未使用密钥或付费接口。",
+      "parameters": "无温度、无 max_tokens。用浏览器操作页面，并用 Python 标准库和 poppler 核对下载物。",
+      "startedAt": "2026-11-22T03:21:20Z",
+      "endedAt": "2026-11-22T03:21:47Z",
+      "repairs": [],
+      "revision": "v2",
+      "status": "success",
+      "checks": [
+        {
+          "name": "PDF 正好两页且接近 A5",
+          "pass": true,
+          "evidence": "v2 再次打印仍是 2 页 A5，420×594.96 pt。"
+        },
+        {
+          "name": "三个站点的时间和限制都在",
+          "pass": true,
+          "evidence": "pdftotext 仍含三个站点、30 份、不收食品、仅演示和雨天室内安排。"
+        },
+        {
+          "name": "摊主四个时点在第二页",
+          "pass": true,
+          "evidence": "第二页仍是 12:20、12:50、17:00、17:20。"
+        },
+        {
+          "name": "没有网页按钮或浏览器页眉",
+          "pass": true,
+          "evidence": "抽出的文字没有浏览器页眉。390 宽 scrollWidth 与 clientWidth 都是 390。"
+        }
+      ],
+      "id": "cursor-orig-n03-rain-booklet-v2",
+      "taskId": "orig-n03-rain-booklet",
+      "promptSha256": "07b985cf41635377baaa3cff65de5f095b14dc0e7646e666024b66b2c6caa7d6",
+      "artifact": "runs/2026-11-22-cursor/orig-n03-rain-booklet/print-v2.html",
+      "artifactSha256": "4d61f9ecf620ff8315ef8d634357a9286cb94b2ebaa563da8126fc86c1aeafc5",
+      "rawOutput": "这一版产物是 runs/2026-11-22-cursor/orig-n03-rain-booklet/print-v2.html，SHA-256 4d61f9ecf620ff8315ef8d634357a9286cb94b2ebaa563da8126fc86c1aeafc5。文件按这次写入保留。"
+    },
+    {
+      "executionClass": "cursor-assisted-with-tools",
+      "label": "Cursor辅助执行/含工具",
+      "provider": "Cursor Cloud Agent",
+      "model": "grok-4.7-high-fast",
+      "modelVersion": "Cursor run-info.originalModelName=grok-4.7-high-fast。没有供应商 HTTP 响应体，没有 token 统计。",
+      "context": "会话 https://cursor.com/agents/bc-df9f393a-ecdc-5142-98e1-44f568293069 已加载本仓库。这不是隔离盲测，也不是裸接口单轮。",
+      "environment": "Cursor Cloud Agent，Linux，本机 Google Chrome headless。未使用密钥或付费接口。",
+      "parameters": "无温度、无 max_tokens。用浏览器操作页面，并用 Python 标准库和 poppler 核对下载物。",
+      "startedAt": "2026-11-22T03:08:40Z",
+      "endedAt": "2026-11-22T03:09:10Z",
+      "repairs": [],
+      "revision": "v1",
+      "status": "success",
+      "checks": [
+        {
+          "name": "四班各两人且都在可用时间内",
+          "pass": true,
+          "evidence": "生成结果是 S1 甲丙、S2 乙丁、S3 甲戊、S4 乙丙。八人次都落在各自可用班次里。"
+        },
+        {
+          "name": "每班有钥匙员，没有相邻班",
+          "pass": true,
+          "evidence": "四班的钥匙员分别是甲、乙、甲、乙。甲只在 S1/S3，乙只在 S2/S4，丙在 S1/S4，没有人连上相邻班。"
+        },
+        {
+          "name": "清空甲的班次后明确无解",
+          "pass": true,
+          "evidence": "取消甲的勾选后再生成，状态是无解，班表被清空，未满足项写明 S1 和 S3 没有可用钥匙员。"
+        },
+        {
+          "name": "恢复后还能再生成",
+          "pass": true,
+          "evidence": "勾回甲的班次后再次生成成功。全部清空后再生成仍是无解，且班次列表为空。"
+        }
+      ],
+      "id": "cursor-orig-n04-paper-roster-v1",
+      "taskId": "orig-n04-paper-roster",
+      "promptSha256": "557c6164ed6fb6626a5182eb9f208462ca1f35497d6832d4b2bee0acacaafb5e",
+      "artifact": "runs/2026-11-22-cursor/orig-n04-paper-roster/index.html",
+      "artifactSha256": "13ab58b225a7f98b52a204e13e38922eb11f5adcdb7d0cb7b0d85b836aca0847",
+      "rawOutput": "这一版产物是 runs/2026-11-22-cursor/orig-n04-paper-roster/index.html，SHA-256 13ab58b225a7f98b52a204e13e38922eb11f5adcdb7d0cb7b0d85b836aca0847。文件按这次写入保留。"
+    },
+    {
+      "executionClass": "cursor-assisted-with-tools",
+      "label": "Cursor辅助执行/含工具",
+      "provider": "Cursor Cloud Agent",
+      "model": "grok-4.7-high-fast",
+      "modelVersion": "Cursor run-info.originalModelName=grok-4.7-high-fast。没有供应商 HTTP 响应体，没有 token 统计。",
+      "context": "会话 https://cursor.com/agents/bc-df9f393a-ecdc-5142-98e1-44f568293069 已加载本仓库。这不是隔离盲测，也不是裸接口单轮。",
+      "environment": "Cursor Cloud Agent，Linux，本机 Google Chrome headless。未使用密钥或付费接口。",
+      "parameters": "无温度、无 max_tokens。用浏览器操作页面，并用 Python 标准库和 poppler 核对下载物。",
+      "startedAt": "2026-11-22T03:09:00Z",
+      "endedAt": "2026-11-22T03:09:30Z",
+      "repairs": [],
+      "revision": "v1",
+      "status": "success",
+      "checks": [
+        {
+          "name": "第一条被丢弃，其余三段时间正确",
+          "pass": true,
+          "evidence": "原第 1 条修正后起止都是 0，被丢弃。留下的区间是 300–2300、2100–3300、4300–6300 毫秒。"
+        },
+        {
+          "name": "SRT 连续编号，VTT 用点号毫秒",
+          "pass": true,
+          "evidence": "SRT 编号 1 到 3，时间用逗号。VTT 以 WEBVTT 开头，毫秒用点号。标签字符串 <i>这是原样文字</i> 还在，页面没有把它变成斜体元素。"
+        },
+        {
+          "name": "只报告 2 与 3 重叠 200 毫秒",
+          "pass": true,
+          "evidence": "报告里唯一重叠是原条目 2 和 3，200 毫秒。两条的结束时间没有被改短。"
+        },
+        {
+          "name": "2.2 秒两条、2.3 秒一条，改成 0 后导出改变",
+          "pass": true,
+          "evidence": "游标 2200 毫秒显示两条，2300 毫秒只剩第二条。平移改成 0 后四条都保留，第一条回到 100–500 毫秒。"
+        }
+      ],
+      "id": "cursor-orig-n05-subtitle-v1",
+      "taskId": "orig-n05-subtitle",
+      "promptSha256": "bb1865ae01c32959e26a8d8ce7b428e4129b10d681ea85c42d347fe83f8589af",
+      "artifact": "runs/2026-11-22-cursor/orig-n05-subtitle/index.html",
+      "artifactSha256": "a2119f717f179be1415adec8fbe314cd91079ce39a7c8a008b1738a462331731",
+      "rawOutput": "这一版产物是 runs/2026-11-22-cursor/orig-n05-subtitle/index.html，SHA-256 a2119f717f179be1415adec8fbe314cd91079ce39a7c8a008b1738a462331731。文件按这次写入保留。"
     }
   ]
 }
