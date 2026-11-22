@@ -125,6 +125,316 @@
       "artifact": "runs/2026-11-22-cursor/orig-ticket-json/v1.json",
       "artifactSha256": "5b00189f4507eac76f38e3d1e830e19cc423bfc8e2b264c438184371af98158b",
       "rawOutput": "首次完整产物是 runs/2026-11-22-cursor/orig-ticket-json/v1.json，SHA-256 5b00189f4507eac76f38e3d1e830e19cc423bfc8e2b264c438184371af98158b。该文件没有被后来的修改覆盖。"
+    },
+    {
+      "executionClass": "cursor-assisted-with-tools",
+      "label": "Cursor辅助执行/含工具",
+      "provider": "Cursor Cloud Agent",
+      "model": "grok-4.7-high-fast",
+      "modelVersion": "来源是 Cursor run-info 的 originalModelName，不是供应商 HTTP 响应。没有 token 统计。",
+      "context": "会话 https://cursor.com/agents/bc-df9f393a-ecdc-5142-98e1-44f568293069 已加载本仓库和先前对话。不是隔离盲测，不是裸 API 单轮。",
+      "environment": "Cursor Cloud Agent，Linux。验收用本机 Google Chrome headless 看实际画面和交互，不以 HTTP 200 当作做成。未使用外部模型 API 或密钥。",
+      "parameters": "无温度、无 max_tokens。执行者可编辑仓库并用浏览器操作页面。",
+      "id": "cursor-ref-ai-world-clock-v1",
+      "taskId": "ref-ai-world-clock",
+      "revision": "v1",
+      "status": "failure",
+      "startedAt": "2026-11-22T01:31:33Z",
+      "endedAt": "2026-11-22T01:32:40Z",
+      "promptSha256": "400eefb0eb1aaded20a7875887dada8bc09b2b58454b79ad69865057621cd5df",
+      "artifact": "runs/2026-11-22-cursor/ref-ai-world-clock/v1.html",
+      "artifactSha256": "ea25650c8f8f8a3791d7a06c925fdb6af1e513af1830cbbaee95022fb6cc3566",
+      "checks": [
+        {
+          "name": "表盘是白的",
+          "pass": true,
+          "evidence": "body 背景 rgb(255, 255, 255)。"
+        },
+        {
+          "name": "分针指向 2，时针指向 10",
+          "pass": true,
+          "evidence": "分针矩阵对应 rotate(60deg)，时针矩阵对应 rotate(305deg)，即 10 点再加 10 分钟的时针偏移。"
+        },
+        {
+          "name": "秒针在转",
+          "pass": true,
+          "evidence": "秒针 animation-name 为 sweep。"
+        },
+        {
+          "name": "窄屏表盘完整",
+          "pass": true,
+          "evidence": "390 宽时没有横向溢出，表盘宽 312。"
+        },
+        {
+          "name": "数字落在表盘内",
+          "pass": false,
+          "evidence": "v1 的 12 个数字被旋出圆盘，截图里散落在表盘四周。时针分针和秒针动画本身符合测量。"
+        }
+      ],
+      "repairs": [
+        "v2"
+      ],
+      "rawOutput": "首次产物仍是 runs/2026-11-22-cursor/ref-ai-world-clock/v1.html，文件未改。数字位置不合格，所以这次记为失败。"
+    },
+    {
+      "executionClass": "cursor-assisted-with-tools",
+      "label": "Cursor辅助执行/含工具",
+      "provider": "Cursor Cloud Agent",
+      "model": "grok-4.7-high-fast",
+      "modelVersion": "来源是 Cursor run-info 的 originalModelName，不是供应商 HTTP 响应。没有 token 统计。",
+      "context": "会话 https://cursor.com/agents/bc-df9f393a-ecdc-5142-98e1-44f568293069 已加载本仓库和先前对话。不是隔离盲测，不是裸 API 单轮。",
+      "environment": "Cursor Cloud Agent，Linux。验收用本机 Google Chrome headless 看实际画面和交互，不以 HTTP 200 当作做成。未使用外部模型 API 或密钥。",
+      "parameters": "无温度、无 max_tokens。执行者可编辑仓库并用浏览器操作页面。",
+      "id": "cursor-ref-solar-system-v1",
+      "taskId": "ref-solar-system",
+      "revision": "v1",
+      "status": "success",
+      "startedAt": "2026-11-22T01:31:33Z",
+      "endedAt": "2026-11-22T01:32:40Z",
+      "promptSha256": "737928eb5d48fdabd0a3cfc9a07c5571b50b08c3a5bdd4516f8683b8ce5f33e1",
+      "artifact": "runs/2026-11-22-cursor/ref-solar-system/v1.html",
+      "artifactSha256": "3fb82237e6c521a99ff626a9688d17252ef7c6095792f6270f021343b5b4c7c3",
+      "checks": [
+        {
+          "name": "看得到太阳和多颗行星",
+          "pass": true,
+          "evidence": "有太阳，以及水星、金星、地球、火星、木星。"
+        },
+        {
+          "name": "行星在轨道上移动",
+          "pass": true,
+          "evidence": "400 毫秒内五颗行星的角度都增加。"
+        },
+        {
+          "name": "内侧行星明显快于外侧",
+          "pass": true,
+          "evidence": "同期角度增量：水星 0.714，木星 0.0145。"
+        },
+        {
+          "name": "页面没有脚本报错",
+          "pass": true,
+          "evidence": "Chrome 控制台没有异常。"
+        }
+      ],
+      "repairs": [],
+      "rawOutput": "首次或该版完整产物是 runs/2026-11-22-cursor/ref-solar-system/v1.html，SHA-256 3fb82237e6c521a99ff626a9688d17252ef7c6095792f6270f021343b5b4c7c3。v1 文件没有被覆盖。"
+    },
+    {
+      "executionClass": "cursor-assisted-with-tools",
+      "label": "Cursor辅助执行/含工具",
+      "provider": "Cursor Cloud Agent",
+      "model": "grok-4.7-high-fast",
+      "modelVersion": "来源是 Cursor run-info 的 originalModelName，不是供应商 HTTP 响应。没有 token 统计。",
+      "context": "会话 https://cursor.com/agents/bc-df9f393a-ecdc-5142-98e1-44f568293069 已加载本仓库和先前对话。不是隔离盲测，不是裸 API 单轮。",
+      "environment": "Cursor Cloud Agent，Linux。验收用本机 Google Chrome headless 看实际画面和交互，不以 HTTP 200 当作做成。未使用外部模型 API 或密钥。",
+      "parameters": "无温度、无 max_tokens。执行者可编辑仓库并用浏览器操作页面。",
+      "id": "cursor-ref-flappy-bird-v1",
+      "taskId": "ref-flappy-bird",
+      "revision": "v1",
+      "status": "failure",
+      "startedAt": "2026-11-22T01:31:33Z",
+      "endedAt": "2026-11-22T01:32:40Z",
+      "promptSha256": "d37d9349ea8a36ef43feeb504f5a43cfe3b36beacd4e2edd9870a834a214bfe4",
+      "artifact": "runs/2026-11-22-cursor/ref-flappy-bird/v1.html",
+      "artifactSha256": "7f989650f962197bc04b8206ef5527556d6ecef9ed51d2b54b23f153776d29d0",
+      "checks": [
+        {
+          "name": "角色受输入上升",
+          "pass": true,
+          "evidence": "点击后鸟的高度上升。"
+        },
+        {
+          "name": "不操作时会下落",
+          "pass": false,
+          "evidence": "v1 在第一次点击前不施加重力，250 到 300 毫秒内高度不变。"
+        },
+        {
+          "name": "障碍会靠近",
+          "pass": true,
+          "evidence": "管子的 x 减小。"
+        },
+        {
+          "name": "撞上后当局结束，并能再开一局",
+          "pass": true,
+          "evidence": "落地后 over 为真，点再开一局后 over 为假。"
+        }
+      ],
+      "repairs": [
+        "v2"
+      ],
+      "rawOutput": "首次或该版完整产物是 runs/2026-11-22-cursor/ref-flappy-bird/v1.html，SHA-256 7f989650f962197bc04b8206ef5527556d6ecef9ed51d2b54b23f153776d29d0。v1 文件没有被覆盖。"
+    },
+    {
+      "executionClass": "cursor-assisted-with-tools",
+      "label": "Cursor辅助执行/含工具",
+      "provider": "Cursor Cloud Agent",
+      "model": "grok-4.7-high-fast",
+      "modelVersion": "来源是 Cursor run-info 的 originalModelName，不是供应商 HTTP 响应。没有 token 统计。",
+      "context": "会话 https://cursor.com/agents/bc-df9f393a-ecdc-5142-98e1-44f568293069 已加载本仓库和先前对话。不是隔离盲测，不是裸 API 单轮。",
+      "environment": "Cursor Cloud Agent，Linux。验收用本机 Google Chrome headless 看实际画面和交互，不以 HTTP 200 当作做成。未使用外部模型 API 或密钥。",
+      "parameters": "无温度、无 max_tokens。执行者可编辑仓库并用浏览器操作页面。",
+      "id": "cursor-ref-flappy-bird-v2",
+      "taskId": "ref-flappy-bird",
+      "revision": "v2",
+      "status": "success",
+      "startedAt": "2026-11-22T01:32:55Z",
+      "endedAt": "2026-11-22T01:33:20Z",
+      "promptSha256": "d37d9349ea8a36ef43feeb504f5a43cfe3b36beacd4e2edd9870a834a214bfe4",
+      "artifact": "runs/2026-11-22-cursor/ref-flappy-bird/v2.html",
+      "artifactSha256": "9365e02c6f7352d7d6ae78ae51f39af06d3aed8e413ef50e878dba31c80fb180",
+      "checks": [
+        {
+          "name": "角色受输入上升",
+          "pass": true,
+          "evidence": "点击后速度向上。"
+        },
+        {
+          "name": "不操作时会下落",
+          "pass": true,
+          "evidence": "打开后不点击，250 毫秒内 y 增加超过 5。"
+        },
+        {
+          "name": "障碍会靠近",
+          "pass": true,
+          "evidence": "管子 x 减小。"
+        },
+        {
+          "name": "撞上后当局结束，并能再开一局",
+          "pass": true,
+          "evidence": "落地后结束，再开一局后恢复进行中。"
+        }
+      ],
+      "repairs": [],
+      "rawOutput": "首次或该版完整产物是 runs/2026-11-22-cursor/ref-flappy-bird/v2.html，SHA-256 9365e02c6f7352d7d6ae78ae51f39af06d3aed8e413ef50e878dba31c80fb180。v1 文件没有被覆盖。"
+    },
+    {
+      "executionClass": "cursor-assisted-with-tools",
+      "label": "Cursor辅助执行/含工具",
+      "provider": "Cursor Cloud Agent",
+      "model": "grok-4.7-high-fast",
+      "modelVersion": "来源是 Cursor run-info 的 originalModelName，不是供应商 HTTP 响应。没有 token 统计。",
+      "context": "会话 https://cursor.com/agents/bc-df9f393a-ecdc-5142-98e1-44f568293069 已加载本仓库和先前对话。不是隔离盲测，不是裸 API 单轮。",
+      "environment": "Cursor Cloud Agent，Linux。验收用本机 Google Chrome headless 看实际画面和交互，不以 HTTP 200 当作做成。未使用外部模型 API 或密钥。",
+      "parameters": "无温度、无 max_tokens。执行者可编辑仓库并用浏览器操作页面。",
+      "id": "cursor-ref-brick-builder-v1",
+      "taskId": "ref-brick-builder",
+      "revision": "v1",
+      "status": "success",
+      "startedAt": "2026-11-22T01:31:33Z",
+      "endedAt": "2026-11-22T01:32:40Z",
+      "promptSha256": "27868d7bf74a4e9c3b3446c17e9be318b216a04ad11469c14b9d9d44355b639a",
+      "artifact": "runs/2026-11-22-cursor/ref-brick-builder/v1.html",
+      "artifactSha256": "e45ec0107ff335ca6eccb4d2c8d71e1a2f661f4877be0f49258c6832ea8927de",
+      "checks": [
+        {
+          "name": "能在底板上放下一块",
+          "pass": true,
+          "evidence": "点放下后砖块数为 1。Three.js r128 从 cdnjs 加载成功。"
+        },
+        {
+          "name": "能删掉刚放的块",
+          "pass": true,
+          "evidence": "点删除后砖块数为 0。"
+        },
+        {
+          "name": "能旋转或换色",
+          "pass": true,
+          "evidence": "旋转后 rotation.y 为 π/2，颜色改为 0000ff。"
+        },
+        {
+          "name": "镜头可以绕着底板转",
+          "pass": true,
+          "evidence": "拖动后相机 x/z 位置变化。"
+        }
+      ],
+      "repairs": [],
+      "rawOutput": "首次或该版完整产物是 runs/2026-11-22-cursor/ref-brick-builder/v1.html，SHA-256 e45ec0107ff335ca6eccb4d2c8d71e1a2f661f4877be0f49258c6832ea8927de。v1 文件没有被覆盖。"
+    },
+    {
+      "executionClass": "cursor-assisted-with-tools",
+      "label": "Cursor辅助执行/含工具",
+      "provider": "Cursor Cloud Agent",
+      "model": "grok-4.7-high-fast",
+      "modelVersion": "来源是 Cursor run-info 的 originalModelName，不是供应商 HTTP 响应。没有 token 统计。",
+      "context": "会话 https://cursor.com/agents/bc-df9f393a-ecdc-5142-98e1-44f568293069 已加载本仓库和先前对话。不是隔离盲测，不是裸 API 单轮。",
+      "environment": "Cursor Cloud Agent，Linux。验收用本机 Google Chrome headless 看实际画面和交互，不以 HTTP 200 当作做成。未使用外部模型 API 或密钥。",
+      "parameters": "无温度、无 max_tokens。执行者可编辑仓库并用浏览器操作页面。",
+      "id": "cursor-orig-plaque-v1",
+      "taskId": "orig-plaque",
+      "revision": "v1",
+      "status": "success",
+      "startedAt": "2026-11-22T01:31:33Z",
+      "endedAt": "2026-11-22T01:32:40Z",
+      "promptSha256": "50c60252546dcfb2c25b296982c95c3e7cb347bbcadc4f67b2807757ae4dbcd6",
+      "artifact": "runs/2026-11-22-cursor/orig-plaque/v1.html",
+      "artifactSha256": "435a8d3ec237ac41ddc9c1ce60a01aa2fbc1d7c56f0d7353e146fcaf36986e58",
+      "checks": [
+        {
+          "name": "三行文字都在且顺序正确",
+          "pass": true,
+          "evidence": "三行依次是展品 No. 014、门外那盏灯、先加热再进门。"
+        },
+        {
+          "name": "没有多出来的说明段落",
+          "pass": true,
+          "evidence": "段落数为 3，没有图片，没有外链样式表。"
+        },
+        {
+          "name": "窄屏仍是一张卡片",
+          "pass": true,
+          "evidence": "390 宽时没有横向溢出，白底，衬线字体栈。"
+        }
+      ],
+      "repairs": [],
+      "rawOutput": "首次或该版完整产物是 runs/2026-11-22-cursor/orig-plaque/v1.html，SHA-256 435a8d3ec237ac41ddc9c1ce60a01aa2fbc1d7c56f0d7353e146fcaf36986e58。v1 文件没有被覆盖。"
+    },
+    {
+      "executionClass": "cursor-assisted-with-tools",
+      "label": "Cursor辅助执行/含工具",
+      "provider": "Cursor Cloud Agent",
+      "model": "grok-4.7-high-fast",
+      "modelVersion": "来源是 Cursor run-info 的 originalModelName，不是供应商 HTTP 响应。没有 token 统计。",
+      "context": "会话 https://cursor.com/agents/bc-df9f393a-ecdc-5142-98e1-44f568293069 已加载本仓库和先前对话。不是隔离盲测，不是裸 API 单轮。",
+      "environment": "Cursor Cloud Agent，Linux。验收用本机 Google Chrome headless 看实际画面和交互，不以 HTTP 200 当作做成。未使用外部模型 API 或密钥。",
+      "parameters": "无温度、无 max_tokens。执行者可编辑仓库并用浏览器操作页面。",
+      "id": "cursor-ref-ai-world-clock-v2",
+      "taskId": "ref-ai-world-clock",
+      "revision": "v2",
+      "status": "success",
+      "startedAt": "2026-11-22T01:34:40Z",
+      "endedAt": "2026-11-22T01:35:10Z",
+      "promptSha256": "400eefb0eb1aaded20a7875887dada8bc09b2b58454b79ad69865057621cd5df",
+      "artifact": "runs/2026-11-22-cursor/ref-ai-world-clock/v2.html",
+      "artifactSha256": "b70a3dc035a89305385de629adf85015e9aececd93b9ac4f9b287da5f82602dc",
+      "repairs": [],
+      "checks": [
+        {
+          "name": "表盘是白的",
+          "pass": true,
+          "evidence": "背景仍是白色。"
+        },
+        {
+          "name": "分针指向 2，时针指向 10",
+          "pass": true,
+          "evidence": "分针仍是 rotate(60deg)，时针仍是 rotate(305deg)。"
+        },
+        {
+          "name": "秒针在转",
+          "pass": true,
+          "evidence": "animation-name 仍为 sweep。"
+        },
+        {
+          "name": "数字落在表盘内",
+          "pass": true,
+          "evidence": "1280 和 390 宽度下，12 个数字的盒子都在圆盘矩形内。"
+        },
+        {
+          "name": "窄屏不溢出",
+          "pass": true,
+          "evidence": "390 宽没有横向溢出。"
+        }
+      ],
+      "rawOutput": "后续版本是 runs/2026-11-22-cursor/ref-ai-world-clock/v2.html，不替代 v1 文件。"
     }
   ]
 }

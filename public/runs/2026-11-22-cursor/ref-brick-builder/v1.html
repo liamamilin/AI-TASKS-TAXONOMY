@@ -1,0 +1,89 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Brick editor</title>
+<style>
+  html, body { margin: 0; height: 100%; background: #d7e4ef; font-family: sans-serif; }
+  canvas { display: block; width: 100%; height: calc(100% - 64px); }
+  #ui { display: flex; flex-wrap: wrap; gap: 8px; align-items: center; padding: 8px; background: #f7f3eb; }
+  button, select, input { font: inherit; min-height: 44px; }
+</style>
+</head>
+<body>
+<div id="ui">
+  <button id="place" type="button">放下</button>
+  <button id="remove" type="button">删除</button>
+  <button id="rotate" type="button">旋转</button>
+  <label>颜色 <input id="color" type="color" value="#c4493a"></label>
+  <label>尺寸 <select id="size"><option value="1">1</option><option value="2">2</option><option value="4">4</option></select></label>
+  <span id="count">0 块</span>
+</div>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+<script>
+(function () {
+  var renderer = new THREE.WebGLRenderer({ antialias: true });
+  renderer.setSize(window.innerWidth, window.innerHeight - 64);
+  document.body.appendChild(renderer.domElement);
+  var scene = new THREE.Scene();
+  scene.background = new THREE.Color(0xd7e4ef);
+  var camera = new THREE.PerspectiveCamera(50, window.innerWidth / (window.innerHeight - 64), 0.1, 100);
+  var theta = 0.7, phi = 0.9, radius = 12;
+  function aim() {
+    camera.position.set(Math.sin(theta) * Math.cos(phi) * radius, Math.sin(phi) * radius + 1, Math.cos(theta) * Math.cos(phi) * radius);
+    camera.lookAt(0, 0, 0);
+  }
+  aim();
+  scene.add(new THREE.AmbientLight(0xffffff, 0.7));
+  var sun = new THREE.DirectionalLight(0xffffff, 0.8);
+  sun.position.set(4, 8, 2);
+  scene.add(sun);
+  var plate = new THREE.Mesh(new THREE.BoxGeometry(10, 0.3, 10), new THREE.MeshStandardMaterial({ color: 0x2f6b3a }));
+  plate.position.y = -0.15;
+  scene.add(plate);
+  var bricks = [];
+  function snap(value) { return Math.round(value); }
+  function place() {
+    var width = Number(document.getElementById("size").value);
+    var mesh = new THREE.Mesh(
+      new THREE.BoxGeometry(width, 0.6, 1),
+      new THREE.MeshStandardMaterial({ color: document.getElementById("color").value })
+    );
+    var index = bricks.length;
+    mesh.position.set(snap((index % 4) - 1.5), 0.3, snap(Math.floor(index / 4) - 1));
+    scene.add(mesh);
+    bricks.push(mesh);
+    document.getElementById("count").textContent = bricks.length + " 块";
+  }
+  document.getElementById("place").onclick = place;
+  document.getElementById("remove").onclick = function () {
+    var mesh = bricks.pop();
+    if (mesh) scene.remove(mesh);
+    document.getElementById("count").textContent = bricks.length + " 块";
+  };
+  document.getElementById("rotate").onclick = function () {
+    var mesh = bricks[bricks.length - 1];
+    if (mesh) mesh.rotation.y += Math.PI / 2;
+  };
+  document.getElementById("color").addEventListener("input", function () {
+    var mesh = bricks[bricks.length - 1];
+    if (mesh) mesh.material.color.set(this.value);
+  });
+  var dragging = false, lastX = 0;
+  renderer.domElement.addEventListener("pointerdown", function (event) { dragging = true; lastX = event.clientX; });
+  addEventListener("pointerup", function () { dragging = false; });
+  addEventListener("pointermove", function (event) {
+    if (!dragging) return;
+    theta += (event.clientX - lastX) * 0.01;
+    lastX = event.clientX;
+    aim();
+  });
+  function loop() { renderer.render(scene, camera); requestAnimationFrame(loop); }
+  loop();
+  window.__bricks = function () { return bricks.map(function (mesh) { return { x: mesh.position.x, y: mesh.rotation.y, color: mesh.material.color.getHexString() }; }); };
+  window.__camera = function () { return camera.position.clone(); };
+})();
+</script>
+</body>
+</html>

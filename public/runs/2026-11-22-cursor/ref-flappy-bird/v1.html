@@ -1,0 +1,79 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Flappy</title>
+<style>
+  html, body { margin: 0; height: 100%; background: #87d7f5; }
+  body { display: grid; place-items: center; }
+  canvas { width: min(100vw, 480px); height: auto; background: #87d7f5; touch-action: none; }
+  #status { position: fixed; left: 12px; top: 12px; font: 16px sans-serif; }
+  button { position: fixed; right: 12px; top: 12px; min-height: 44px; }
+</style>
+</head>
+<body>
+<canvas id="game" width="480" height="640"></canvas>
+<p id="status">进行中</p>
+<button id="again" type="button" hidden>再开一局</button>
+<script>
+(function () {
+  var canvas = document.getElementById("game");
+  var ctx = canvas.getContext("2d");
+  var status = document.getElementById("status");
+  var again = document.getElementById("again");
+  var y, vy, pipes, over, started;
+  function reset() {
+    y = 220; vy = 0; over = false; started = false;
+    pipes = [{ x: 520, gapY: 280 }, { x: 760, gapY: 220 }];
+    status.textContent = "进行中";
+    again.hidden = true;
+  }
+  function flap() {
+    if (over) return;
+    started = true;
+    vy = -7.2;
+  }
+  canvas.addEventListener("pointerdown", flap);
+  addEventListener("keydown", function (event) { if (event.code === "Space") { event.preventDefault(); flap(); } });
+  again.addEventListener("click", reset);
+  function hit() {
+    if (y < 12 || y > 620) return true;
+    for (var i = 0; i < pipes.length; i++) {
+      var pipe = pipes[i];
+      var withinX = 70 + 16 > pipe.x && 70 - 16 < pipe.x + 54;
+      var inGap = y > pipe.gapY - 75 && y < pipe.gapY + 75;
+      if (withinX && !inGap) return true;
+    }
+    return false;
+  }
+  function frame() {
+    if (!over && started) {
+      vy += 0.32;
+      y += vy;
+      pipes.forEach(function (pipe) {
+        pipe.x -= 2.2;
+        if (pipe.x < -80) { pipe.x = 520; pipe.gapY = 160 + Math.random() * 280; }
+      });
+      if (hit()) { over = true; status.textContent = "结束"; again.hidden = false; }
+    }
+    ctx.fillStyle = "#87d7f5";
+    ctx.fillRect(0, 0, 480, 640);
+    ctx.fillStyle = "#3d9a4a";
+    pipes.forEach(function (pipe) {
+      ctx.fillRect(pipe.x, 0, 54, pipe.gapY - 75);
+      ctx.fillRect(pipe.x, pipe.gapY + 75, 54, 640);
+    });
+    ctx.fillStyle = "#f4d36a";
+    ctx.beginPath();
+    ctx.arc(70, y, 16, 0, Math.PI * 2);
+    ctx.fill();
+    requestAnimationFrame(frame);
+  }
+  reset();
+  frame();
+  window.__bird = function () { return { y: y, vy: vy, over: over, pipeX: pipes[0].x, started: started }; };
+})();
+</script>
+</body>
+</html>

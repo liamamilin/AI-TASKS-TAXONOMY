@@ -1,0 +1,41 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<style>
+  html, body { margin: 0; min-height: 100%; background: #fff; color: #111; }
+  body { display: grid; place-items: center; }
+  .clock { position: relative; width: min(80vw, 420px); aspect-ratio: 1; }
+  .face { position: absolute; inset: 0; border: 8px solid #111; border-radius: 50%; box-sizing: border-box; background: #fff; }
+  .num { position: absolute; left: 50%; top: 50%; width: 2rem; height: 2rem; margin: -1rem 0 0 -1rem; text-align: center; font: 700 1.1rem/2rem Georgia, "Times New Roman", serif; }
+  .hand { position: absolute; left: 50%; bottom: 50%; transform-origin: 50% 100%; border-radius: 2px; }
+  .hour { width: 8px; height: 24%; margin-left: -4px; background: #111; transform: rotate(305deg); }
+  .minute { width: 6px; height: 34%; margin-left: -3px; background: #111; transform: rotate(60deg); }
+  .second { width: 2px; height: 40%; margin-left: -1px; background: #c4493a; animation: sweep 60s linear infinite; }
+  .cap { position: absolute; left: 50%; top: 50%; width: 14px; height: 14px; margin: -7px 0 0 -7px; background: #111; border-radius: 50%; }
+  @keyframes sweep { to { transform: rotate(360deg); } }
+</style>
+</head>
+<body>
+<div class="clock" role="img" aria-label="Analog clock showing 10:10">
+  <div class="face"></div>
+  <div class="num" style="transform:rotate(30deg) translateY(-38cqi)">1</div>
+  <div class="num" style="transform:rotate(60deg) translateY(-38cqi)">2</div>
+  <div class="num" style="transform:rotate(90deg) translateY(-38cqi)">3</div>
+  <div class="num" style="transform:rotate(120deg) translateY(-38cqi)">4</div>
+  <div class="num" style="transform:rotate(150deg) translateY(-38cqi)">5</div>
+  <div class="num" style="transform:rotate(180deg) translateY(-38cqi)">6</div>
+  <div class="num" style="transform:rotate(210deg) translateY(-38cqi)">7</div>
+  <div class="num" style="transform:rotate(240deg) translateY(-38cqi)">8</div>
+  <div class="num" style="transform:rotate(270deg) translateY(-38cqi)">9</div>
+  <div class="num" style="transform:rotate(300deg) translateY(-38cqi)">10</div>
+  <div class="num" style="transform:rotate(330deg) translateY(-38cqi)">11</div>
+  <div class="num" style="transform:rotate(0deg) translateY(-38cqi)">12</div>
+  <div class="hand hour"></div>
+  <div class="hand minute"></div>
+  <div class="hand second"></div>
+  <div class="cap"></div>
+</div>
+</body>
+</html>

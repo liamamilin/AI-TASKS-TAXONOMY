@@ -1,0 +1,1 @@
+Create an animated solar system simulation in a single HTML file, with planets orbiting the sun at relative speeds based on their real orbital periods.
