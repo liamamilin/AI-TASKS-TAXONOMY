@@ -1,5 +1,130 @@
 {
-  "notice": "runs 只收录带原始响应的真实调用。没有 provider 返回的模型标识和原文时，不要写入。开发时手写的页面不能算运行。",
+  "notice": "runs 只收录带原始产物的真实执行。Cursor辅助执行不是裸 API，也不是第三方盲测。没有产物和检查记录的任务保持未测。",
   "records": [],
-  "runs": []
+  "runs": [
+    {
+      "executionClass": "cursor-assisted-with-tools",
+      "label": "Cursor辅助执行/含工具",
+      "provider": "Cursor Cloud Agent",
+      "model": "grok-4.7-high-fast",
+      "modelVersion": "Cursor run-info.originalModelName=grok-4.7-high-fast。没有供应商 HTTP 响应体，没有 token 统计。",
+      "context": "会话 https://cursor.com/agents/bc-df9f393a-ecdc-5142-98e1-44f568293069 已加载 AI-TASKS-TAXONOMY 仓库和先前对话。这不是隔离盲测，也不是裸 API 单轮。",
+      "environment": "Cursor Cloud Agent，Linux。检查用本机 Google Chrome headless 打开产物。未调用外部模型 API，未使用密钥。",
+      "parameters": "无温度、无 max_tokens。执行中可以读写本仓库，并用浏览器查看产物。",
+      "startedAt": "2026-11-22T01:26:12Z",
+      "endedAt": "2026-11-22T01:27:30Z",
+      "repairs": [],
+      "revision": "v1",
+      "status": "success",
+      "checks": [
+        {
+          "name": "有 SVG",
+          "pass": true,
+          "evidence": "打开 v1.html 后 document.querySelector('svg') 存在。"
+        },
+        {
+          "name": "轮子在转动",
+          "pass": true,
+          "evidence": "两个 .spin 的 animation-name 为 spin。"
+        },
+        {
+          "name": "腿跟着脚踏",
+          "pass": true,
+          "evidence": "200 毫秒后 legL 的 y2 从 347.76 变为 343.28。"
+        }
+      ],
+      "id": "cursor-ref-pelican-bicycle-v1",
+      "taskId": "ref-pelican-bicycle",
+      "promptSha256": "f2d950b537085dbc1ccf41db2840b878ab5b42f31a24afd1eec2d8e4455b6778",
+      "artifact": "runs/2026-11-22-cursor/ref-pelican-bicycle/v1.html",
+      "artifactSha256": "805f46d29f47a69b36e3bb861fdadaf80e92b66add5e7b9ac48a3b23a1740084",
+      "rawOutput": "首次完整产物是 runs/2026-11-22-cursor/ref-pelican-bicycle/v1.html，SHA-256 805f46d29f47a69b36e3bb861fdadaf80e92b66add5e7b9ac48a3b23a1740084。该文件没有被后来的修改覆盖。"
+    },
+    {
+      "executionClass": "cursor-assisted-with-tools",
+      "label": "Cursor辅助执行/含工具",
+      "provider": "Cursor Cloud Agent",
+      "model": "grok-4.7-high-fast",
+      "modelVersion": "Cursor run-info.originalModelName=grok-4.7-high-fast。没有供应商 HTTP 响应体，没有 token 统计。",
+      "context": "会话 https://cursor.com/agents/bc-df9f393a-ecdc-5142-98e1-44f568293069 已加载 AI-TASKS-TAXONOMY 仓库和先前对话。这不是隔离盲测，也不是裸 API 单轮。",
+      "environment": "Cursor Cloud Agent，Linux。检查用本机 Google Chrome headless 打开产物。未调用外部模型 API，未使用密钥。",
+      "parameters": "无温度、无 max_tokens。执行中可以读写本仓库，并用浏览器查看产物。",
+      "startedAt": "2026-11-22T01:26:12Z",
+      "endedAt": "2026-11-22T01:27:30Z",
+      "repairs": [],
+      "revision": "v1",
+      "status": "success",
+      "checks": [
+        {
+          "name": "开始都在左岸",
+          "pass": true,
+          "evidence": "左岸按钮数为 4。"
+        },
+        {
+          "name": "一次最多再带一件",
+          "pass": true,
+          "evidence": "同时选人、猫、鱼后提示「一次最多再带一件」，次数仍为 0。"
+        },
+        {
+          "name": "非法组合取消",
+          "pass": true,
+          "evidence": "人带猫离开鱼和鱼食时提示「鱼把鱼食吃了」，左岸仍是 4。"
+        },
+        {
+          "name": "能全部过河",
+          "pass": true,
+          "evidence": "按规定步骤后提示「都过去了，用了 7 次」，左岸为 0。"
+        }
+      ],
+      "id": "cursor-orig-ferry-v1",
+      "taskId": "orig-ferry",
+      "promptSha256": "e84fd6aa8b6ec34e39f169569543e68c4ff70415c077bd8fa270f19b7de0b2bc",
+      "artifact": "runs/2026-11-22-cursor/orig-ferry/v1.html",
+      "artifactSha256": "ddba71d39e93d7a6c35a67484d4bbcf68afe3d249a45b2cee67087a90d70b599",
+      "rawOutput": "首次完整产物是 runs/2026-11-22-cursor/orig-ferry/v1.html，SHA-256 ddba71d39e93d7a6c35a67484d4bbcf68afe3d249a45b2cee67087a90d70b599。该文件没有被后来的修改覆盖。"
+    },
+    {
+      "executionClass": "cursor-assisted-with-tools",
+      "label": "Cursor辅助执行/含工具",
+      "provider": "Cursor Cloud Agent",
+      "model": "grok-4.7-high-fast",
+      "modelVersion": "Cursor run-info.originalModelName=grok-4.7-high-fast。没有供应商 HTTP 响应体，没有 token 统计。",
+      "context": "会话 https://cursor.com/agents/bc-df9f393a-ecdc-5142-98e1-44f568293069 已加载 AI-TASKS-TAXONOMY 仓库和先前对话。这不是隔离盲测，也不是裸 API 单轮。",
+      "environment": "Cursor Cloud Agent，Linux。检查用本机 Google Chrome headless 打开产物。未调用外部模型 API，未使用密钥。",
+      "parameters": "无温度、无 max_tokens。执行中可以读写本仓库，并用浏览器查看产物。",
+      "startedAt": "2026-11-22T01:26:12Z",
+      "endedAt": "2026-11-22T01:27:30Z",
+      "repairs": [],
+      "revision": "v1",
+      "status": "success",
+      "checks": [
+        {
+          "name": "合法 JSON 且只有三个字段",
+          "pass": true,
+          "evidence": "键为 seat、startsAt、priceYuan。"
+        },
+        {
+          "name": "座位",
+          "pass": true,
+          "evidence": "seat 等于甲区 12 排 8 座。"
+        },
+        {
+          "name": "开场",
+          "pass": true,
+          "evidence": "startsAt 等于 19:30。"
+        },
+        {
+          "name": "票价",
+          "pass": true,
+          "evidence": "priceYuan 等于数字 40。"
+        }
+      ],
+      "id": "cursor-orig-ticket-json-v1",
+      "taskId": "orig-ticket-json",
+      "promptSha256": "8235c6504131e05bbd8f7a14ee1dc29f0d425440acb0e1569bfc39661a8b4c72",
+      "artifact": "runs/2026-11-22-cursor/orig-ticket-json/v1.json",
+      "artifactSha256": "5b00189f4507eac76f38e3d1e830e19cc423bfc8e2b264c438184371af98158b",
+      "rawOutput": "首次完整产物是 runs/2026-11-22-cursor/orig-ticket-json/v1.json，SHA-256 5b00189f4507eac76f38e3d1e830e19cc423bfc8e2b264c438184371af98158b。该文件没有被后来的修改覆盖。"
+    }
+  ]
 }

@@ -57,6 +57,15 @@ function motif(kind) {
   return `<svg class="art-svg" viewBox="0 0 640 360" aria-hidden="true"><rect width="640" height="360" fill="#f6efe2"/><g transform="translate(240 110) scale(2.2)">${shapes[kind] || shapes.data}</g></svg>`
 }
 
+function statusText(task) {
+  const runs = (resultBook.runs || []).filter((run) => run.taskId === task.id)
+  if (!runs.length) return "未测"
+  const ok = runs.some((run) => run.status === "success")
+  const bad = runs.some((run) => run.status === "failure")
+  if (ok && bad) return "有成功也有失败"
+  return ok ? "Cursor运行成功" : "Cursor运行失败"
+}
+
 export function taskHome(params, featuredId) {
   const featured = taskList.find((task) => task.id === featuredId) || taskList[0]
   const shown = filterTasks(params)
@@ -67,7 +76,7 @@ export function taskHome(params, featuredId) {
     <div>
       <p class="kicker">让模型交作品 · 不是让人猜谜</p>
       <h1>问笺馆</h1>
-      <p class="lede">这里的主馆是任务：模型要交出一个能打开的文件或一段可运行的结果。提示词可以整段抄走。本馆这次没有可用的免费模型接口，所以模型页仍然是 0 次运行，不放示例冒充。</p>
+      <p class="lede">这里的主馆是任务：要交出一个能打开的文件。已上架的运行标明「Cursor辅助执行/含工具」，发生在带有本仓库上下文的会话里，不是裸接口盲测。没有原始产物的任务仍写未测。</p>
       <div class="actions">
         <a class="btn btn-primary" href="#/tasks">浏览任务</a>
         <a class="btn btn-ghost" href="#/warmup">短题热身</a>
@@ -84,7 +93,7 @@ export function taskHome(params, featuredId) {
         <div class="frame frame-hero">
           <div class="mat"><div class="art">${motif(featured.kind)}</div></div>
           <div class="plaque">
-            <p class="exhibit-no">${featured.coverage === "quoted" ? "引用公开题面" : "问笺馆原创"} · 未测</p>
+            <p class="exhibit-no">${featured.coverage === "quoted" ? "引用公开题面" : "问笺馆原创"} · ${esc(statusText(featured))}</p>
             <h2>${esc(featured.title)}</h2>
             <p>${esc(featured.artifact)}</p>
           </div>
@@ -128,7 +137,7 @@ export function taskHome(params, featuredId) {
 function taskCard(task, params) {
   return `<a class="card" href="${href(`/t/${task.id}`, params)}">
     <div class="frame frame-thumb"><div class="mat"><div class="art">${motif(task.kind)}</div></div></div>
-    <p class="exhibit-no">${esc(kindLabel(task.kind))} · ${task.coverage === "quoted" ? "引用" : "原创"} · 未测</p>
+    <p class="exhibit-no">${esc(kindLabel(task.kind))} · ${task.coverage === "quoted" ? "引用" : "原创"} · ${esc(statusText(task))}</p>
     <h3>${esc(task.title)}</h3>
     <p class="hook">${esc(task.summary)}</p>
     <p class="meta">约 ${task.minutes} 分钟制作</p>
@@ -146,7 +155,7 @@ export function taskDetail(id, params) {
   const runs = (resultBook.runs || []).filter((run) => run.taskId === task.id)
   return `<article class="detail">
     <p class="crumb"><a href="${href("/tasks", params)}">作品任务</a> / ${esc(task.id)}</p>
-    <p class="kicker">${esc(kindLabel(task.kind))} · ${task.coverage === "quoted" ? "引用公开题面" : "问笺馆原创"} · 约 ${task.minutes} 分钟 · 本馆未测</p>
+    <p class="kicker">${esc(kindLabel(task.kind))} · ${task.coverage === "quoted" ? "引用公开题面" : "问笺馆原创"} · 约 ${task.minutes} 分钟 · ${esc(runs.length ? "见下方运行" : "未测")}</p>
     <h1>${esc(task.title)}</h1>
     <p class="hook">${esc(task.summary)}</p>
     <div class="spec-grid">
@@ -192,10 +201,21 @@ function sourceBlock(task) {
 }
 
 function renderRun(run) {
+  const preview = run.artifact?.endsWith(".html")
+    ? `<iframe sandbox="allow-scripts" src="${esc(run.artifact)}" title="首次产物预览，已隔离脚本"></iframe>`
+    : `<p><a href="${esc(run.artifact)}">打开首次产物</a></p>`
   return `<article class="run">
-    <h3>${esc(run.model)} · ${esc(run.status === "failure" ? "失败" : "成功")}</h3>
-    <p>版本 ${esc(run.modelVersion || "未返回")} · ${esc(run.startedAt || "")}</p>
-    <pre class="prompt">${esc(run.rawOutput || "")}</pre>
+    <h3>${esc(run.label || "运行")} · ${esc(run.status === "failure" ? "失败" : "成功")} · ${esc(run.revision || "v1")}</h3>
+    <p>${esc(run.provider || "")} · 平台记录的模型名：${esc(run.model || "底层模型未提供")}</p>
+    <p>${esc(run.startedAt || "")} 至 ${esc(run.endedAt || "")}</p>
+    <p>${esc(run.context || "")}</p>
+    <p>${esc(run.environment || "")}</p>
+    <p>题面 SHA-256 ${esc(run.promptSha256 || "")}</p>
+    <p>产物 SHA-256 ${esc(run.artifactSha256 || "")}</p>
+    <ul>${(run.checks || []).map((item) => `<li>${item.pass ? "通过" : "未通过"}：${esc(item.name)}。${esc(item.evidence || "")}</li>`).join("")}</ul>
+    ${(run.repairs || []).length ? `<p>另有后续版本，不替代这一次：${esc(run.repairs.join("、"))}</p>` : `<p>没有后续修复版。这一次的文件没有被覆盖。</p>`}
+    ${preview}
+    <p><a href="${esc(run.artifact)}">单独打开首次产物</a></p>
   </article>`
 }
 
@@ -204,7 +224,8 @@ export function taskPrompt(id) {
 }
 
 export function taskChecklist() {
-  return taskList.map((task) => `${task.id}\t${task.title}\t${kindLabel(task.kind)}\t${task.coverage}\t未测`).join("\n")
+  const ran = new Set((resultBook.runs || []).map((run) => run.taskId))
+  return taskList.map((task) => `${task.id}\t${task.title}\t${kindLabel(task.kind)}\t${task.coverage}\t${ran.has(task.id) ? "有Cursor辅助运行" : "未测"}`).join("\n")
 }
 
 export const featuredTaskIds = ["ref-pelican-bicycle", "ref-minecraft-web", "ref-flappy-bird", "orig-lantern-bridge", "orig-ticket-json", "ref-ai-world-clock"]

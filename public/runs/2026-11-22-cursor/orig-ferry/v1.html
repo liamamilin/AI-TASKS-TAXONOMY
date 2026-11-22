@@ -1,0 +1,84 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<title>过河</title>
+<style>
+  body { margin: 0; font-family: "Songti SC", "Noto Serif SC", serif; background: #f3ecdf; color: #1d1916; }
+  main { max-width: 720px; margin: 0 auto; padding: 24px 16px 48px; }
+  h1 { font-size: 2rem; margin: 0 0 8px; }
+  .shores { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+  .bank { background: #f7f3eb; border: 1px solid #e3d8c8; min-height: 140px; padding: 12px; }
+  button.token, button.action { font: inherit; min-height: 44px; margin: 4px; border-radius: 999px; border: 1px solid #1d1916; background: #fffaf3; }
+  button.token[aria-pressed="true"] { background: #1d1916; color: #f3ecdf; }
+  button.action { background: #1d1916; color: #f3ecdf; padding: 8px 14px; }
+  #note { min-height: 3em; }
+</style>
+</head>
+<body>
+<main>
+  <h1>过河</h1>
+  <p>选择人和至多一件东西，再渡到对岸。人不在时，猫会吃鱼，鱼会吃鱼食。</p>
+  <div class="shores">
+    <section class="bank"><h2>左岸</h2><div id="left"></div></section>
+    <section class="bank"><h2>右岸</h2><div id="right"></div></section>
+  </div>
+  <p>
+    <button class="action" id="cross" type="button">渡到对岸</button>
+    <button class="action" id="reset" type="button">重开</button>
+  </p>
+  <p id="note">已渡 0 次。</p>
+</main>
+<script>
+(function () {
+  var names = { p: "人", cat: "猫", fish: "鱼", food: "鱼食" };
+  var state = { p: 0, cat: 0, fish: 0, food: 0, steps: 0, selected: {} };
+  function unsafe(s) {
+    if (s.cat === s.fish && s.cat !== s.p) return "猫把鱼吃了";
+    if (s.fish === s.food && s.fish !== s.p) return "鱼把鱼食吃了";
+    return "";
+  }
+  function render(message) {
+    ["left", "right"].forEach(function (id, side) {
+      var box = document.getElementById(id);
+      box.innerHTML = "";
+      Object.keys(names).forEach(function (key) {
+        if (state[key] !== side) return;
+        var button = document.createElement("button");
+        button.type = "button";
+        button.className = "token";
+        button.textContent = names[key];
+        button.setAttribute("aria-pressed", state.selected[key] ? "true" : "false");
+        button.addEventListener("click", function () {
+          state.selected[key] = !state.selected[key];
+          render("已渡 " + state.steps + " 次。");
+        });
+        box.appendChild(button);
+      });
+    });
+    var won = state.p === 1 && state.cat === 1 && state.fish === 1 && state.food === 1;
+    document.getElementById("note").textContent = won ? "都过去了，用了 " + state.steps + " 次。" : message;
+  }
+  document.getElementById("cross").addEventListener("click", function () {
+    var chosen = Object.keys(names).filter(function (key) { return state.selected[key]; });
+    if (chosen.indexOf("p") < 0) return render("人得跟着一起走。已渡 " + state.steps + " 次。");
+    if (chosen.length > 2) return render("一次最多再带一件。已渡 " + state.steps + " 次。");
+    if (chosen.some(function (key) { return state[key] !== state.p; })) return render("选中的东西不在人这一侧。已渡 " + state.steps + " 次。");
+    var next = { p: 1 - state.p, cat: state.cat, fish: state.fish, food: state.food };
+    chosen.forEach(function (key) { if (key !== "p") next[key] = next.p; });
+    var problem = unsafe(next);
+    if (problem) return render(problem + "，这一步取消。已渡 " + state.steps + " 次。");
+    state.p = next.p; state.cat = next.cat; state.fish = next.fish; state.food = next.food;
+    state.steps += 1;
+    state.selected = {};
+    render("已渡 " + state.steps + " 次。");
+  });
+  document.getElementById("reset").addEventListener("click", function () {
+    state = { p: 0, cat: 0, fish: 0, food: 0, steps: 0, selected: {} };
+    render("已渡 0 次。");
+  });
+  render("已渡 0 次。");
+})();
+</script>
+</body>
+</html>
