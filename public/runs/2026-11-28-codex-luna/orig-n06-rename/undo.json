@@ -1,0 +1,14 @@
+{
+  "rows": [
+    {
+      "from": "IMG_01.jpg",
+      "to": "2026-04-01_red.jpg",
+      "sha256": "2a191a15a62a8dbc363e560a3de8801905e31681df8ca59e9ddec99f687c5d6b"
+    },
+    {
+      "from": "IMG_02.jpg",
+      "to": "2026-04-01_blue.jpg",
+      "sha256": "3168bffb0b2ac59970f8ee6af97de08c1b37a13897ea396ff60700a2ae2bcabf"
+    }
+  ]
+}

@@ -1,0 +1,5 @@
+只输出一个 JSON 对象，不要 Markdown。根据下面这张票填写，不要增加字段。
+座位：甲区 12 排 8 座
+开场：19:30
+票价：40 元
+字段必须是 seat, startsAt, priceYuan。priceYuan 是数字。

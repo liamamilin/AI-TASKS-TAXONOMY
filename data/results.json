@@ -1,5 +1,5 @@
 {
-  "notice": "runs 只收录带原始产物的真实执行，当前包含 Cursor（Grok）与 Gemini 辅助执行记录。没有产物和检查记录的任务保持未测。",
+  "notice": "runs 收录 Gemini、Grok（Cursor）与 GPT-6 Luna（Codex 子 Agent）的真实作品运行，含首次产物及逐项验收记录。",
   "records": [],
   "runs": [
     {
@@ -3645,6 +3645,2492 @@
       "artifact": "runs/2026-11-21-gemini/orig-n14-sound-postcard/index.html",
       "artifactSha256": "21c32fd4394ac0cb5c006947b0297c4bc3c5b33c2f446f9e42e5606d2e976816",
       "rawOutput": "首次完整产物是 runs/2026-11-21-gemini/orig-n14-sound-postcard/index.html，SHA-256 21c32fd4394ac0cb5c006947b0297c4bc3c5b33c2f446f9e42e5606d2e976816。该文件为首次生成原样保留，未经过后续覆盖。"
+    },
+    {
+      "id": "codex-luna-ref-pelican-bicycle-v1",
+      "taskId": "ref-pelican-bicycle",
+      "executionClass": "codex-luna-subagent-with-tools",
+      "label": "Codex 辅助执行 · GPT-6 Luna",
+      "provider": "OpenAI Codex",
+      "model": "gpt-6-luna",
+      "modelVersion": "Codex 子 Agent 指定的模型标识 gpt-6-luna。",
+      "context": "三组子 Agent 各完成 16 道作品任务。每项使用任务定义中的完整 prompt，馆藏的额外验收清单与既有作品未提供给生成 Agent。",
+      "environment": "macOS 本地工作区生成。主 Agent 用 Chromium、文件解析或源码检查复核，具体方法见逐项证据。",
+      "parameters": "使用子 Agent 默认推理参数，允许本地工具写文件。时间范围为批次准备到该任务提交文件的最后写入时间。",
+      "startedAt": "2026-11-28T11:18:52Z",
+      "endedAt": "2026-11-28T11:24:08Z",
+      "repairs": [],
+      "revision": "v1",
+      "status": "partial",
+      "checks": [
+        {
+          "name": "画面里同时认得出长嘴水禽和自行车",
+          "pass": true,
+          "evidence": "画面可辨认水禽和两轮自行车。"
+        },
+        {
+          "name": "轮子在转动",
+          "pass": true,
+          "evidence": "两个车轮的轮辐在 CSS 动画中持续旋转。"
+        },
+        {
+          "name": "脚踏在转，腿的动作跟着脚踏",
+          "pass": false,
+          "evidence": "腿、脚与车架间的线条固定，没有踏板或曲柄联动。"
+        }
+      ],
+      "promptSha256": "f2d950b537085dbc1ccf41db2840b878ab5b42f31a24afd1eec2d8e4455b6778",
+      "artifact": "runs/2026-11-28-codex-luna/ref-pelican-bicycle/v1.html",
+      "artifactSha256": "338641056b6cc8d31d6a1420c092c5b5031c0849b7436dce6b99f041e0d056c8",
+      "files": [
+        {
+          "artifact": "runs/2026-11-28-codex-luna/ref-pelican-bicycle/v1.html",
+          "sha256": "338641056b6cc8d31d6a1420c092c5b5031c0849b7436dce6b99f041e0d056c8"
+        }
+      ],
+      "rawOutput": "首次产物保存在 runs/2026-11-28-codex-luna/ref-pelican-bicycle/v1.html。"
+    },
+    {
+      "id": "codex-luna-ref-bouncing-ball-hexagon-v1",
+      "taskId": "ref-bouncing-ball-hexagon",
+      "executionClass": "codex-luna-subagent-with-tools",
+      "label": "Codex 辅助执行 · GPT-6 Luna",
+      "provider": "OpenAI Codex",
+      "model": "gpt-6-luna",
+      "modelVersion": "Codex 子 Agent 指定的模型标识 gpt-6-luna。",
+      "context": "三组子 Agent 各完成 16 道作品任务。每项使用任务定义中的完整 prompt，馆藏的额外验收清单与既有作品未提供给生成 Agent。",
+      "environment": "macOS 本地工作区生成。主 Agent 用 Chromium、文件解析或源码检查复核，具体方法见逐项证据。",
+      "parameters": "使用子 Agent 默认推理参数，允许本地工具写文件。时间范围为批次准备到该任务提交文件的最后写入时间。",
+      "startedAt": "2026-11-28T11:18:52Z",
+      "endedAt": "2026-11-28T11:26:14Z",
+      "repairs": [],
+      "revision": "v1",
+      "status": "partial",
+      "checks": [
+        {
+          "name": "六边形在转",
+          "pass": true,
+          "evidence": "连续浏览器截图的六边形方向不同。"
+        },
+        {
+          "name": "球受重力下落并反复碰撞",
+          "pass": true,
+          "evidence": "实测纵向速度随重力增大，碰撞后速度反向。"
+        },
+        {
+          "name": "球不会穿过边",
+          "pass": false,
+          "evidence": "浏览器取样第 53 帧时，球的外缘越过墙约 23 像素。"
+        },
+        {
+          "name": "碰撞后的方向看得出墙也在动，而不是只按静止墙反弹",
+          "pass": false,
+          "evidence": "代码计算了墙速变量，但碰撞反射没有使用该变量。"
+        }
+      ],
+      "promptSha256": "02b93878253e83e527496f95fafaffc25bf6198443562b5a2db63c171c1e5fb0",
+      "artifact": "runs/2026-11-28-codex-luna/ref-bouncing-ball-hexagon/v1.html",
+      "artifactSha256": "85a988fd6e7e3822d0cc4f0a392ad0870b423783c920d8fe7b40459d045ff284",
+      "files": [
+        {
+          "artifact": "runs/2026-11-28-codex-luna/ref-bouncing-ball-hexagon/v1.html",
+          "sha256": "85a988fd6e7e3822d0cc4f0a392ad0870b423783c920d8fe7b40459d045ff284"
+        }
+      ],
+      "rawOutput": "首次产物保存在 runs/2026-11-28-codex-luna/ref-bouncing-ball-hexagon/v1.html。"
+    },
+    {
+      "id": "codex-luna-ref-voxel-pagoda-v1",
+      "taskId": "ref-voxel-pagoda",
+      "executionClass": "codex-luna-subagent-with-tools",
+      "label": "Codex 辅助执行 · GPT-6 Luna",
+      "provider": "OpenAI Codex",
+      "model": "gpt-6-luna",
+      "modelVersion": "Codex 子 Agent 指定的模型标识 gpt-6-luna。",
+      "context": "三组子 Agent 各完成 16 道作品任务。每项使用任务定义中的完整 prompt，馆藏的额外验收清单与既有作品未提供给生成 Agent。",
+      "environment": "macOS 本地工作区生成。主 Agent 用 Chromium、文件解析或源码检查复核，具体方法见逐项证据。",
+      "parameters": "使用子 Agent 默认推理参数，允许本地工具写文件。时间范围为批次准备到该任务提交文件的最后写入时间。",
+      "startedAt": "2026-11-28T11:18:52Z",
+      "endedAt": "2026-11-28T11:27:29Z",
+      "repairs": [],
+      "revision": "v1",
+      "status": "partial",
+      "checks": [
+        {
+          "name": "看得到宝塔",
+          "pass": true,
+          "evidence": "Chromium 画面可辨认至少三层的宝塔。"
+        },
+        {
+          "name": "看得到树，其中有樱花",
+          "pass": false,
+          "evidence": "能看到粉色方片，没有树干和树冠组成的樱花树。"
+        },
+        {
+          "name": "场景由许多彩色方块样的体素组成",
+          "pass": false,
+          "evidence": "部分地面方块有立体阴影，塔身与屋檐主要是二维多边形，画面不构成完整的彩色体素场景。"
+        },
+        {
+          "name": "画面不是空白或报错",
+          "pass": true,
+          "evidence": "Chromium 打开后有可见画面，无页面脚本错误。"
+        },
+        {
+          "name": "题面要求的实现与交付",
+          "pass": false,
+          "evidence": "页面使用二维 Canvas 投影，未交付题面要求的三维场景。"
+        }
+      ],
+      "promptSha256": "ff77a19d76fa230140da967b6a0c474bac87023f333767c347e12fe529a5247b",
+      "artifact": "runs/2026-11-28-codex-luna/ref-voxel-pagoda/v1.html",
+      "artifactSha256": "05631ca34577e66b45205bebd07e4e4e1980352a5fb01c69f57855e941a719e8",
+      "files": [
+        {
+          "artifact": "runs/2026-11-28-codex-luna/ref-voxel-pagoda/v1.html",
+          "sha256": "05631ca34577e66b45205bebd07e4e4e1980352a5fb01c69f57855e941a719e8"
+        }
+      ],
+      "rawOutput": "首次产物保存在 runs/2026-11-28-codex-luna/ref-voxel-pagoda/v1.html。"
+    },
+    {
+      "id": "codex-luna-ref-minecraft-web-v1",
+      "taskId": "ref-minecraft-web",
+      "executionClass": "codex-luna-subagent-with-tools",
+      "label": "Codex 辅助执行 · GPT-6 Luna",
+      "provider": "OpenAI Codex",
+      "model": "gpt-6-luna",
+      "modelVersion": "Codex 子 Agent 指定的模型标识 gpt-6-luna。",
+      "context": "三组子 Agent 各完成 16 道作品任务。每项使用任务定义中的完整 prompt，馆藏的额外验收清单与既有作品未提供给生成 Agent。已有游戏及桌面仅采用原创名称、素材和界面。",
+      "environment": "macOS 本地工作区生成。主 Agent 用 Chromium、文件解析或源码检查复核，具体方法见逐项证据。",
+      "parameters": "使用子 Agent 默认推理参数，允许本地工具写文件。时间范围为批次准备到该任务提交文件的最后写入时间。",
+      "startedAt": "2026-11-28T11:18:52Z",
+      "endedAt": "2026-11-28T11:24:08Z",
+      "repairs": [],
+      "revision": "v1",
+      "status": "partial",
+      "checks": [
+        {
+          "name": "页面能进入第一人称或等价的可移动视角",
+          "pass": false,
+          "evidence": "画面是固定俯视二维网格；方向键只移动格子光标，没有第一人称或等价可移动视角。"
+        },
+        {
+          "name": "能看见不同方块或地形",
+          "pass": true,
+          "evidence": "Canvas 网格中可选草地、沙地和水方块。"
+        },
+        {
+          "name": "能看见沙和水一类环境",
+          "pass": true,
+          "evidence": "初始地图同时绘制沙地与水区。"
+        },
+        {
+          "name": "没有必须播放的声音文件",
+          "pass": true,
+          "evidence": "源码没有音频元素、音频文件或必须播放的声音。"
+        },
+        {
+          "name": "题面要求的实现与交付",
+          "pass": false,
+          "evidence": "任务要求 Three.js；源码只用 2D Canvas，未加载或使用 Three.js。"
+        }
+      ],
+      "promptSha256": "e2f509879019426cd15f3890875d8d5462911f985d35c7bdfdd15cb89610ac40",
+      "artifact": "runs/2026-11-28-codex-luna/ref-minecraft-web/v1.html",
+      "artifactSha256": "39f0d920851fea03b3b959867b70e69c8b1ecb1a28af9415ae45efda099725ca",
+      "files": [
+        {
+          "artifact": "runs/2026-11-28-codex-luna/ref-minecraft-web/v1.html",
+          "sha256": "39f0d920851fea03b3b959867b70e69c8b1ecb1a28af9415ae45efda099725ca"
+        }
+      ],
+      "rawOutput": "首次产物保存在 runs/2026-11-28-codex-luna/ref-minecraft-web/v1.html。"
+    },
+    {
+      "id": "codex-luna-ref-rubiks-cube-v1",
+      "taskId": "ref-rubiks-cube",
+      "executionClass": "codex-luna-subagent-with-tools",
+      "label": "Codex 辅助执行 · GPT-6 Luna",
+      "provider": "OpenAI Codex",
+      "model": "gpt-6-luna",
+      "modelVersion": "Codex 子 Agent 指定的模型标识 gpt-6-luna。",
+      "context": "三组子 Agent 各完成 16 道作品任务。每项使用任务定义中的完整 prompt，馆藏的额外验收清单与既有作品未提供给生成 Agent。",
+      "environment": "macOS 本地工作区生成。主 Agent 用 Chromium、文件解析或源码检查复核，具体方法见逐项证据。",
+      "parameters": "使用子 Agent 默认推理参数，允许本地工具写文件。时间范围为批次准备到该任务提交文件的最后写入时间。",
+      "startedAt": "2026-11-28T11:18:52Z",
+      "endedAt": "2026-11-28T11:26:14Z",
+      "repairs": [],
+      "revision": "v1",
+      "status": "failure",
+      "checks": [
+        {
+          "name": "能拖动视角",
+          "pass": false,
+          "evidence": "<style> 未在 <script> 前闭合，脚本作为样式文本不执行；smoke changedPixels=0，画布空白。"
+        },
+        {
+          "name": "每个转动按钮让对应的面转 90 度",
+          "pass": false,
+          "evidence": "脚本不执行，且源码只有 2D canvas，没有实现面转 90°；没有 U/D/L/R/F/B 面转按钮。"
+        },
+        {
+          "name": "打乱后魔方变乱，并且记下手顺",
+          "pass": false,
+          "evidence": "脚本不执行；只有 Scramble/Auto unscramble 控件，没有标准面转按钮或实际 cubie 手顺。"
+        },
+        {
+          "name": "自动还原按记录的逆序进行，而不是重新随机",
+          "pass": false,
+          "evidence": "脚本不执行；自动还原逻辑不可运行，且没有 cubie 位置/旋转状态可逆序恢复。"
+        },
+        {
+          "name": "还原后各面颜色复原",
+          "pass": false,
+          "evidence": "空白画布中无魔方，源码也无 cubie 颜色状态或 solved-state 比较。"
+        },
+        {
+          "name": "题面要求的实现与交付",
+          "pass": false,
+          "evidence": "题目要求 Three.js 与 OrbitControls；源码仅为 2D canvas，且 smoke linkedScripts 为空。"
+        }
+      ],
+      "promptSha256": "fa096edb7f49a3032029e08d2bcc156c58401437769107c7a1dbaa2cd1862461",
+      "artifact": "runs/2026-11-28-codex-luna/ref-rubiks-cube/v1.html",
+      "artifactSha256": "a3721f0d15cf291fd09fe0df5d2e11bcc48fa5f161f308bafdaa3646954ae7c7",
+      "files": [
+        {
+          "artifact": "runs/2026-11-28-codex-luna/ref-rubiks-cube/v1.html",
+          "sha256": "a3721f0d15cf291fd09fe0df5d2e11bcc48fa5f161f308bafdaa3646954ae7c7"
+        }
+      ],
+      "rawOutput": "首次产物保存在 runs/2026-11-28-codex-luna/ref-rubiks-cube/v1.html。"
+    },
+    {
+      "id": "codex-luna-ref-kart-racer-v1",
+      "taskId": "ref-kart-racer",
+      "executionClass": "codex-luna-subagent-with-tools",
+      "label": "Codex 辅助执行 · GPT-6 Luna",
+      "provider": "OpenAI Codex",
+      "model": "gpt-6-luna",
+      "modelVersion": "Codex 子 Agent 指定的模型标识 gpt-6-luna。",
+      "context": "三组子 Agent 各完成 16 道作品任务。每项使用任务定义中的完整 prompt，馆藏的额外验收清单与既有作品未提供给生成 Agent。已有游戏及桌面仅采用原创名称、素材和界面。",
+      "environment": "macOS 本地工作区生成。主 Agent 用 Chromium、文件解析或源码检查复核，具体方法见逐项证据。",
+      "parameters": "使用子 Agent 默认推理参数，允许本地工具写文件。时间范围为批次准备到该任务提交文件的最后写入时间。",
+      "startedAt": "2026-11-28T11:18:52Z",
+      "endedAt": "2026-11-28T11:27:29Z",
+      "repairs": [],
+      "revision": "v1",
+      "status": "partial",
+      "checks": [
+        {
+          "name": "能开始一局并开车",
+          "pass": true,
+          "evidence": "浏览器点开始后按加速和转向键，车速变为 4.48，环道位置随输入改变。"
+        },
+        {
+          "name": "有可见赛道",
+          "pass": true,
+          "evidence": "实际开始后画面显示椭圆赛道和边缘标记。"
+        },
+        {
+          "name": "车不会一开始就掉出世界",
+          "pass": true,
+          "evidence": "车辆生成在环道上，实测驶出起步点后仍在跑道上。"
+        },
+        {
+          "name": "有重新开始或完成一圈的反馈",
+          "pass": true,
+          "evidence": "按 Restart 后车辆回到起点，圈数回到 1，计时归零。"
+        },
+        {
+          "name": "题面要求的实现与交付",
+          "pass": false,
+          "evidence": "页面使用二维 Canvas，未采用题面指定的 Three.js。"
+        }
+      ],
+      "promptSha256": "8353c7e650a2787d9ce1e16c11161e40ffdfb79794d52863596a42aac50facd6",
+      "artifact": "runs/2026-11-28-codex-luna/ref-kart-racer/v1.html",
+      "artifactSha256": "775be81a9cf81bf101678a2b4eb3ab938a27a7515e47e97be6ede64177bb4f90",
+      "files": [
+        {
+          "artifact": "runs/2026-11-28-codex-luna/ref-kart-racer/v1.html",
+          "sha256": "775be81a9cf81bf101678a2b4eb3ab938a27a7515e47e97be6ede64177bb4f90"
+        }
+      ],
+      "rawOutput": "首次产物保存在 runs/2026-11-28-codex-luna/ref-kart-racer/v1.html。"
+    },
+    {
+      "id": "codex-luna-ref-meteor-city-v1",
+      "taskId": "ref-meteor-city",
+      "executionClass": "codex-luna-subagent-with-tools",
+      "label": "Codex 辅助执行 · GPT-6 Luna",
+      "provider": "OpenAI Codex",
+      "model": "gpt-6-luna",
+      "modelVersion": "Codex 子 Agent 指定的模型标识 gpt-6-luna。",
+      "context": "三组子 Agent 各完成 16 道作品任务。每项使用任务定义中的完整 prompt，馆藏的额外验收清单与既有作品未提供给生成 Agent。",
+      "environment": "macOS 本地工作区生成。主 Agent 用 Chromium、文件解析或源码检查复核，具体方法见逐项证据。",
+      "parameters": "使用子 Agent 默认推理参数，允许本地工具写文件。时间范围为批次准备到该任务提交文件的最后写入时间。",
+      "startedAt": "2026-11-28T11:18:52Z",
+      "endedAt": "2026-11-28T11:24:08Z",
+      "repairs": [],
+      "revision": "v1",
+      "status": "partial",
+      "checks": [
+        {
+          "name": "看得到城市",
+          "pass": true,
+          "evidence": "画面渲染带窗灯的城市天际线。"
+        },
+        {
+          "name": "看得到陨石接近",
+          "pass": true,
+          "evidence": "1 秒与 5 秒截图显示陨石从左上向城市逼近。"
+        },
+        {
+          "name": "发生一次看得见的撞击",
+          "pass": true,
+          "evidence": "约第 6 秒出现撞击闪光，7 秒截图能看到落点光斑。"
+        },
+        {
+          "name": "撞击后城市或天空有变化",
+          "pass": true,
+          "evidence": "撞击后天空出现橙色闪光，并随时间衰减。"
+        },
+        {
+          "name": "题面要求的实现与交付",
+          "pass": false,
+          "evidence": "使用二维 Canvas，未采用题面指定的 Three.js。"
+        }
+      ],
+      "promptSha256": "0fb19e70ab933417b0e8a56268e57c677974a3b93acd2deac34c8f7c774ee6db",
+      "artifact": "runs/2026-11-28-codex-luna/ref-meteor-city/v1.html",
+      "artifactSha256": "74b44ed11aa0d5aa3e9e662f0b12a42a2f80bb0ad3d0f07acd97550dd15a7ee3",
+      "files": [
+        {
+          "artifact": "runs/2026-11-28-codex-luna/ref-meteor-city/v1.html",
+          "sha256": "74b44ed11aa0d5aa3e9e662f0b12a42a2f80bb0ad3d0f07acd97550dd15a7ee3"
+        }
+      ],
+      "rawOutput": "首次产物保存在 runs/2026-11-28-codex-luna/ref-meteor-city/v1.html。"
+    },
+    {
+      "id": "codex-luna-ref-supernova-v1",
+      "taskId": "ref-supernova",
+      "executionClass": "codex-luna-subagent-with-tools",
+      "label": "Codex 辅助执行 · GPT-6 Luna",
+      "provider": "OpenAI Codex",
+      "model": "gpt-6-luna",
+      "modelVersion": "Codex 子 Agent 指定的模型标识 gpt-6-luna。",
+      "context": "三组子 Agent 各完成 16 道作品任务。每项使用任务定义中的完整 prompt，馆藏的额外验收清单与既有作品未提供给生成 Agent。",
+      "environment": "macOS 本地工作区生成。主 Agent 用 Chromium、文件解析或源码检查复核，具体方法见逐项证据。",
+      "parameters": "使用子 Agent 默认推理参数，允许本地工具写文件。时间范围为批次准备到该任务提交文件的最后写入时间。",
+      "startedAt": "2026-11-28T11:18:52Z",
+      "endedAt": "2026-11-28T11:26:14Z",
+      "repairs": [],
+      "revision": "v1",
+      "status": "partial",
+      "checks": [
+        {
+          "name": "开始时看得到恒星",
+          "pass": true,
+          "evidence": "初始帧可见发光的恒星核心。"
+        },
+        {
+          "name": "随后有膨胀或坍缩",
+          "pass": true,
+          "evidence": "连续截图中恒星先扩大、随后收缩。"
+        },
+        {
+          "name": "然后有爆炸",
+          "pass": false,
+          "evidence": "粒子从第一帧起就持续漂移，没有独立的爆炸转场或可辨的爆发时刻。"
+        },
+        {
+          "name": "最后留下和爆炸前不同的残骸或光",
+          "pass": true,
+          "evidence": "末段保留缩小的发光核心，以及比起始范围更广的粒子残留。"
+        }
+      ],
+      "promptSha256": "cfb8c6c0185943c303497e24c982382674102275b361570ac77a3ae256846231",
+      "artifact": "runs/2026-11-28-codex-luna/ref-supernova/v1.html",
+      "artifactSha256": "aca4ab05b463d3c42c80b6c1ef3eb3e17dab2b066f47583e8b50b3e6ba887ce2",
+      "files": [
+        {
+          "artifact": "runs/2026-11-28-codex-luna/ref-supernova/v1.html",
+          "sha256": "aca4ab05b463d3c42c80b6c1ef3eb3e17dab2b066f47583e8b50b3e6ba887ce2"
+        }
+      ],
+      "rawOutput": "首次产物保存在 runs/2026-11-28-codex-luna/ref-supernova/v1.html。"
+    },
+    {
+      "id": "codex-luna-ref-flappy-bird-v1",
+      "taskId": "ref-flappy-bird",
+      "executionClass": "codex-luna-subagent-with-tools",
+      "label": "Codex 辅助执行 · GPT-6 Luna",
+      "provider": "OpenAI Codex",
+      "model": "gpt-6-luna",
+      "modelVersion": "Codex 子 Agent 指定的模型标识 gpt-6-luna。",
+      "context": "三组子 Agent 各完成 16 道作品任务。每项使用任务定义中的完整 prompt，馆藏的额外验收清单与既有作品未提供给生成 Agent。已有游戏及桌面仅采用原创名称、素材和界面。",
+      "environment": "macOS 本地工作区生成。主 Agent 用 Chromium、文件解析或源码检查复核，具体方法见逐项证据。",
+      "parameters": "使用子 Agent 默认推理参数，允许本地工具写文件。时间范围为批次准备到该任务提交文件的最后写入时间。",
+      "startedAt": "2026-11-28T11:18:52Z",
+      "endedAt": "2026-11-28T11:26:07Z",
+      "repairs": [],
+      "revision": "v1",
+      "status": "success",
+      "checks": [
+        {
+          "name": "角色受输入上升",
+          "pass": true,
+          "evidence": "实测按空格后高度坐标由 288 降到 265，角色向上飞。"
+        },
+        {
+          "name": "不操作时会下落",
+          "pass": true,
+          "evidence": "不按键时速度向下，起始高度坐标从 250 增到约 288。"
+        },
+        {
+          "name": "障碍会靠近",
+          "pass": true,
+          "evidence": "持续操作后障碍在 x=531，已由右边缘 x=780 移近。"
+        },
+        {
+          "name": "撞上后当局结束，并能再开一局",
+          "pass": true,
+          "evidence": "飞鸟落至地面边界后本局结束，点击重开可再次运行。"
+        }
+      ],
+      "promptSha256": "d37d9349ea8a36ef43feeb504f5a43cfe3b36beacd4e2edd9870a834a214bfe4",
+      "artifact": "runs/2026-11-28-codex-luna/ref-flappy-bird/v1.html",
+      "artifactSha256": "0409dfbde51fad9ca76b9f968d44eb51a5df032dfa2236b5de1347b058cd7c53",
+      "files": [
+        {
+          "artifact": "runs/2026-11-28-codex-luna/ref-flappy-bird/v1.html",
+          "sha256": "0409dfbde51fad9ca76b9f968d44eb51a5df032dfa2236b5de1347b058cd7c53"
+        }
+      ],
+      "rawOutput": "首次产物保存在 runs/2026-11-28-codex-luna/ref-flappy-bird/v1.html。"
+    },
+    {
+      "id": "codex-luna-ref-tetris-v1",
+      "taskId": "ref-tetris",
+      "executionClass": "codex-luna-subagent-with-tools",
+      "label": "Codex 辅助执行 · GPT-6 Luna",
+      "provider": "OpenAI Codex",
+      "model": "gpt-6-luna",
+      "modelVersion": "Codex 子 Agent 指定的模型标识 gpt-6-luna。",
+      "context": "三组子 Agent 各完成 16 道作品任务。每项使用任务定义中的完整 prompt，馆藏的额外验收清单与既有作品未提供给生成 Agent。已有游戏及桌面仅采用原创名称、素材和界面。",
+      "environment": "macOS 本地工作区生成。主 Agent 用 Chromium、文件解析或源码检查复核，具体方法见逐项证据。",
+      "parameters": "使用子 Agent 默认推理参数，允许本地工具写文件。时间范围为批次准备到该任务提交文件的最后写入时间。",
+      "startedAt": "2026-11-28T11:18:52Z",
+      "endedAt": "2026-11-28T11:24:08Z",
+      "repairs": [],
+      "revision": "v1",
+      "status": "success",
+      "checks": [
+        {
+          "name": "方块会按格下落",
+          "pass": true,
+          "evidence": "虚拟时钟推进 800 ms 后，活动方块按格下落一行。"
+        },
+        {
+          "name": "旋转不会无故穿出边界",
+          "pass": true,
+          "evidence": "反复向左移至边界后按旋转，碰撞函数仍为 false，方块保留在网格内。"
+        },
+        {
+          "name": "填满的一行会消失",
+          "pass": true,
+          "evidence": "注入剩一格的底行后用该产物的落锁函数补满，满行消失，得分变为 100。"
+        },
+        {
+          "name": "有结束或重开",
+          "pass": true,
+          "evidence": "重新开始后，分数归零，网格清空并出现新方块。"
+        }
+      ],
+      "promptSha256": "090fdb48240363755d5c0cd5cbef842ded85507a0e06509832438d0df0c29fa1",
+      "artifact": "runs/2026-11-28-codex-luna/ref-tetris/v1.html",
+      "artifactSha256": "1e2cb16ad352a9df5cc4c5478832cff7a0b819ef246f8d21880ba49ff02545c5",
+      "files": [
+        {
+          "artifact": "runs/2026-11-28-codex-luna/ref-tetris/v1.html",
+          "sha256": "1e2cb16ad352a9df5cc4c5478832cff7a0b819ef246f8d21880ba49ff02545c5"
+        }
+      ],
+      "rawOutput": "首次产物保存在 runs/2026-11-28-codex-luna/ref-tetris/v1.html。"
+    },
+    {
+      "id": "codex-luna-ref-solar-system-v1",
+      "taskId": "ref-solar-system",
+      "executionClass": "codex-luna-subagent-with-tools",
+      "label": "Codex 辅助执行 · GPT-6 Luna",
+      "provider": "OpenAI Codex",
+      "model": "gpt-6-luna",
+      "modelVersion": "Codex 子 Agent 指定的模型标识 gpt-6-luna。",
+      "context": "三组子 Agent 各完成 16 道作品任务。每项使用任务定义中的完整 prompt，馆藏的额外验收清单与既有作品未提供给生成 Agent。",
+      "environment": "macOS 本地工作区生成。主 Agent 用 Chromium、文件解析或源码检查复核，具体方法见逐项证据。",
+      "parameters": "使用子 Agent 默认推理参数，允许本地工具写文件。时间范围为批次准备到该任务提交文件的最后写入时间。",
+      "startedAt": "2026-11-28T11:18:52Z",
+      "endedAt": "2026-11-28T11:26:14Z",
+      "repairs": [],
+      "revision": "v1",
+      "status": "success",
+      "checks": [
+        {
+          "name": "看得到太阳和多颗行星",
+          "pass": true,
+          "evidence": "源码绘制太阳及 Mercury–Saturn 六颗行星；0.png 可见太阳和多颗行星。"
+        },
+        {
+          "name": "行星在轨道上移动",
+          "pass": true,
+          "evidence": "每颗行星按角度周期式更新位置；0/1.png 行星位置有变化。"
+        },
+        {
+          "name": "内侧行星明显快于外侧",
+          "pass": true,
+          "evidence": "角速度为 2π/period，水星 88 天、土星 10759 天，内侧明显更快。"
+        },
+        {
+          "name": "页面没有脚本报错",
+          "pass": true,
+          "evidence": "smoke.json errors/warnings 均为空，且画面截图有变化。"
+        }
+      ],
+      "promptSha256": "737928eb5d48fdabd0a3cfc9a07c5571b50b08c3a5bdd4516f8683b8ce5f33e1",
+      "artifact": "runs/2026-11-28-codex-luna/ref-solar-system/v1.html",
+      "artifactSha256": "39b3685b75cf8aec743d37e9761a2723aa8d821845bd8a2eeba8d4a0aec45acd",
+      "files": [
+        {
+          "artifact": "runs/2026-11-28-codex-luna/ref-solar-system/v1.html",
+          "sha256": "39b3685b75cf8aec743d37e9761a2723aa8d821845bd8a2eeba8d4a0aec45acd"
+        }
+      ],
+      "rawOutput": "首次产物保存在 runs/2026-11-28-codex-luna/ref-solar-system/v1.html。"
+    },
+    {
+      "id": "codex-luna-ref-web-os-desktop-v1",
+      "taskId": "ref-web-os-desktop",
+      "executionClass": "codex-luna-subagent-with-tools",
+      "label": "Codex 辅助执行 · GPT-6 Luna",
+      "provider": "OpenAI Codex",
+      "model": "gpt-6-luna",
+      "modelVersion": "Codex 子 Agent 指定的模型标识 gpt-6-luna。",
+      "context": "三组子 Agent 各完成 16 道作品任务。每项使用任务定义中的完整 prompt，馆藏的额外验收清单与既有作品未提供给生成 Agent。已有游戏及桌面仅采用原创名称、素材和界面。",
+      "environment": "macOS 本地工作区生成。主 Agent 用 Chromium、文件解析或源码检查复核，具体方法见逐项证据。",
+      "parameters": "使用子 Agent 默认推理参数，允许本地工具写文件。时间范围为批次准备到该任务提交文件的最后写入时间。",
+      "startedAt": "2026-11-28T11:18:52Z",
+      "endedAt": "2026-11-28T11:27:29Z",
+      "repairs": [],
+      "revision": "v1",
+      "status": "failure",
+      "checks": [
+        {
+          "name": "有桌面和可点击的图标或菜单",
+          "pass": false,
+          "evidence": "桌面图标有渲染，但点击所依赖的脚本因 Unexpected identifier Daybreak 无法解析。"
+        },
+        {
+          "name": "文本编辑里打出的字还在",
+          "pass": false,
+          "evidence": "Notes 的打开和输入保存函数均被脚本语法错误阻断。"
+        },
+        {
+          "name": "文件列表或画布至少有一个能实际操作",
+          "pass": false,
+          "evidence": "文件列表和绘画功能无法从桌面启动。"
+        },
+        {
+          "name": "不是只有一张桌面截图式的静态图",
+          "pass": false,
+          "evidence": "页面只显示欢迎桌面，交互脚本未运行。"
+        }
+      ],
+      "promptSha256": "49de34b2eb918e1960ed68ca1c0e670e5f40b068948dc92362bf398b4ea0c869",
+      "artifact": "runs/2026-11-28-codex-luna/ref-web-os-desktop/v1.html",
+      "artifactSha256": "27674a716c68394de791516e425f73b449de013b03feb1f02db77e3add449b74",
+      "files": [
+        {
+          "artifact": "runs/2026-11-28-codex-luna/ref-web-os-desktop/v1.html",
+          "sha256": "27674a716c68394de791516e425f73b449de013b03feb1f02db77e3add449b74"
+        }
+      ],
+      "rawOutput": "首次产物保存在 runs/2026-11-28-codex-luna/ref-web-os-desktop/v1.html。"
+    },
+    {
+      "id": "codex-luna-ref-drowned-gothic-city-v1",
+      "taskId": "ref-drowned-gothic-city",
+      "executionClass": "codex-luna-subagent-with-tools",
+      "label": "Codex 辅助执行 · GPT-6 Luna",
+      "provider": "OpenAI Codex",
+      "model": "gpt-6-luna",
+      "modelVersion": "Codex 子 Agent 指定的模型标识 gpt-6-luna。",
+      "context": "三组子 Agent 各完成 16 道作品任务。每项使用任务定义中的完整 prompt，馆藏的额外验收清单与既有作品未提供给生成 Agent。",
+      "environment": "macOS 本地工作区生成。主 Agent 用 Chromium、文件解析或源码检查复核，具体方法见逐项证据。",
+      "parameters": "使用子 Agent 默认推理参数，允许本地工具写文件。时间范围为批次准备到该任务提交文件的最后写入时间。",
+      "startedAt": "2026-11-28T11:18:52Z",
+      "endedAt": "2026-11-28T11:22:55Z",
+      "repairs": [],
+      "revision": "v1",
+      "status": "success",
+      "checks": [
+        {
+          "name": "满屏是程序生成的画面",
+          "pass": true,
+          "evidence": "页面为全屏 WebGL Canvas；QA 截图非空且 smoke 记录有像素变化。"
+        },
+        {
+          "name": "看得到高塔和水面",
+          "pass": true,
+          "evidence": "片元着色器按网格生成尖塔/塔楼剪影，并在 horizon 以下合成海面。"
+        },
+        {
+          "name": "浪或视角在变化",
+          "pass": true,
+          "evidence": "水平线和水面高光依赖时间变量 t 的正弦项；连续 requestAnimationFrame 更新。"
+        },
+        {
+          "name": "拖动或默认动画至少一种在动",
+          "pass": true,
+          "evidence": "默认动画持续运行并重绘全屏画面。"
+        }
+      ],
+      "promptSha256": "01a25b7f67452ce839d64635f241282a346ad9a0eaaea4c81042953e826a81fa",
+      "artifact": "runs/2026-11-28-codex-luna/ref-drowned-gothic-city/v1.html",
+      "artifactSha256": "a370ab28f3922f5b9357c3de4dfdf84c5d4789250811d79a607b3f2e30824463",
+      "files": [
+        {
+          "artifact": "runs/2026-11-28-codex-luna/ref-drowned-gothic-city/v1.html",
+          "sha256": "a370ab28f3922f5b9357c3de4dfdf84c5d4789250811d79a607b3f2e30824463"
+        }
+      ],
+      "rawOutput": "首次产物保存在 runs/2026-11-28-codex-luna/ref-drowned-gothic-city/v1.html。"
+    },
+    {
+      "id": "codex-luna-ref-brick-builder-v1",
+      "taskId": "ref-brick-builder",
+      "executionClass": "codex-luna-subagent-with-tools",
+      "label": "Codex 辅助执行 · GPT-6 Luna",
+      "provider": "OpenAI Codex",
+      "model": "gpt-6-luna",
+      "modelVersion": "Codex 子 Agent 指定的模型标识 gpt-6-luna。",
+      "context": "三组子 Agent 各完成 16 道作品任务。每项使用任务定义中的完整 prompt，馆藏的额外验收清单与既有作品未提供给生成 Agent。",
+      "environment": "macOS 本地工作区生成。主 Agent 用 Chromium、文件解析或源码检查复核，具体方法见逐项证据。",
+      "parameters": "使用子 Agent 默认推理参数，允许本地工具写文件。时间范围为批次准备到该任务提交文件的最后写入时间。",
+      "startedAt": "2026-11-28T11:18:52Z",
+      "endedAt": "2026-11-28T11:26:14Z",
+      "repairs": [],
+      "revision": "v1",
+      "status": "failure",
+      "checks": [
+        {
+          "name": "能在底板上放下一块",
+          "pass": false,
+          "evidence": "<style> 未在 <script> 前闭合，渲染和点击脚本未执行；smoke changedPixels=0、画布空白。"
+        },
+        {
+          "name": "能删掉刚放的块",
+          "pass": false,
+          "evidence": "虽有放置代码，但该代码被当作样式文本；实际 smoke 画布未渲染方块。"
+        },
+        {
+          "name": "能旋转或换色",
+          "pass": false,
+          "evidence": "旋转/移除/换色处理器均在未执行脚本内，截图显示空白画布。"
+        },
+        {
+          "name": "镜头可以绕着底板转",
+          "pass": false,
+          "evidence": "源码是 2D canvas 伪等轴投影，且事件脚本未执行，不能绕底板旋转视角。"
+        },
+        {
+          "name": "题面要求的实现与交付",
+          "pass": false,
+          "evidence": "要求 Three.js 的 3D 编辑器；没有 Three.js 或相关外链，smoke linkedScripts 为空。"
+        }
+      ],
+      "promptSha256": "27868d7bf74a4e9c3b3446c17e9be318b216a04ad11469c14b9d9d44355b639a",
+      "artifact": "runs/2026-11-28-codex-luna/ref-brick-builder/v1.html",
+      "artifactSha256": "ab73cca13d3a3f9a9fce49c1eac75e496a9248cac65f94f42176501f5343e825",
+      "files": [
+        {
+          "artifact": "runs/2026-11-28-codex-luna/ref-brick-builder/v1.html",
+          "sha256": "ab73cca13d3a3f9a9fce49c1eac75e496a9248cac65f94f42176501f5343e825"
+        }
+      ],
+      "rawOutput": "首次产物保存在 runs/2026-11-28-codex-luna/ref-brick-builder/v1.html。"
+    },
+    {
+      "id": "codex-luna-ref-flight-sim-v1",
+      "taskId": "ref-flight-sim",
+      "executionClass": "codex-luna-subagent-with-tools",
+      "label": "Codex 辅助执行 · GPT-6 Luna",
+      "provider": "OpenAI Codex",
+      "model": "gpt-6-luna",
+      "modelVersion": "Codex 子 Agent 指定的模型标识 gpt-6-luna。",
+      "context": "三组子 Agent 各完成 16 道作品任务。每项使用任务定义中的完整 prompt，馆藏的额外验收清单与既有作品未提供给生成 Agent。",
+      "environment": "macOS 本地工作区生成。主 Agent 用 Chromium、文件解析或源码检查复核，具体方法见逐项证据。",
+      "parameters": "使用子 Agent 默认推理参数，允许本地工具写文件。时间范围为批次准备到该任务提交文件的最后写入时间。",
+      "startedAt": "2026-11-28T11:18:52Z",
+      "endedAt": "2026-11-28T11:26:07Z",
+      "repairs": [],
+      "revision": "v1",
+      "status": "success",
+      "checks": [
+        {
+          "name": "看得到高楼",
+          "pass": true,
+          "evidence": "Chromium 截图可见持续绘制的楼群和窗格。"
+        },
+        {
+          "name": "输入能改变飞行方向或高度",
+          "pass": true,
+          "evidence": "实测按 W 后俯仰角改变，高度读数从 1200 变为 1176。"
+        },
+        {
+          "name": "飞一会后楼还在周围，而不是立刻穿出空场景",
+          "pass": true,
+          "evidence": "推进后仍有 100 栋楼体，靠近边界的楼自动移回远处。"
+        }
+      ],
+      "promptSha256": "db7a6b7ce531dfe9074a06476cd3c3e49d78c79b04dc72bf618d331f81c860c1",
+      "artifact": "runs/2026-11-28-codex-luna/ref-flight-sim/v1.html",
+      "artifactSha256": "14c47503d842822b161ddcdbf6a7ced657ff88815a98c2b35a056baa6e0a414a",
+      "files": [
+        {
+          "artifact": "runs/2026-11-28-codex-luna/ref-flight-sim/v1.html",
+          "sha256": "14c47503d842822b161ddcdbf6a7ced657ff88815a98c2b35a056baa6e0a414a"
+        }
+      ],
+      "rawOutput": "首次产物保存在 runs/2026-11-28-codex-luna/ref-flight-sim/v1.html。"
+    },
+    {
+      "id": "codex-luna-ref-hand-gesture-particles-v1",
+      "taskId": "ref-hand-gesture-particles",
+      "executionClass": "codex-luna-subagent-with-tools",
+      "label": "Codex 辅助执行 · GPT-6 Luna",
+      "provider": "OpenAI Codex",
+      "model": "gpt-6-luna",
+      "modelVersion": "Codex 子 Agent 指定的模型标识 gpt-6-luna。",
+      "context": "三组子 Agent 各完成 16 道作品任务。每项使用任务定义中的完整 prompt，馆藏的额外验收清单与既有作品未提供给生成 Agent。",
+      "environment": "macOS 本地工作区生成。主 Agent 用 Chromium、文件解析或源码检查复核，具体方法见逐项证据。",
+      "parameters": "使用子 Agent 默认推理参数，允许本地工具写文件。时间范围为批次准备到该任务提交文件的最后写入时间。",
+      "startedAt": "2026-11-28T11:18:52Z",
+      "endedAt": "2026-11-28T11:22:55Z",
+      "repairs": [],
+      "revision": "v1",
+      "status": "partial",
+      "checks": [
+        {
+          "name": "能切换至少两种形状",
+          "pass": true,
+          "evidence": "从 Heart 切换到 Saturn 后，画布改为环状粒子。"
+        },
+        {
+          "name": "改颜色后粒子颜色改变",
+          "pass": true,
+          "evidence": "将颜色从 #72edbd 改为 #fa448c 后，粒子画布随之变化。"
+        },
+        {
+          "name": "摄像头可用时，双手动作会改变粒子展开程度",
+          "pass": false,
+          "evidence": "页面明确说明只用滑块模拟，并无摄像头采集或双手识别。"
+        },
+        {
+          "name": "题面要求的实现与交付",
+          "pass": false,
+          "evidence": "使用原生二维 Canvas，未采用题面指定的 Three.js。"
+        }
+      ],
+      "promptSha256": "84a0734fa50e8585ce7294ad7c118d446fab7c0969c89ce69df0888d0065a763",
+      "artifact": "runs/2026-11-28-codex-luna/ref-hand-gesture-particles/v1.html",
+      "artifactSha256": "7fd43a2275132f1da0f98b5ee664d9ca812a5458b051a9b01a6f4ce19d604106",
+      "files": [
+        {
+          "artifact": "runs/2026-11-28-codex-luna/ref-hand-gesture-particles/v1.html",
+          "sha256": "7fd43a2275132f1da0f98b5ee664d9ca812a5458b051a9b01a6f4ce19d604106"
+        }
+      ],
+      "rawOutput": "首次产物保存在 runs/2026-11-28-codex-luna/ref-hand-gesture-particles/v1.html。"
+    },
+    {
+      "id": "codex-luna-ref-tesseract-ball-v1",
+      "taskId": "ref-tesseract-ball",
+      "executionClass": "codex-luna-subagent-with-tools",
+      "label": "Codex 辅助执行 · GPT-6 Luna",
+      "provider": "OpenAI Codex",
+      "model": "gpt-6-luna",
+      "modelVersion": "Codex 子 Agent 指定的模型标识 gpt-6-luna。",
+      "context": "三组子 Agent 各完成 16 道作品任务。每项使用任务定义中的完整 prompt，馆藏的额外验收清单与既有作品未提供给生成 Agent。",
+      "environment": "macOS 本地工作区生成。主 Agent 用 Chromium、文件解析或源码检查复核，具体方法见逐项证据。",
+      "parameters": "使用子 Agent 默认推理参数，允许本地工具写文件。时间范围为批次准备到该任务提交文件的最后写入时间。",
+      "startedAt": "2026-11-28T11:18:52Z",
+      "endedAt": "2026-11-28T11:26:14Z",
+      "repairs": [],
+      "revision": "v1",
+      "status": "partial",
+      "checks": [
+        {
+          "name": "看得到超立方体的投影而不是普通立方体一张皮",
+          "pass": true,
+          "evidence": "源码枚举 16 个四位顶点，并按 4 个 bit 连接超立方体边；投影不只是普通立方体。"
+        },
+        {
+          "name": "投影在旋转",
+          "pass": true,
+          "evidence": "t 每帧递增并旋转两个坐标平面；0/1.png 的投影方向不同。"
+        },
+        {
+          "name": "球碰到可见的边界会改变方向",
+          "pass": false,
+          "evidence": "球缩放使用 b[3]，但 b 只有 3 个分量，结果为 NaN；0/1.png 中投影内没有球。"
+        }
+      ],
+      "promptSha256": "9217aaffce053d3b34bc309f3878830e75fe77887d2ec997302181cef8611a72",
+      "artifact": "runs/2026-11-28-codex-luna/ref-tesseract-ball/v1.html",
+      "artifactSha256": "aa87e61d8cf700c62cd6d4894e129f140f87373c977ccbfb99cdfbc08e9facbe",
+      "files": [
+        {
+          "artifact": "runs/2026-11-28-codex-luna/ref-tesseract-ball/v1.html",
+          "sha256": "aa87e61d8cf700c62cd6d4894e129f140f87373c977ccbfb99cdfbc08e9facbe"
+        }
+      ],
+      "rawOutput": "首次产物保存在 runs/2026-11-28-codex-luna/ref-tesseract-ball/v1.html。"
+    },
+    {
+      "id": "codex-luna-ref-starship-control-panel-v1",
+      "taskId": "ref-starship-control-panel",
+      "executionClass": "codex-luna-subagent-with-tools",
+      "label": "Codex 辅助执行 · GPT-6 Luna",
+      "provider": "OpenAI Codex",
+      "model": "gpt-6-luna",
+      "modelVersion": "Codex 子 Agent 指定的模型标识 gpt-6-luna。",
+      "context": "三组子 Agent 各完成 16 道作品任务。每项使用任务定义中的完整 prompt，馆藏的额外验收清单与既有作品未提供给生成 Agent。",
+      "environment": "macOS 本地工作区生成。主 Agent 用 Chromium、文件解析或源码检查复核，具体方法见逐项证据。",
+      "parameters": "使用子 Agent 默认推理参数，允许本地工具写文件。时间范围为批次准备到该任务提交文件的最后写入时间。",
+      "startedAt": "2026-11-28T11:18:52Z",
+      "endedAt": "2026-11-28T11:27:29Z",
+      "repairs": [],
+      "revision": "v1",
+      "status": "success",
+      "checks": [
+        {
+          "name": "运行后有仪表、按钮或航迹一类控制台元素",
+          "pass": true,
+          "evidence": "将原样草图加载在 p5.js 1.9.4 空白页，900×600 画布显示雷达、按钮提示和数据面板。"
+        },
+        {
+          "name": "有动画或可点击的反馈",
+          "pass": true,
+          "evidence": "扫描动画推进，实测点按信号位置后 armed 从 false 变为 true，并改变面板文案。"
+        },
+        {
+          "name": "不是空白画布",
+          "pass": true,
+          "evidence": "浏览器截图包含环形雷达与遥测条，未出现运行异常。"
+        }
+      ],
+      "promptSha256": "a1194b641655d4524ecb939289fe06fb8ab6179f8b0465ac037133ed6d8c4799",
+      "artifact": "runs/2026-11-28-codex-luna/ref-starship-control-panel/v1.js",
+      "artifactSha256": "47812daa2f3ee456dc1649664f3e38f697af5ad0343764ac87912d0d156fa21b",
+      "files": [
+        {
+          "artifact": "runs/2026-11-28-codex-luna/ref-starship-control-panel/v1.js",
+          "sha256": "47812daa2f3ee456dc1649664f3e38f697af5ad0343764ac87912d0d156fa21b"
+        }
+      ],
+      "rawOutput": "首次产物保存在 runs/2026-11-28-codex-luna/ref-starship-control-panel/v1.js。"
+    },
+    {
+      "id": "codex-luna-ref-ai-world-clock-v1",
+      "taskId": "ref-ai-world-clock",
+      "executionClass": "codex-luna-subagent-with-tools",
+      "label": "Codex 辅助执行 · GPT-6 Luna",
+      "provider": "OpenAI Codex",
+      "model": "gpt-6-luna",
+      "modelVersion": "Codex 子 Agent 指定的模型标识 gpt-6-luna。",
+      "context": "三组子 Agent 各完成 16 道作品任务。每项使用任务定义中的完整 prompt，馆藏的额外验收清单与既有作品未提供给生成 Agent。",
+      "environment": "macOS 本地工作区生成。主 Agent 用 Chromium、文件解析或源码检查复核，具体方法见逐项证据。",
+      "parameters": "使用子 Agent 默认推理参数，允许本地工具写文件。时间范围为批次准备到该任务提交文件的最后写入时间。",
+      "startedAt": "2026-11-28T11:18:52Z",
+      "endedAt": "2026-11-28T11:22:55Z",
+      "repairs": [],
+      "revision": "v1",
+      "status": "success",
+      "checks": [
+        {
+          "name": "表盘是白的",
+          "pass": true,
+          "evidence": "浏览器计算背景为 #fff，表盘为白底。"
+        },
+        {
+          "name": "分针指向 2，时针指向 10",
+          "pass": true,
+          "evidence": "分针 60°，时针 305°，对应 10:10。"
+        },
+        {
+          "name": "秒针在转",
+          "pass": true,
+          "evidence": "将 CSS 动画时间从 0 调到 1.7 秒，秒针矩阵旋转 6°。"
+        },
+        {
+          "name": "把窗口缩窄后表盘仍完整",
+          "pass": true,
+          "evidence": "280 px 宽窗口中表盘约 218 px，四周完整可见。"
+        }
+      ],
+      "promptSha256": "400eefb0eb1aaded20a7875887dada8bc09b2b58454b79ad69865057621cd5df",
+      "artifact": "runs/2026-11-28-codex-luna/ref-ai-world-clock/v1.html",
+      "artifactSha256": "735e27e88a3a591b1d0505bda2a4fc5c100783a4d95406beed9ed5be8141aeb4",
+      "files": [
+        {
+          "artifact": "runs/2026-11-28-codex-luna/ref-ai-world-clock/v1.html",
+          "sha256": "735e27e88a3a591b1d0505bda2a4fc5c100783a4d95406beed9ed5be8141aeb4"
+        }
+      ],
+      "rawOutput": "首次产物保存在 runs/2026-11-28-codex-luna/ref-ai-world-clock/v1.html。"
+    },
+    {
+      "id": "codex-luna-ref-mars-round-trip-v1",
+      "taskId": "ref-mars-round-trip",
+      "executionClass": "codex-luna-subagent-with-tools",
+      "label": "Codex 辅助执行 · GPT-6 Luna",
+      "provider": "OpenAI Codex",
+      "model": "gpt-6-luna",
+      "modelVersion": "Codex 子 Agent 指定的模型标识 gpt-6-luna。",
+      "context": "三组子 Agent 各完成 16 道作品任务。每项使用任务定义中的完整 prompt，馆藏的额外验收清单与既有作品未提供给生成 Agent。",
+      "environment": "macOS 本地工作区生成。主 Agent 用 Chromium、文件解析或源码检查复核，具体方法见逐项证据。",
+      "parameters": "使用子 Agent 默认推理参数，允许本地工具写文件。时间范围为批次准备到该任务提交文件的最后写入时间。",
+      "startedAt": "2026-11-28T11:18:52Z",
+      "endedAt": "2026-11-28T11:26:14Z",
+      "repairs": [],
+      "revision": "v1",
+      "status": "partial",
+      "checks": [
+        {
+          "name": "看得到地球和火星",
+          "pass": true,
+          "evidence": "画面显示带标注的地球和火星。"
+        },
+        {
+          "name": "飞行器离开地球",
+          "pass": true,
+          "evidence": "黄色飞行器沿弧线离开地球。"
+        },
+        {
+          "name": "到达火星",
+          "pass": true,
+          "evidence": "去程路径以火星坐标为终点，航程文案显示到达阶段。"
+        },
+        {
+          "name": "之后又离开火星回到地球",
+          "pass": true,
+          "evidence": "返程分支从火星坐标回到地球。"
+        },
+        {
+          "name": "题面要求的实现与交付",
+          "pass": false,
+          "evidence": "页面为二维 Canvas 路径，未采用题面指定的 Three.js 三维绘图，飞行器也没有驻留等待发射窗口。"
+        }
+      ],
+      "promptSha256": "a1f1a335a4e3b0e01c03e51f5195f196835275566dfcaccec82b8a20ecc8e50e",
+      "artifact": "runs/2026-11-28-codex-luna/ref-mars-round-trip/v1.html",
+      "artifactSha256": "5577d41c57c761f898a9cf78e836aa0762e3aa70ce7fba61736d2c7aca98dac0",
+      "files": [
+        {
+          "artifact": "runs/2026-11-28-codex-luna/ref-mars-round-trip/v1.html",
+          "sha256": "5577d41c57c761f898a9cf78e836aa0762e3aa70ce7fba61736d2c7aca98dac0"
+        }
+      ],
+      "rawOutput": "首次产物保存在 runs/2026-11-28-codex-luna/ref-mars-round-trip/v1.html。"
+    },
+    {
+      "id": "codex-luna-orig-lantern-bridge-v1",
+      "taskId": "orig-lantern-bridge",
+      "executionClass": "codex-luna-subagent-with-tools",
+      "label": "Codex 辅助执行 · GPT-6 Luna",
+      "provider": "OpenAI Codex",
+      "model": "gpt-6-luna",
+      "modelVersion": "Codex 子 Agent 指定的模型标识 gpt-6-luna。",
+      "context": "三组子 Agent 各完成 16 道作品任务。每项使用任务定义中的完整 prompt，馆藏的额外验收清单与既有作品未提供给生成 Agent。",
+      "environment": "macOS 本地工作区生成。主 Agent 用 Chromium、文件解析或源码检查复核，具体方法见逐项证据。",
+      "parameters": "使用子 Agent 默认推理参数，允许本地工具写文件。时间范围为批次准备到该任务提交文件的最后写入时间。",
+      "startedAt": "2026-11-28T11:18:52Z",
+      "endedAt": "2026-11-28T11:23:15Z",
+      "repairs": [],
+      "revision": "v1",
+      "status": "success",
+      "checks": [
+        {
+          "name": "数得清四盏灯笼和两团倒影",
+          "pass": true,
+          "evidence": "SVG 有三盏桥上灯、一盏檐灯，以及两个独立倒影组。"
+        },
+        {
+          "name": "灯笼在摇",
+          "pass": true,
+          "evidence": "连续浏览器截图显示灯笼和倒影在变化，CSS 动画循环。"
+        },
+        {
+          "name": "倒影比灯笼淡",
+          "pass": true,
+          "evidence": "两个倒影组单独设置透明度，颜色比不透明的灯笼淡。"
+        },
+        {
+          "name": "断网打开仍然能看",
+          "pass": true,
+          "evidence": "加载时阻断外部网络，SVG 和动画仍工作，资源请求为零。"
+        }
+      ],
+      "promptSha256": "0b008829ab294f2540dda3fe025cd1826e4f8778bdeabb9a71a1ea162245bfcb",
+      "artifact": "runs/2026-11-28-codex-luna/orig-lantern-bridge/v1.html",
+      "artifactSha256": "032c9e0a73c156e02c0c0812c79867afb8b4c14ddfa7987d6fa992e41f781f06",
+      "files": [
+        {
+          "artifact": "runs/2026-11-28-codex-luna/orig-lantern-bridge/v1.html",
+          "sha256": "032c9e0a73c156e02c0c0812c79867afb8b4c14ddfa7987d6fa992e41f781f06"
+        }
+      ],
+      "rawOutput": "首次产物保存在 runs/2026-11-28-codex-luna/orig-lantern-bridge/v1.html。"
+    },
+    {
+      "id": "codex-luna-orig-ticket-json-v1",
+      "taskId": "orig-ticket-json",
+      "executionClass": "codex-luna-subagent-with-tools",
+      "label": "Codex 辅助执行 · GPT-6 Luna",
+      "provider": "OpenAI Codex",
+      "model": "gpt-6-luna",
+      "modelVersion": "Codex 子 Agent 指定的模型标识 gpt-6-luna。",
+      "context": "三组子 Agent 各完成 16 道作品任务。每项使用任务定义中的完整 prompt，馆藏的额外验收清单与既有作品未提供给生成 Agent。",
+      "environment": "macOS 本地工作区生成。主 Agent 用 Chromium、文件解析或源码检查复核，具体方法见逐项证据。",
+      "parameters": "使用子 Agent 默认推理参数，允许本地工具写文件。时间范围为批次准备到该任务提交文件的最后写入时间。",
+      "startedAt": "2026-11-28T11:18:52Z",
+      "endedAt": "2026-11-28T11:22:55Z",
+      "repairs": [],
+      "revision": "v1",
+      "status": "success",
+      "checks": [
+        {
+          "name": "是合法 JSON",
+          "pass": true,
+          "evidence": "用标准 JSON 解析器成功读取单个对象。"
+        },
+        {
+          "name": "seat 等于「甲区 12 排 8 座」",
+          "pass": true,
+          "evidence": "seat 精确匹配甲区 12 排 8 座。"
+        },
+        {
+          "name": "startsAt 等于「19:30」",
+          "pass": true,
+          "evidence": "startsAt 为字符串 19:30。"
+        },
+        {
+          "name": "priceYuan 等于 40",
+          "pass": true,
+          "evidence": "priceYuan 为数值 40。"
+        }
+      ],
+      "promptSha256": "8235c6504131e05bbd8f7a14ee1dc29f0d425440acb0e1569bfc39661a8b4c72",
+      "artifact": "runs/2026-11-28-codex-luna/orig-ticket-json/v1.json",
+      "artifactSha256": "312f6ae957b3a711b99b62f3e22bb68129539971301c8ad4be3d0e5456c9bece",
+      "files": [
+        {
+          "artifact": "runs/2026-11-28-codex-luna/orig-ticket-json/v1.json",
+          "sha256": "312f6ae957b3a711b99b62f3e22bb68129539971301c8ad4be3d0e5456c9bece"
+        }
+      ],
+      "rawOutput": "首次产物保存在 runs/2026-11-28-codex-luna/orig-ticket-json/v1.json。"
+    },
+    {
+      "id": "codex-luna-orig-ferry-v1",
+      "taskId": "orig-ferry",
+      "executionClass": "codex-luna-subagent-with-tools",
+      "label": "Codex 辅助执行 · GPT-6 Luna",
+      "provider": "OpenAI Codex",
+      "model": "gpt-6-luna",
+      "modelVersion": "Codex 子 Agent 指定的模型标识 gpt-6-luna。",
+      "context": "三组子 Agent 各完成 16 道作品任务。每项使用任务定义中的完整 prompt，馆藏的额外验收清单与既有作品未提供给生成 Agent。",
+      "environment": "macOS 本地工作区生成。主 Agent 用 Chromium、文件解析或源码检查复核，具体方法见逐项证据。",
+      "parameters": "使用子 Agent 默认推理参数，允许本地工具写文件。时间范围为批次准备到该任务提交文件的最后写入时间。",
+      "startedAt": "2026-11-28T11:18:52Z",
+      "endedAt": "2026-11-28T11:23:12Z",
+      "repairs": [],
+      "revision": "v1",
+      "status": "success",
+      "checks": [
+        {
+          "name": "四样东西一开始都在左岸",
+          "pass": true,
+          "evidence": "浏览器初次渲染左岸有人、猫、鱼和鱼食四项。"
+        },
+        {
+          "name": "一次只能再带一件",
+          "pass": true,
+          "evidence": "点选物品时只保留一个同行选中项，单次移动只更新人和该物品。"
+        },
+        {
+          "name": "非法组合会被拒绝",
+          "pass": true,
+          "evidence": "起始点击独自渡河，页面拒绝该动作并保持原局。"
+        },
+        {
+          "name": "存在一条能全部过河的玩法",
+          "pass": true,
+          "evidence": "实测鱼→空→猫→鱼→鱼食→空→鱼，7 次后右岸齐全。"
+        }
+      ],
+      "promptSha256": "e84fd6aa8b6ec34e39f169569543e68c4ff70415c077bd8fa270f19b7de0b2bc",
+      "artifact": "runs/2026-11-28-codex-luna/orig-ferry/v1.html",
+      "artifactSha256": "14c843aae8fd0e5d4f4c2b668e4b518002de3b38f09f83ca9fc0675e5df531e3",
+      "files": [
+        {
+          "artifact": "runs/2026-11-28-codex-luna/orig-ferry/v1.html",
+          "sha256": "14c843aae8fd0e5d4f4c2b668e4b518002de3b38f09f83ca9fc0675e5df531e3"
+        }
+      ],
+      "rawOutput": "首次产物保存在 runs/2026-11-28-codex-luna/orig-ferry/v1.html。"
+    },
+    {
+      "id": "codex-luna-orig-three-lamps-v1",
+      "taskId": "orig-three-lamps",
+      "executionClass": "codex-luna-subagent-with-tools",
+      "label": "Codex 辅助执行 · GPT-6 Luna",
+      "provider": "OpenAI Codex",
+      "model": "gpt-6-luna",
+      "modelVersion": "Codex 子 Agent 指定的模型标识 gpt-6-luna。",
+      "context": "三组子 Agent 各完成 16 道作品任务。每项使用任务定义中的完整 prompt，馆藏的额外验收清单与既有作品未提供给生成 Agent。",
+      "environment": "macOS 本地工作区生成。主 Agent 用 Chromium、文件解析或源码检查复核，具体方法见逐项证据。",
+      "parameters": "使用子 Agent 默认推理参数，允许本地工具写文件。时间范围为批次准备到该任务提交文件的最后写入时间。",
+      "startedAt": "2026-11-28T11:18:52Z",
+      "endedAt": "2026-11-28T11:23:15Z",
+      "repairs": [],
+      "revision": "v1",
+      "status": "success",
+      "checks": [
+        {
+          "name": "打开时三盏都灭",
+          "pass": true,
+          "evidence": "初始亮灯元素数为 0。"
+        },
+        {
+          "name": "只按 A 后第一和第二盏亮",
+          "pass": true,
+          "evidence": "按 A 后显示亮、亮、灭。"
+        },
+        {
+          "name": "在此基础上按 C 后，亮着的是第二和第三盏",
+          "pass": true,
+          "evidence": "再按 C 后显示灭、亮、亮。"
+        },
+        {
+          "name": "再按一次 A 能把第二盏关掉",
+          "pass": true,
+          "evidence": "再按 A 后显示亮、灭、亮，第二盏熄灭。"
+        }
+      ],
+      "promptSha256": "b22a09957cbb47dd93676a47cac883d611c9e4b53b4558cb2ada4ae6b8164411",
+      "artifact": "runs/2026-11-28-codex-luna/orig-three-lamps/v1.html",
+      "artifactSha256": "6e9d95f4065d8c547d552702f080878ecfd662b2ff48714782c6e35fd3ff29d6",
+      "files": [
+        {
+          "artifact": "runs/2026-11-28-codex-luna/orig-three-lamps/v1.html",
+          "sha256": "6e9d95f4065d8c547d552702f080878ecfd662b2ff48714782c6e35fd3ff29d6"
+        }
+      ],
+      "rawOutput": "首次产物保存在 runs/2026-11-28-codex-luna/orig-three-lamps/v1.html。"
+    },
+    {
+      "id": "codex-luna-orig-tea-timer-v1",
+      "taskId": "orig-tea-timer",
+      "executionClass": "codex-luna-subagent-with-tools",
+      "label": "Codex 辅助执行 · GPT-6 Luna",
+      "provider": "OpenAI Codex",
+      "model": "gpt-6-luna",
+      "modelVersion": "Codex 子 Agent 指定的模型标识 gpt-6-luna。",
+      "context": "三组子 Agent 各完成 16 道作品任务。每项使用任务定义中的完整 prompt，馆藏的额外验收清单与既有作品未提供给生成 Agent。",
+      "environment": "macOS 本地工作区生成。主 Agent 用 Chromium、文件解析或源码检查复核，具体方法见逐项证据。",
+      "parameters": "使用子 Agent 默认推理参数，允许本地工具写文件。时间范围为批次准备到该任务提交文件的最后写入时间。",
+      "startedAt": "2026-11-28T11:18:52Z",
+      "endedAt": "2026-11-28T11:22:02Z",
+      "repairs": [],
+      "revision": "v1",
+      "status": "success",
+      "checks": [
+        {
+          "name": "三项都有自己的剩余时间",
+          "pass": true,
+          "evidence": "三个计时区域初始分别显示 8:00、2:00、1:00。"
+        },
+        {
+          "name": "同时开始时互不等待",
+          "pass": true,
+          "evidence": "依次开始三项并推进虚拟时钟约 5 秒，三个计时都已下降。"
+        },
+        {
+          "name": "洗杯先结束，烧水仍在走",
+          "pass": true,
+          "evidence": "推进到约 120 秒，洗杯为 0:00、烧水仍显示 5:59。"
+        },
+        {
+          "name": "三项都结束后出现可以泡了",
+          "pass": true,
+          "evidence": "推进到 480 秒后出现可以泡了。"
+        }
+      ],
+      "promptSha256": "0ff30f1b91689cef39a0fb7bb4640be8d99d2bf494ea8a68efa9e5cc0fb37181",
+      "artifact": "runs/2026-11-28-codex-luna/orig-tea-timer/v1.html",
+      "artifactSha256": "98c7241e064cb9b98477c2a8fccc338c01154e327eb3097f7b427a026ef7f4e9",
+      "files": [
+        {
+          "artifact": "runs/2026-11-28-codex-luna/orig-tea-timer/v1.html",
+          "sha256": "98c7241e064cb9b98477c2a8fccc338c01154e327eb3097f7b427a026ef7f4e9"
+        }
+      ],
+      "rawOutput": "首次产物保存在 runs/2026-11-28-codex-luna/orig-tea-timer/v1.html。"
+    },
+    {
+      "id": "codex-luna-orig-plaque-v1",
+      "taskId": "orig-plaque",
+      "executionClass": "codex-luna-subagent-with-tools",
+      "label": "Codex 辅助执行 · GPT-6 Luna",
+      "provider": "OpenAI Codex",
+      "model": "gpt-6-luna",
+      "modelVersion": "Codex 子 Agent 指定的模型标识 gpt-6-luna。",
+      "context": "三组子 Agent 各完成 16 道作品任务。每项使用任务定义中的完整 prompt，馆藏的额外验收清单与既有作品未提供给生成 Agent。",
+      "environment": "macOS 本地工作区生成。主 Agent 用 Chromium、文件解析或源码检查复核，具体方法见逐项证据。",
+      "parameters": "使用子 Agent 默认推理参数，允许本地工具写文件。时间范围为批次准备到该任务提交文件的最后写入时间。",
+      "startedAt": "2026-11-28T11:18:52Z",
+      "endedAt": "2026-11-28T11:23:12Z",
+      "repairs": [],
+      "revision": "v1",
+      "status": "success",
+      "checks": [
+        {
+          "name": "三行文字都在且顺序正确",
+          "pass": true,
+          "evidence": "Chromium 打印后依次提取出展品 No. 014、门外那盏灯、先加热再进门。"
+        },
+        {
+          "name": "没有多出来的说明段落",
+          "pass": true,
+          "evidence": "HTML 和打印文本均只有要求的三行正文。"
+        },
+        {
+          "name": "打印预览仍是一张卡片",
+          "pass": true,
+          "evidence": "Chromium 输出一页，页面中间是一张完整边框展签。"
+        }
+      ],
+      "promptSha256": "50c60252546dcfb2c25b296982c95c3e7cb347bbcadc4f67b2807757ae4dbcd6",
+      "artifact": "runs/2026-11-28-codex-luna/orig-plaque/v1.html",
+      "artifactSha256": "e2a6d5f3772056e8f675c769483d7663a746d9054efc334c69ab8536165e7360",
+      "files": [
+        {
+          "artifact": "runs/2026-11-28-codex-luna/orig-plaque/v1.html",
+          "sha256": "e2a6d5f3772056e8f675c769483d7663a746d9054efc334c69ab8536165e7360"
+        }
+      ],
+      "rawOutput": "首次产物保存在 runs/2026-11-28-codex-luna/orig-plaque/v1.html。"
+    },
+    {
+      "id": "codex-luna-orig-n01-lost-found-v1",
+      "taskId": "orig-n01-lost-found",
+      "executionClass": "codex-luna-subagent-with-tools",
+      "label": "Codex 辅助执行 · GPT-6 Luna",
+      "provider": "OpenAI Codex",
+      "model": "gpt-6-luna",
+      "modelVersion": "Codex 子 Agent 指定的模型标识 gpt-6-luna。",
+      "context": "三组子 Agent 各完成 16 道作品任务。每项使用任务定义中的完整 prompt，馆藏的额外验收清单与既有作品未提供给生成 Agent。",
+      "environment": "macOS 本地工作区生成。主 Agent 用 Chromium、文件解析或源码检查复核，具体方法见逐项证据。",
+      "parameters": "使用子 Agent 默认推理参数，允许本地工具写文件。时间范围为批次准备到该任务提交文件的最后写入时间。",
+      "startedAt": "2026-11-28T11:18:52Z",
+      "endedAt": "2026-11-28T11:23:15Z",
+      "repairs": [],
+      "revision": "v1",
+      "status": "partial",
+      "checks": [
+        {
+          "name": "四行按首次出现排序，A01 采用源行 4",
+          "pass": true,
+          "evidence": "页面依次显示 A01 至 A04，A01 取源行 4 的 2026-04-03 和数量 2。"
+        },
+        {
+          "name": "0 被保留，坏日期和空数量被记下来",
+          "pass": true,
+          "evidence": "导出保留 A02 的 0，问题清单记录非法日期和空数量。"
+        },
+        {
+          "name": "带逗号的物品名重读仍是一格",
+          "pass": true,
+          "evidence": "用 CSV 解析器重读导出数据，纸伞,蓝色保持为一格。"
+        },
+        {
+          "name": "改掉 A02 的数量后导出跟着变",
+          "pass": true,
+          "evidence": "把输入中 A02 的数量改为 7 后重新清洗，下载结果随之变成 7。"
+        },
+        {
+          "name": "题面要求的实现与交付",
+          "pass": false,
+          "evidence": "首次提交中缺少实际生成的 cleaned.csv 和 issues.json。验收时从页面重新导出了两份文件。"
+        }
+      ],
+      "promptSha256": "9007e0716f2974292d82f0ec17a072d0d15a44ab0e97251f75704e649019647a",
+      "artifact": "runs/2026-11-28-codex-luna/orig-n01-lost-found/index.html",
+      "artifactSha256": "f6fb2f8d37370071a4311a5c4abf8847c62a95bcfd6d2254752698111987c026",
+      "files": [
+        {
+          "artifact": "runs/2026-11-28-codex-luna/orig-n01-lost-found/README.md",
+          "sha256": "4ab544f37c721a9f609097e66c14f1ef18f926e7f6d2f92a8161569d41db72f7"
+        },
+        {
+          "artifact": "runs/2026-11-28-codex-luna/orig-n01-lost-found/index.html",
+          "sha256": "f6fb2f8d37370071a4311a5c4abf8847c62a95bcfd6d2254752698111987c026"
+        }
+      ],
+      "rawOutput": "首次产物保存在 runs/2026-11-28-codex-luna/orig-n01-lost-found/index.html。"
+    },
+    {
+      "id": "codex-luna-orig-n03-rain-booklet-v1",
+      "taskId": "orig-n03-rain-booklet",
+      "executionClass": "codex-luna-subagent-with-tools",
+      "label": "Codex 辅助执行 · GPT-6 Luna",
+      "provider": "OpenAI Codex",
+      "model": "gpt-6-luna",
+      "modelVersion": "Codex 子 Agent 指定的模型标识 gpt-6-luna。",
+      "context": "三组子 Agent 各完成 16 道作品任务。每项使用任务定义中的完整 prompt，馆藏的额外验收清单与既有作品未提供给生成 Agent。该任务的生成辅助脚本写入了系统临时目录，偏离题面的目录约束。",
+      "environment": "macOS 本地工作区生成。主 Agent 用 Chromium、文件解析或源码检查复核，具体方法见逐项证据。",
+      "parameters": "使用子 Agent 默认推理参数，允许本地工具写文件。时间范围为批次准备到该任务提交文件的最后写入时间。",
+      "startedAt": "2026-11-28T11:18:52Z",
+      "endedAt": "2026-11-28T11:20:47Z",
+      "repairs": [],
+      "revision": "v1",
+      "status": "partial",
+      "checks": [
+        {
+          "name": "PDF 正好两页且接近 A5",
+          "pass": false,
+          "evidence": "首次提交没有 booklet.pdf。用其原始 HTML 验收打印实际得到两页，尺寸均约 148.2 × 209.9 mm。"
+        },
+        {
+          "name": "三个站点的时间和限制都在",
+          "pass": true,
+          "evidence": "第一页打印内容保留三站时间、30 份、仅演示、不收食品、室内雨备和不需预约。"
+        },
+        {
+          "name": "摊主四个时点在第二页",
+          "pass": true,
+          "evidence": "PDF 第二页有 12:20、12:50、17:00、17:20，第一页有公众开放时段。"
+        },
+        {
+          "name": "没有网页按钮或浏览器页眉",
+          "pass": true,
+          "evidence": "复核浏览器打印页，两页没有网址、按钮或默认打印页眉页脚。"
+        },
+        {
+          "name": "题面要求的实现与交付",
+          "pass": false,
+          "evidence": "Luna 将生成辅助脚本写到系统临时目录，超出题面限定的任务目录。"
+        }
+      ],
+      "promptSha256": "07b985cf41635377baaa3cff65de5f095b14dc0e7646e666024b66b2c6caa7d6",
+      "artifact": "runs/2026-11-28-codex-luna/orig-n03-rain-booklet/print.html",
+      "artifactSha256": "a3ce0dc0710f37e9282e3f84cfa1931ffebe1c96c2b52170bc609f17521af1ca",
+      "files": [
+        {
+          "artifact": "runs/2026-11-28-codex-luna/orig-n03-rain-booklet/README.md",
+          "sha256": "a3141d74d184cb53de2aa3ded0e7da5172ae769de1f563568322b46206aa7639"
+        },
+        {
+          "artifact": "runs/2026-11-28-codex-luna/orig-n03-rain-booklet/print.html",
+          "sha256": "a3ce0dc0710f37e9282e3f84cfa1931ffebe1c96c2b52170bc609f17521af1ca"
+        }
+      ],
+      "rawOutput": "首次产物保存在 runs/2026-11-28-codex-luna/orig-n03-rain-booklet/print.html。"
+    },
+    {
+      "id": "codex-luna-orig-n04-paper-roster-v1",
+      "taskId": "orig-n04-paper-roster",
+      "executionClass": "codex-luna-subagent-with-tools",
+      "label": "Codex 辅助执行 · GPT-6 Luna",
+      "provider": "OpenAI Codex",
+      "model": "gpt-6-luna",
+      "modelVersion": "Codex 子 Agent 指定的模型标识 gpt-6-luna。",
+      "context": "三组子 Agent 各完成 16 道作品任务。每项使用任务定义中的完整 prompt，馆藏的额外验收清单与既有作品未提供给生成 Agent。",
+      "environment": "macOS 本地工作区生成。主 Agent 用 Chromium、文件解析或源码检查复核，具体方法见逐项证据。",
+      "parameters": "使用子 Agent 默认推理参数，允许本地工具写文件。时间范围为批次准备到该任务提交文件的最后写入时间。",
+      "startedAt": "2026-11-28T11:18:52Z",
+      "endedAt": "2026-11-28T11:26:59Z",
+      "repairs": [],
+      "revision": "v1",
+      "status": "partial",
+      "checks": [
+        {
+          "name": "四班各两人且都在可用时间内",
+          "pass": true,
+          "evidence": "实际导出 4 班、共 8 人次，逐人核对班次均在输入可用性内。"
+        },
+        {
+          "name": "每班有钥匙员，没有相邻班",
+          "pass": true,
+          "evidence": "逐班均有甲或乙，每人不超过 2 班，按班号核对无连班。"
+        },
+        {
+          "name": "清空甲的班次后明确无解",
+          "pass": true,
+          "evidence": "清空甲的 S1/S3 后生成，页面报告无解并替换原排班结果。"
+        },
+        {
+          "name": "恢复后还能再生成",
+          "pass": true,
+          "evidence": "恢复 S1/S3 后可以再次生成和下载有效班表。"
+        },
+        {
+          "name": "题面要求的实现与交付",
+          "pass": false,
+          "evidence": "首次提交只有 HTML，缺少题面要求单独交付的 roster.json 与 README.md。"
+        }
+      ],
+      "promptSha256": "557c6164ed6fb6626a5182eb9f208462ca1f35497d6832d4b2bee0acacaafb5e",
+      "artifact": "runs/2026-11-28-codex-luna/orig-n04-paper-roster/v1.html",
+      "artifactSha256": "3aae886b6738ba62fe925753ad0376d1d40440291b15fa704b17226151caf0d2",
+      "files": [
+        {
+          "artifact": "runs/2026-11-28-codex-luna/orig-n04-paper-roster/README.md",
+          "sha256": "4b5ef9eb36e300c6186da176b4403911ff39ee132cb8da1366a6c236839254ba"
+        },
+        {
+          "artifact": "runs/2026-11-28-codex-luna/orig-n04-paper-roster/v1.html",
+          "sha256": "3aae886b6738ba62fe925753ad0376d1d40440291b15fa704b17226151caf0d2"
+        }
+      ],
+      "rawOutput": "首次产物保存在 runs/2026-11-28-codex-luna/orig-n04-paper-roster/v1.html。"
+    },
+    {
+      "id": "codex-luna-orig-n05-subtitle-v1",
+      "taskId": "orig-n05-subtitle",
+      "executionClass": "codex-luna-subagent-with-tools",
+      "label": "Codex 辅助执行 · GPT-6 Luna",
+      "provider": "OpenAI Codex",
+      "model": "gpt-6-luna",
+      "modelVersion": "Codex 子 Agent 指定的模型标识 gpt-6-luna。",
+      "context": "三组子 Agent 各完成 16 道作品任务。每项使用任务定义中的完整 prompt，馆藏的额外验收清单与既有作品未提供给生成 Agent。",
+      "environment": "macOS 本地工作区生成。主 Agent 用 Chromium、文件解析或源码检查复核，具体方法见逐项证据。",
+      "parameters": "使用子 Agent 默认推理参数，允许本地工具写文件。时间范围为批次准备到该任务提交文件的最后写入时间。",
+      "startedAt": "2026-11-28T11:18:52Z",
+      "endedAt": "2026-11-28T11:23:15Z",
+      "repairs": [],
+      "revision": "v1",
+      "status": "success",
+      "checks": [
+        {
+          "name": "第一条被丢弃，其余三段时间正确",
+          "pass": true,
+          "evidence": "报告丢弃原第 1 条并说明结束不晚于开始。余下三段为 300–2300、2100–3300、4300–6300 ms。"
+        },
+        {
+          "name": "SRT 连续编号，VTT 用点号毫秒",
+          "pass": true,
+          "evidence": "下载 SRT 连续编号 1–3，VTT 有 WEBVTT 头及点号毫秒，末条标签字符串按原文保留。"
+        },
+        {
+          "name": "只报告 2 与 3 重叠 200 毫秒",
+          "pass": true,
+          "evidence": "下载报告仅标出源条目 2、3 重叠 200 ms。"
+        },
+        {
+          "name": "2.2 秒两条、2.3 秒一条，改成 0 后导出改变",
+          "pass": true,
+          "evidence": "游标在 2.2 秒显示两条，在 2.3 秒显示一条。校正量改成 0 后下载报告更新。"
+        }
+      ],
+      "promptSha256": "bb1865ae01c32959e26a8d8ce7b428e4129b10d681ea85c42d347fe83f8589af",
+      "artifact": "runs/2026-11-28-codex-luna/orig-n05-subtitle/index.html",
+      "artifactSha256": "8aecab8e3ee5cbe2b4b4ab28d8fb82412ad7f82dbc0b28f48d7d72f73e9ae489",
+      "files": [
+        {
+          "artifact": "runs/2026-11-28-codex-luna/orig-n05-subtitle/README.md",
+          "sha256": "3a70261fe8ed004324a0023a02f170fd71bed56fe5b6b36936baf596ea49e03e"
+        },
+        {
+          "artifact": "runs/2026-11-28-codex-luna/orig-n05-subtitle/corrected.srt",
+          "sha256": "4c4828b606cb76299ce9b7b6c0d73a199d7f5583bf26acdac55166d3f9749c61"
+        },
+        {
+          "artifact": "runs/2026-11-28-codex-luna/orig-n05-subtitle/corrected.vtt",
+          "sha256": "5bac623abca4a653b7442bee8ff1bf72efc71c40ae2d9ce340b08c2a5886f8ff"
+        },
+        {
+          "artifact": "runs/2026-11-28-codex-luna/orig-n05-subtitle/index.html",
+          "sha256": "8aecab8e3ee5cbe2b4b4ab28d8fb82412ad7f82dbc0b28f48d7d72f73e9ae489"
+        },
+        {
+          "artifact": "runs/2026-11-28-codex-luna/orig-n05-subtitle/report.json",
+          "sha256": "09b9e7fdfd85935db8e2bc9895db79bbf3e099345da57e67ba13b5cb52b5bfed"
+        }
+      ],
+      "rawOutput": "首次产物保存在 runs/2026-11-28-codex-luna/orig-n05-subtitle/index.html。"
+    },
+    {
+      "id": "codex-luna-orig-n02-pastry-waste-v1",
+      "taskId": "orig-n02-pastry-waste",
+      "executionClass": "codex-luna-subagent-with-tools",
+      "label": "Codex 辅助执行 · GPT-6 Luna",
+      "provider": "OpenAI Codex",
+      "model": "gpt-6-luna",
+      "modelVersion": "Codex 子 Agent 指定的模型标识 gpt-6-luna。",
+      "context": "三组子 Agent 各完成 16 道作品任务。每项使用任务定义中的完整 prompt，馆藏的额外验收清单与既有作品未提供给生成 Agent。该任务的生成辅助脚本写入了系统临时目录，偏离题面的目录约束。",
+      "environment": "macOS 本地工作区生成。主 Agent 用 Chromium、文件解析或源码检查复核，具体方法见逐项证据。",
+      "parameters": "使用子 Agent 默认推理参数，允许本地工具写文件。时间范围为批次准备到该任务提交文件的最后写入时间。",
+      "startedAt": "2026-11-28T11:18:52Z",
+      "endedAt": "2026-11-28T11:20:47Z",
+      "repairs": [],
+      "revision": "v1",
+      "status": "partial",
+      "checks": [
+        {
+          "name": "全量月牙饼剩余 5，分母是 20 不是 32",
+          "pass": true,
+          "evidence": "全量下载的月牙饼为剩余 5、份额 5/20，缺测行未计入分母。"
+        },
+        {
+          "name": "星星酥剩余 4/26，合计可计算剩余 9",
+          "pass": true,
+          "evidence": "星星酥为 4/26，全量可计算剩余 9。"
+        },
+        {
+          "name": "4 月 2 日月牙饼显示未知",
+          "pass": true,
+          "evidence": "切到 4 月 2 日，月牙饼剩余为未知，导出相应字段为 null。"
+        },
+        {
+          "name": "条形图从 0 起，导出与页面一致",
+          "pass": true,
+          "evidence": "条形图旁显示零起点，筛选后的图表数值与下载摘要一致。"
+        },
+        {
+          "name": "题面要求的实现与交付",
+          "pass": false,
+          "evidence": "Luna 将生成辅助脚本写到系统临时目录，超出题面限定的任务目录。"
+        }
+      ],
+      "promptSha256": "7705f0fcacd6c7b4e460696235802c6ec02e15685e4142fdab72a8890098ba7a",
+      "artifact": "runs/2026-11-28-codex-luna/orig-n02-pastry-waste/index.html",
+      "artifactSha256": "1c89a1098e2f23912dc85b880dfd1bd3f90cae9d542c674a22911469bb27db05",
+      "files": [
+        {
+          "artifact": "runs/2026-11-28-codex-luna/orig-n02-pastry-waste/README.md",
+          "sha256": "bff5b85f03b3f285a2f730e735e052c1a922cef51facd520e4945df9409e18a7"
+        },
+        {
+          "artifact": "runs/2026-11-28-codex-luna/orig-n02-pastry-waste/index.html",
+          "sha256": "1c89a1098e2f23912dc85b880dfd1bd3f90cae9d542c674a22911469bb27db05"
+        },
+        {
+          "artifact": "runs/2026-11-28-codex-luna/orig-n02-pastry-waste/summary.json",
+          "sha256": "0dcbea0543f97881d093b4c8310686603597c73b6dde9f252f13decb1134965d"
+        }
+      ],
+      "rawOutput": "首次产物保存在 runs/2026-11-28-codex-luna/orig-n02-pastry-waste/index.html。"
+    },
+    {
+      "id": "codex-luna-orig-n06-rename-v1",
+      "taskId": "orig-n06-rename",
+      "executionClass": "codex-luna-subagent-with-tools",
+      "label": "Codex 辅助执行 · GPT-6 Luna",
+      "provider": "OpenAI Codex",
+      "model": "gpt-6-luna",
+      "modelVersion": "Codex 子 Agent 指定的模型标识 gpt-6-luna。",
+      "context": "三组子 Agent 各完成 16 道作品任务。每项使用任务定义中的完整 prompt，馆藏的额外验收清单与既有作品未提供给生成 Agent。",
+      "environment": "macOS 本地工作区生成。主 Agent 用 Chromium、文件解析或源码检查复核，具体方法见逐项证据。",
+      "parameters": "使用子 Agent 默认推理参数，允许本地工具写文件。时间范围为批次准备到该任务提交文件的最后写入时间。",
+      "startedAt": "2026-11-28T11:18:52Z",
+      "endedAt": "2026-11-28T11:24:51Z",
+      "repairs": [],
+      "revision": "v1",
+      "status": "success",
+      "checks": [
+        {
+          "name": "冲突计划拦住且三个文件哈希不变",
+          "pass": true,
+          "evidence": "在产物副本中造冲突，计划和应用均退出 2，三个文件哈希保持。"
+        },
+        {
+          "name": "修复后只改红蓝，cloud 字节不变",
+          "pass": true,
+          "evidence": "修复计划后应用只改红蓝两项，cloud 文件的 SHA-256 一致。"
+        },
+        {
+          "name": "撤销后路径和字节恢复",
+          "pass": true,
+          "evidence": "应用后运行撤销，三个原文件名和 SHA-256 全部恢复。"
+        },
+        {
+          "name": "拒绝目录外路径，不用今天补日期",
+          "pass": true,
+          "evidence": "测试 ../IMG_01.jpg 和缺日期，两项均被拒绝，计划无输出目标。"
+        }
+      ],
+      "promptSha256": "96be29e3dc7bc2871faa6bfaa55cc81998a948941352de40498c13f873fc5c2f",
+      "artifact": "runs/2026-11-28-codex-luna/orig-n06-rename/index.html",
+      "artifactSha256": "e8745a4468104bc0b469d23399f568cb6f521541847dd756bace330556c49c6d",
+      "files": [
+        {
+          "artifact": "runs/2026-11-28-codex-luna/orig-n06-rename/README.md",
+          "sha256": "84b2f2c50bc2f9780bf9afe9a00d6c518721e123d37989fccb7727ee3e4c91a6"
+        },
+        {
+          "artifact": "runs/2026-11-28-codex-luna/orig-n06-rename/index.html",
+          "sha256": "e8745a4468104bc0b469d23399f568cb6f521541847dd756bace330556c49c6d"
+        },
+        {
+          "artifact": "runs/2026-11-28-codex-luna/orig-n06-rename/log.json",
+          "sha256": "1d74cd3138d3f03ea949ea48421d4275fc7f286228399ce52d28bb7839600764"
+        },
+        {
+          "artifact": "runs/2026-11-28-codex-luna/orig-n06-rename/manifest.json",
+          "sha256": "81fced84097f41626dcc65e9c1496bb9c5a0af7e0fb4c2e620419254f16d9fd6"
+        },
+        {
+          "artifact": "runs/2026-11-28-codex-luna/orig-n06-rename/plan.json",
+          "sha256": "5b02c1bb88d3aaac8a7fb1c42b2c54b076aae1b56e0f7f163a543ac162cf510a"
+        },
+        {
+          "artifact": "runs/2026-11-28-codex-luna/orig-n06-rename/rename_tool.py",
+          "sha256": "b91ace494de053537035782a728fbc36108a9792c3818e1adfe375a0bedf62a0"
+        },
+        {
+          "artifact": "runs/2026-11-28-codex-luna/orig-n06-rename/sandbox/2026-04-01_cloud.jpg",
+          "sha256": "61b822fd86521785323f342ba64b7e48ed727123a8486592315829c3135f78a1"
+        },
+        {
+          "artifact": "runs/2026-11-28-codex-luna/orig-n06-rename/sandbox/IMG_01.jpg",
+          "sha256": "2a191a15a62a8dbc363e560a3de8801905e31681df8ca59e9ddec99f687c5d6b"
+        },
+        {
+          "artifact": "runs/2026-11-28-codex-luna/orig-n06-rename/sandbox/IMG_02.jpg",
+          "sha256": "3168bffb0b2ac59970f8ee6af97de08c1b37a13897ea396ff60700a2ae2bcabf"
+        },
+        {
+          "artifact": "runs/2026-11-28-codex-luna/orig-n06-rename/undo.json",
+          "sha256": "7705b7b7a0d73fedabaf8381da0cdff6200e90fd37826789b1084893d65086c0"
+        }
+      ],
+      "rawOutput": "首次产物保存在 runs/2026-11-28-codex-luna/orig-n06-rename/index.html。"
+    },
+    {
+      "id": "codex-luna-orig-n07-seed-ledger-v1",
+      "taskId": "orig-n07-seed-ledger",
+      "executionClass": "codex-luna-subagent-with-tools",
+      "label": "Codex 辅助执行 · GPT-6 Luna",
+      "provider": "OpenAI Codex",
+      "model": "gpt-6-luna",
+      "modelVersion": "Codex 子 Agent 指定的模型标识 gpt-6-luna。",
+      "context": "三组子 Agent 各完成 16 道作品任务。每项使用任务定义中的完整 prompt，馆藏的额外验收清单与既有作品未提供给生成 Agent。",
+      "environment": "macOS 本地工作区生成。主 Agent 用 Chromium、文件解析或源码检查复核，具体方法见逐项证据。",
+      "parameters": "使用子 Agent 默认推理参数，允许本地工具写文件。时间范围为批次准备到该任务提交文件的最后写入时间。",
+      "startedAt": "2026-11-28T11:18:52Z",
+      "endedAt": "2026-11-28T11:23:15Z",
+      "repairs": [],
+      "revision": "v1",
+      "status": "success",
+      "checks": [
+        {
+          "name": "第二次借出被拒绝且不记事件",
+          "pass": true,
+          "evidence": "第二次借豆星 2 被拒绝，事件列表仍只有首笔借出。"
+        },
+        {
+          "name": "撤销只收回还，库存回到 1 和 1",
+          "pass": true,
+          "evidence": "归还月瓜后撤销，保留豆星借出，库存为豆星 1、月瓜 1。"
+        },
+        {
+          "name": "刷新保持，重置恢复，非法数量不入账",
+          "pass": true,
+          "evidence": "刷新后导出完全相同，数量 0 未入账，重置恢复 3/1 及空事件。"
+        },
+        {
+          "name": "导出事件重放与页面一致",
+          "pass": true,
+          "evidence": "用导出初值和仅剩的借出 2 事件独立得出 1/1，与页面一致。"
+        }
+      ],
+      "promptSha256": "83ed4b184e9de2613c69997131951e515386be3f389ab843a4f5267a27db0302",
+      "artifact": "runs/2026-11-28-codex-luna/orig-n07-seed-ledger/index.html",
+      "artifactSha256": "67d96fc725d66b22b6bd9445d52e0af91804f6127a815d48adb4bcba686ca48a",
+      "files": [
+        {
+          "artifact": "runs/2026-11-28-codex-luna/orig-n07-seed-ledger/README.md",
+          "sha256": "f6de9bfa481caa9c7cf0330365610728464fb7090bb0f296305d69c245ad94cd"
+        },
+        {
+          "artifact": "runs/2026-11-28-codex-luna/orig-n07-seed-ledger/index.html",
+          "sha256": "67d96fc725d66b22b6bd9445d52e0af91804f6127a815d48adb4bcba686ca48a"
+        },
+        {
+          "artifact": "runs/2026-11-28-codex-luna/orig-n07-seed-ledger/ledger.json",
+          "sha256": "921b369de7bc038c6c1eafde4776637630782a892be1f524ef2876e77f6bc8af"
+        }
+      ],
+      "rawOutput": "首次产物保存在 runs/2026-11-28-codex-luna/orig-n07-seed-ledger/index.html。"
+    },
+    {
+      "id": "codex-luna-orig-n08-repair-form-v1",
+      "taskId": "orig-n08-repair-form",
+      "executionClass": "codex-luna-subagent-with-tools",
+      "label": "Codex 辅助执行 · GPT-6 Luna",
+      "provider": "OpenAI Codex",
+      "model": "gpt-6-luna",
+      "modelVersion": "Codex 子 Agent 指定的模型标识 gpt-6-luna。",
+      "context": "三组子 Agent 各完成 16 道作品任务。每项使用任务定义中的完整 prompt，馆藏的额外验收清单与既有作品未提供给生成 Agent。该任务的生成辅助脚本写入了系统临时目录，偏离题面的目录约束。",
+      "environment": "macOS 本地工作区生成。主 Agent 用 Chromium、文件解析或源码检查复核，具体方法见逐项证据。",
+      "parameters": "使用子 Agent 默认推理参数，允许本地工具写文件。时间范围为批次准备到该任务提交文件的最后写入时间。",
+      "startedAt": "2026-11-28T11:18:52Z",
+      "endedAt": "2026-11-28T11:22:02Z",
+      "repairs": [],
+      "revision": "v1",
+      "status": "partial",
+      "checks": [
+        {
+          "name": "四个样例按优先级分流",
+          "pass": true,
+          "evidence": "实测纸品、布艺、危险的纸品和其他类别依次分流到纸艺桌、缝补桌、拒收和咨询桌。"
+        },
+        {
+          "name": "空值、未选和超长被拒绝且原值还在",
+          "pass": true,
+          "evidence": "空名称、未选危险项及 45 字名称被拒绝，输入和备注仍保留。"
+        },
+        {
+          "name": "键盘能完成填写、提交、返回和下载",
+          "pass": true,
+          "evidence": "用键盘走通选择、提交、Enter 下载及返回修改，焦点回到原输入。"
+        },
+        {
+          "name": "回执与输入一致，没有外发",
+          "pass": true,
+          "evidence": "键盘下载的回执含手账、其他、否和原备注，rule_id 为 OTHER_DESK。页面完成该流程未访问外部网络。"
+        },
+        {
+          "name": "题面要求的实现与交付",
+          "pass": false,
+          "evidence": "Luna 将生成辅助脚本写到系统临时目录，超出题面限定的任务目录。"
+        }
+      ],
+      "promptSha256": "69055853894a468c8c9c25f1e5f074eaa3d3e143fd32ceb7de551dceef74d0ca",
+      "artifact": "runs/2026-11-28-codex-luna/orig-n08-repair-form/index.html",
+      "artifactSha256": "d08d1bdb6d89ab3710f39878f242f5f689ebbb70fa2cd4c0069cf1acad4356dc",
+      "files": [
+        {
+          "artifact": "runs/2026-11-28-codex-luna/orig-n08-repair-form/README.md",
+          "sha256": "c9487dd59b3ff0f6a677899e1af2382a19ec93d35c1625276242dee3ed439cd2"
+        },
+        {
+          "artifact": "runs/2026-11-28-codex-luna/orig-n08-repair-form/index.html",
+          "sha256": "d08d1bdb6d89ab3710f39878f242f5f689ebbb70fa2cd4c0069cf1acad4356dc"
+        },
+        {
+          "artifact": "runs/2026-11-28-codex-luna/orig-n08-repair-form/receipt.json",
+          "sha256": "c741deceb81d2e8be633250d42e0a3875c475726bf2c7e5f6e62f2c3eb25da7a"
+        }
+      ],
+      "rawOutput": "首次产物保存在 runs/2026-11-28-codex-luna/orig-n08-repair-form/index.html。"
+    },
+    {
+      "id": "codex-luna-orig-n09-comma-diff-v1",
+      "taskId": "orig-n09-comma-diff",
+      "executionClass": "codex-luna-subagent-with-tools",
+      "label": "Codex 辅助执行 · GPT-6 Luna",
+      "provider": "OpenAI Codex",
+      "model": "gpt-6-luna",
+      "modelVersion": "Codex 子 Agent 指定的模型标识 gpt-6-luna。",
+      "context": "三组子 Agent 各完成 16 道作品任务。每项使用任务定义中的完整 prompt，馆藏的额外验收清单与既有作品未提供给生成 Agent。",
+      "environment": "macOS 本地工作区生成。主 Agent 用 Chromium、文件解析或源码检查复核，具体方法见逐项证据。",
+      "parameters": "使用子 Agent 默认推理参数，允许本地工具写文件。时间范围为批次准备到该任务提交文件的最后写入时间。",
+      "startedAt": "2026-11-28T11:18:52Z",
+      "endedAt": "2026-11-28T11:24:09Z",
+      "repairs": [],
+      "revision": "v1",
+      "status": "success",
+      "checks": [
+        {
+          "name": "差异能拼回原文和改文",
+          "pass": true,
+          "evidence": "将默认导出段分别过滤插入或删除后拼接，可重建原文和改文。"
+        },
+        {
+          "name": "默认代价 8，短例子代价 1",
+          "pass": true,
+          "evidence": "默认比较代价 8，输入甲乙→甲乙丙得到代价 1。"
+        },
+        {
+          "name": "安全探针保持为文字",
+          "pass": true,
+          "evidence": "把 HTML 片段填入改文后，右区显示原样文本且没有 img 元素。"
+        },
+        {
+          "name": "改字后导出跟着变",
+          "pass": true,
+          "evidence": "改文后重新下载 diff.json，new、segments 及 cost 随输入变化。"
+        }
+      ],
+      "promptSha256": "7c5ddc48d48653a27fd04be0324905cd112d642fdec2cd638710b149fe13ad2d",
+      "artifact": "runs/2026-11-28-codex-luna/orig-n09-comma-diff/index.html",
+      "artifactSha256": "43ec983e4c9320324553aa95b00241cb8ccb1a13c0f562313cb3229850c951fa",
+      "files": [
+        {
+          "artifact": "runs/2026-11-28-codex-luna/orig-n09-comma-diff/README.md",
+          "sha256": "e86741b979faf75506137b943a304872a9a6dc722e927ebe117666902ba9433a"
+        },
+        {
+          "artifact": "runs/2026-11-28-codex-luna/orig-n09-comma-diff/diff.json",
+          "sha256": "fd9ce39f2f4ccbf7d8cd19016f30548091c23ab0f4db6c244889a1365294e58c"
+        },
+        {
+          "artifact": "runs/2026-11-28-codex-luna/orig-n09-comma-diff/index.html",
+          "sha256": "43ec983e4c9320324553aa95b00241cb8ccb1a13c0f562313cb3229850c951fa"
+        }
+      ],
+      "rawOutput": "首次产物保存在 runs/2026-11-28-codex-luna/orig-n09-comma-diff/index.html。"
+    },
+    {
+      "id": "codex-luna-orig-n10-midnight-post-v1",
+      "taskId": "orig-n10-midnight-post",
+      "executionClass": "codex-luna-subagent-with-tools",
+      "label": "Codex 辅助执行 · GPT-6 Luna",
+      "provider": "OpenAI Codex",
+      "model": "gpt-6-luna",
+      "modelVersion": "Codex 子 Agent 指定的模型标识 gpt-6-luna。",
+      "context": "三组子 Agent 各完成 16 道作品任务。每项使用任务定义中的完整 prompt，馆藏的额外验收清单与既有作品未提供给生成 Agent。",
+      "environment": "macOS 本地工作区生成。主 Agent 用 Chromium、文件解析或源码检查复核，具体方法见逐项证据。",
+      "parameters": "使用子 Agent 默认推理参数，允许本地工具写文件。时间范围为批次准备到该任务提交文件的最后写入时间。",
+      "startedAt": "2026-11-28T11:18:52Z",
+      "endedAt": "2026-11-28T11:23:15Z",
+      "repairs": [],
+      "revision": "v1",
+      "status": "success",
+      "checks": [
+        {
+          "name": "七节点和三条结局都可达",
+          "pass": true,
+          "evidence": "story.json 与页面含 A/B/C/D/E1/E2/E3 七节点及题目所列边；QA probes 报告三个结局均可达。"
+        },
+        {
+          "name": "花掉邮票后不能寄给明天",
+          "pass": true,
+          "evidence": "B支出1票后状态降为0，D的E2选项依赖 stamps>=1 并禁用显示原因；保留邮票路线可选E2；QA probes确认禁用行为。"
+        },
+        {
+          "name": "后退恢复邮票，重读回到初态",
+          "pass": true,
+          "evidence": "path 保存每步邮票状态，后退仅移动游标，故可退回B并改选保留邮票；restart重置到A并清空选择。QA probes确认退款/重置结果。"
+        },
+        {
+          "name": "正文长度合格，日志能重放",
+          "pass": true,
+          "evidence": "QA probes记录七节点正文长度为67–80个中文字符；reading-log按选择序列记录节点、选项和余票，含可重放的完整状态信息。"
+        }
+      ],
+      "promptSha256": "7f8575d0a5c356606b3ddab5dd7684bf83c2d2574ccd5fc80e8b03b4dc2def6c",
+      "artifact": "runs/2026-11-28-codex-luna/orig-n10-midnight-post/index.html",
+      "artifactSha256": "87a2ff338d5e3bd2916178be611d3680c18fc7af7ed17def6855e879c58b2352",
+      "files": [
+        {
+          "artifact": "runs/2026-11-28-codex-luna/orig-n10-midnight-post/README.md",
+          "sha256": "e2a45a0c66de6437e8a945cf2be391c16fc6c86da56458d1b5acb5a8ec618c82"
+        },
+        {
+          "artifact": "runs/2026-11-28-codex-luna/orig-n10-midnight-post/index.html",
+          "sha256": "87a2ff338d5e3bd2916178be611d3680c18fc7af7ed17def6855e879c58b2352"
+        },
+        {
+          "artifact": "runs/2026-11-28-codex-luna/orig-n10-midnight-post/reading-log.json",
+          "sha256": "84328b856b6f1c0a5c29df50885c9fbf4edbe5a0bf3b60731df814fe82ebf8bd"
+        },
+        {
+          "artifact": "runs/2026-11-28-codex-luna/orig-n10-midnight-post/story.json",
+          "sha256": "d7f65793798e7b6e476c78ef1e35abd813fa8c9f44a094daa7692c85a0c15cb7"
+        }
+      ],
+      "rawOutput": "首次产物保存在 runs/2026-11-28-codex-luna/orig-n10-midnight-post/index.html。"
+    },
+    {
+      "id": "codex-luna-orig-n15-pocket-notes-v1",
+      "taskId": "orig-n15-pocket-notes",
+      "executionClass": "codex-luna-subagent-with-tools",
+      "label": "Codex 辅助执行 · GPT-6 Luna",
+      "provider": "OpenAI Codex",
+      "model": "gpt-6-luna",
+      "modelVersion": "Codex 子 Agent 指定的模型标识 gpt-6-luna。",
+      "context": "三组子 Agent 各完成 16 道作品任务。每项使用任务定义中的完整 prompt，馆藏的额外验收清单与既有作品未提供给生成 Agent。该任务的生成辅助脚本写入了系统临时目录，偏离题面的目录约束。",
+      "environment": "macOS 本地工作区生成。主 Agent 用 Chromium、文件解析或源码检查复核，具体方法见逐项证据。",
+      "parameters": "使用子 Agent 默认推理参数，允许本地工具写文件。时间范围为批次准备到该任务提交文件的最后写入时间。",
+      "startedAt": "2026-11-28T11:18:52Z",
+      "endedAt": "2026-11-28T11:22:02Z",
+      "repairs": [],
+      "revision": "v1",
+      "status": "failure",
+      "checks": [
+        {
+          "name": "三个探针的编号正确",
+          "pass": false,
+          "evidence": "原始 HTML 的脚本解析遇到 Unexpected token export，三个检索探针均无法运行。"
+        },
+        {
+          "name": "片段能回到原便签",
+          "pass": false,
+          "evidence": "检索列表与原文视图依赖未能解析的脚本，浏览器没有生成对应内容。"
+        },
+        {
+          "name": "钉住、导出和 HTML 都按规则",
+          "pass": false,
+          "evidence": "页面无法钉住或导出。附带的 results.json 无法由页面当前查询重现。"
+        },
+        {
+          "name": "题面要求的实现与交付",
+          "pass": false,
+          "evidence": "Luna 将生成辅助脚本写到系统临时目录，超出题面限定的任务目录。"
+        }
+      ],
+      "promptSha256": "56b8a3995ee1b931c22abf8e18d39b2cd63f0e43483bdf2b787258eb67d452c4",
+      "artifact": "runs/2026-11-28-codex-luna/orig-n15-pocket-notes/index.html",
+      "artifactSha256": "80724f1655652e7d80eb5288a6774bf8851fe41be7a9392338ab7eb5e74e2190",
+      "files": [
+        {
+          "artifact": "runs/2026-11-28-codex-luna/orig-n15-pocket-notes/README.md",
+          "sha256": "af20d71b6d87370c209af8c14bfc6d9390bc8917f7abe5e5bee3ce1c0b07fd50"
+        },
+        {
+          "artifact": "runs/2026-11-28-codex-luna/orig-n15-pocket-notes/index.html",
+          "sha256": "80724f1655652e7d80eb5288a6774bf8851fe41be7a9392338ab7eb5e74e2190"
+        },
+        {
+          "artifact": "runs/2026-11-28-codex-luna/orig-n15-pocket-notes/results.json",
+          "sha256": "afade6341638cc29e9ec085c325f16bb7ffc7be005342979484a3ac9a023e585"
+        }
+      ],
+      "rawOutput": "首次产物保存在 runs/2026-11-28-codex-luna/orig-n15-pocket-notes/index.html。首次 HTML 由 Luna 原始生成脚本逐字恢复。"
+    },
+    {
+      "id": "codex-luna-orig-n16-revision-v1",
+      "taskId": "orig-n16-revision",
+      "executionClass": "codex-luna-subagent-with-tools",
+      "label": "Codex 辅助执行 · GPT-6 Luna",
+      "provider": "OpenAI Codex",
+      "model": "gpt-6-luna",
+      "modelVersion": "Codex 子 Agent 指定的模型标识 gpt-6-luna。",
+      "context": "三组子 Agent 各完成 16 道作品任务。每项使用任务定义中的完整 prompt，馆藏的额外验收清单与既有作品未提供给生成 Agent。",
+      "environment": "macOS 本地工作区生成。主 Agent 用 Chromium、文件解析或源码检查复核，具体方法见逐项证据。",
+      "parameters": "使用子 Agent 默认推理参数，允许本地工具写文件。时间范围为批次准备到该任务提交文件的最后写入时间。",
+      "startedAt": "2026-11-28T11:18:52Z",
+      "endedAt": "2026-11-28T11:24:09Z",
+      "repairs": [],
+      "revision": "v1",
+      "status": "partial",
+      "checks": [
+        {
+          "name": "修订后的三段时间首尾相接",
+          "pass": true,
+          "evidence": "修订视图显示 10:30–10:40、10:40–11:30、11:30–11:40 三个首尾相接的时段。"
+        },
+        {
+          "name": "纸张数量在三个视图里一致",
+          "pass": false,
+          "evidence": "只有物资单显示纸张总需 36、需补 26，公告和流程表不显示纸张数。"
+        },
+        {
+          "name": "非目标字段不改",
+          "pass": true,
+          "evidence": "比对导出可见标题、日期、地点、主办方标识和库存保持题面数值。"
+        },
+        {
+          "name": "人数改成 2 时不出现负补货",
+          "pass": true,
+          "evidence": "人数设为 2 后总需 6、需补 0，切回原版仍是 8 人、总需 24、需补 14。"
+        }
+      ],
+      "promptSha256": "4bc25a7dd8ac9af021a55a5f565f3e05582f6e075a433ba539160552286b231d",
+      "artifact": "runs/2026-11-28-codex-luna/orig-n16-revision/change.html",
+      "artifactSha256": "863dd0f755004270e428899964bf728f6389f206e3601e5184de90f623c73427",
+      "files": [
+        {
+          "artifact": "runs/2026-11-28-codex-luna/orig-n16-revision/README.md",
+          "sha256": "65ba6d1c55be98cf3d9fb78412b42927dd0fa0b090a8b768dae1d6a4478fa75e"
+        },
+        {
+          "artifact": "runs/2026-11-28-codex-luna/orig-n16-revision/change-log.json",
+          "sha256": "4fa0f7479b8e486a7c8e623dd6124540a49d6cb72322bb79d2c2f7eaed80fa8d"
+        },
+        {
+          "artifact": "runs/2026-11-28-codex-luna/orig-n16-revision/change.html",
+          "sha256": "863dd0f755004270e428899964bf728f6389f206e3601e5184de90f623c73427"
+        },
+        {
+          "artifact": "runs/2026-11-28-codex-luna/orig-n16-revision/revised.json",
+          "sha256": "ee1ec5db3eb69f2dd9d309a76a7616ad848e0f833e0594c7629a8bfa608d5879"
+        }
+      ],
+      "rawOutput": "首次产物保存在 runs/2026-11-28-codex-luna/orig-n16-revision/change.html。"
+    },
+    {
+      "id": "codex-luna-orig-n14-sound-postcard-v1",
+      "taskId": "orig-n14-sound-postcard",
+      "executionClass": "codex-luna-subagent-with-tools",
+      "label": "Codex 辅助执行 · GPT-6 Luna",
+      "provider": "OpenAI Codex",
+      "model": "gpt-6-luna",
+      "modelVersion": "Codex 子 Agent 指定的模型标识 gpt-6-luna。",
+      "context": "三组子 Agent 各完成 16 道作品任务。每项使用任务定义中的完整 prompt，馆藏的额外验收清单与既有作品未提供给生成 Agent。",
+      "environment": "macOS 本地工作区生成。主 Agent 用 Chromium、文件解析或源码检查复核，具体方法见逐项证据。",
+      "parameters": "使用子 Agent 默认推理参数，允许本地工具写文件。时间范围为批次准备到该任务提交文件的最后写入时间。",
+      "startedAt": "2026-11-28T11:18:52Z",
+      "endedAt": "2026-11-28T11:23:15Z",
+      "repairs": [],
+      "revision": "v1",
+      "status": "success",
+      "checks": [
+        {
+          "name": "WAV 格式和峰值符合要求",
+          "pass": true,
+          "evidence": "WAV 为单声道、16-bit PCM、22050 Hz、176400 帧，峰值 10267。"
+        },
+        {
+          "name": "声段位置正确且两次字节相同",
+          "pass": true,
+          "evidence": "两次独立合成与提交文件 SHA-256 完全相同，非静音仅在 0.5–1.3、2–4、5–7 秒三段。"
+        },
+        {
+          "name": "播放页不自动开始",
+          "pass": true,
+          "evidence": "浏览器加载时音频暂停在 0 秒，点击播放后实测时间推进，时长 8 秒。"
+        }
+      ],
+      "promptSha256": "736f5983b854004693fcb27f2997fffa3a3cd90616cd127cf462216a131e871c",
+      "artifact": "runs/2026-11-28-codex-luna/orig-n14-sound-postcard/index.html",
+      "artifactSha256": "d2bf4cb38ef2e29091711bc713f6b5c12c072aa09b9a75050aa4c7e027833332",
+      "files": [
+        {
+          "artifact": "runs/2026-11-28-codex-luna/orig-n14-sound-postcard/README.md",
+          "sha256": "51cdaa31e1063161a949be89f5aaf6979119ed49a4272359cdf97b8a30e9d8e3"
+        },
+        {
+          "artifact": "runs/2026-11-28-codex-luna/orig-n14-sound-postcard/cue-sheet.json",
+          "sha256": "c0051d528f8976a8f07aea45fea2b0b412c9cb90a1c41ed2590c176b0f28f711"
+        },
+        {
+          "artifact": "runs/2026-11-28-codex-luna/orig-n14-sound-postcard/index.html",
+          "sha256": "d2bf4cb38ef2e29091711bc713f6b5c12c072aa09b9a75050aa4c7e027833332"
+        },
+        {
+          "artifact": "runs/2026-11-28-codex-luna/orig-n14-sound-postcard/postcard.wav",
+          "sha256": "637c3bb069385af4d5dbd365cfbf10c53c99018efbedc78eed7b37b8c7c17542"
+        },
+        {
+          "artifact": "runs/2026-11-28-codex-luna/orig-n14-sound-postcard/synth.py",
+          "sha256": "a0b1f9b66be7ac4332c69966495af0ec582e6193d20839edc505930c48281036"
+        }
+      ],
+      "rawOutput": "首次产物保存在 runs/2026-11-28-codex-luna/orig-n14-sound-postcard/index.html。"
+    },
+    {
+      "id": "codex-luna-orig-pendulum-wave-v1",
+      "taskId": "orig-pendulum-wave",
+      "executionClass": "codex-luna-subagent-with-tools",
+      "label": "Codex 辅助执行 · GPT-6 Luna",
+      "provider": "OpenAI Codex",
+      "model": "gpt-6-luna",
+      "modelVersion": "Codex 子 Agent 指定的模型标识 gpt-6-luna。",
+      "context": "三组子 Agent 各完成 16 道作品任务。每项使用任务定义中的完整 prompt，馆藏的额外验收清单与既有作品未提供给生成 Agent。",
+      "environment": "macOS 本地工作区生成。主 Agent 用 Chromium、文件解析或源码检查复核，具体方法见逐项证据。",
+      "parameters": "使用子 Agent 默认推理参数，允许本地工具写文件。时间范围为批次准备到该任务提交文件的最后写入时间。",
+      "startedAt": "2026-11-28T11:18:52Z",
+      "endedAt": "2026-11-28T11:22:02Z",
+      "repairs": [],
+      "revision": "v1",
+      "status": "success",
+      "checks": [
+        {
+          "name": "画面中清楚看到 15 颗摆球并有连续波形变化",
+          "pass": true,
+          "evidence": "截图可数出 15 颗摆球；各摆周期不同且持续重绘，形成连续变化的波形。"
+        },
+        {
+          "name": "切换俯视/正视视图正常变化",
+          "pass": true,
+          "evidence": "probes 记录 view=true；俯视/正视由按钮切换 topView 并改变摆球坐标计算。"
+        },
+        {
+          "name": "暂停、齐步释放与倍速滑块都立即生效",
+          "pass": true,
+          "evidence": "probes 显示暂停时 offset 保持不变、齐步重置回到 0、倍速滑块更新到 2×。"
+        }
+      ],
+      "promptSha256": "a1176736dfe97af05ef6b14798453c68209c4e3bee6ec5d2f0bab8780d188ee1",
+      "artifact": "runs/2026-11-28-codex-luna/orig-pendulum-wave/v1.html",
+      "artifactSha256": "48b22b527bdfc6a325d167afd3e25685edaa0301f05eecd78943ec368a2646f2",
+      "files": [
+        {
+          "artifact": "runs/2026-11-28-codex-luna/orig-pendulum-wave/v1.html",
+          "sha256": "48b22b527bdfc6a325d167afd3e25685edaa0301f05eecd78943ec368a2646f2"
+        }
+      ],
+      "rawOutput": "首次产物保存在 runs/2026-11-28-codex-luna/orig-pendulum-wave/v1.html。"
+    },
+    {
+      "id": "codex-luna-orig-isometric-courtyard-v1",
+      "taskId": "orig-isometric-courtyard",
+      "executionClass": "codex-luna-subagent-with-tools",
+      "label": "Codex 辅助执行 · GPT-6 Luna",
+      "provider": "OpenAI Codex",
+      "model": "gpt-6-luna",
+      "modelVersion": "Codex 子 Agent 指定的模型标识 gpt-6-luna。",
+      "context": "三组子 Agent 各完成 16 道作品任务。每项使用任务定义中的完整 prompt，馆藏的额外验收清单与既有作品未提供给生成 Agent。",
+      "environment": "macOS 本地工作区生成。主 Agent 用 Chromium、文件解析或源码检查复核，具体方法见逐项证据。",
+      "parameters": "使用子 Agent 默认推理参数，允许本地工具写文件。时间范围为批次准备到该任务提交文件的最后写入时间。",
+      "startedAt": "2026-11-28T11:18:52Z",
+      "endedAt": "2026-11-28T11:23:12Z",
+      "repairs": [],
+      "revision": "v1",
+      "status": "partial",
+      "checks": [
+        {
+          "name": "能分辨建筑粉墙黛瓦、池塘、小桥与灯笼层次",
+          "pass": false,
+          "evidence": "画面有浅色房屋、池塘和灯点，瓦屋顶与木桥未清楚区分。"
+        },
+        {
+          "name": "拖动画面时场景绕中心平滑旋转",
+          "pass": true,
+          "evidence": "拖动后取景角度和画布画面改变。"
+        },
+        {
+          "name": "切换昼夜与细雨开关后光影和雨丝立刻响应",
+          "pass": true,
+          "evidence": "点昼夜及雨势控件后画面改变，雨势按钮切为关，代码随状态改变雨线和配色。"
+        }
+      ],
+      "promptSha256": "8cc78b732f6d6751e50a98bf705c66b1276b7526e9c2fdedadf817bd74ea0107",
+      "artifact": "runs/2026-11-28-codex-luna/orig-isometric-courtyard/v1.html",
+      "artifactSha256": "c5e0e662872fd0a13ae6f4395c0fe2c6c548365734aa16f0d8d054f9d6948371",
+      "files": [
+        {
+          "artifact": "runs/2026-11-28-codex-luna/orig-isometric-courtyard/v1.html",
+          "sha256": "c5e0e662872fd0a13ae6f4395c0fe2c6c548365734aa16f0d8d054f9d6948371"
+        }
+      ],
+      "rawOutput": "首次产物保存在 runs/2026-11-28-codex-luna/orig-isometric-courtyard/v1.html。"
+    },
+    {
+      "id": "codex-luna-orig-orbit-slingshot-v1",
+      "taskId": "orig-orbit-slingshot",
+      "executionClass": "codex-luna-subagent-with-tools",
+      "label": "Codex 辅助执行 · GPT-6 Luna",
+      "provider": "OpenAI Codex",
+      "model": "gpt-6-luna",
+      "modelVersion": "Codex 子 Agent 指定的模型标识 gpt-6-luna。",
+      "context": "三组子 Agent 各完成 16 道作品任务。每项使用任务定义中的完整 prompt，馆藏的额外验收清单与既有作品未提供给生成 Agent。",
+      "environment": "macOS 本地工作区生成。主 Agent 用 Chromium、文件解析或源码检查复核，具体方法见逐项证据。",
+      "parameters": "使用子 Agent 默认推理参数，允许本地工具写文件。时间范围为批次准备到该任务提交文件的最后写入时间。",
+      "startedAt": "2026-11-28T11:18:52Z",
+      "endedAt": "2026-11-28T11:26:07Z",
+      "repairs": [],
+      "revision": "v1",
+      "status": "failure",
+      "checks": [
+        {
+          "name": "调节仰角或初速时虚线预测轨道实时弯曲变化",
+          "pass": false,
+          "evidence": "修改角度能改变内部预测数组，浏览器前后画布完全一样，要等下一次发射才重绘。"
+        },
+        {
+          "name": "发射后探测器沿引力场弯曲飞行并留下尾迹",
+          "pass": false,
+          "evidence": "实测发射后探测器飞行，页面没有绘制历史位置形成的尾迹。"
+        },
+        {
+          "name": "撞星、出界与送达信标均有明确提示且可切换关卡",
+          "pass": false,
+          "evidence": "实测可触发撞星与出界提示。枚举首关滑块可选的角度与速度，未找到送达输入，无法切到下一关。"
+        }
+      ],
+      "promptSha256": "356880d7a1d2626e6a9b43a31ed8a0bf6c49cae392d29d6fed2a1136dc71d15e",
+      "artifact": "runs/2026-11-28-codex-luna/orig-orbit-slingshot/v1.html",
+      "artifactSha256": "e5921876aa5b41ef81a51c44a38ca37712c0d7d8771f14b818e562f94e77189e",
+      "files": [
+        {
+          "artifact": "runs/2026-11-28-codex-luna/orig-orbit-slingshot/v1.html",
+          "sha256": "e5921876aa5b41ef81a51c44a38ca37712c0d7d8771f14b818e562f94e77189e"
+        }
+      ],
+      "rawOutput": "首次产物保存在 runs/2026-11-28-codex-luna/orig-orbit-slingshot/v1.html。"
+    },
+    {
+      "id": "codex-luna-orig-chord-synth-v1",
+      "taskId": "orig-chord-synth",
+      "executionClass": "codex-luna-subagent-with-tools",
+      "label": "Codex 辅助执行 · GPT-6 Luna",
+      "provider": "OpenAI Codex",
+      "model": "gpt-6-luna",
+      "modelVersion": "Codex 子 Agent 指定的模型标识 gpt-6-luna。",
+      "context": "三组子 Agent 各完成 16 道作品任务。每项使用任务定义中的完整 prompt，馆藏的额外验收清单与既有作品未提供给生成 Agent。",
+      "environment": "macOS 本地工作区生成。主 Agent 用 Chromium、文件解析或源码检查复核，具体方法见逐项证据。",
+      "parameters": "使用子 Agent 默认推理参数，允许本地工具写文件。时间范围为批次准备到该任务提交文件的最后写入时间。",
+      "startedAt": "2026-11-28T11:18:52Z",
+      "endedAt": "2026-11-28T11:20:47Z",
+      "repairs": [],
+      "revision": "v1",
+      "status": "partial",
+      "checks": [
+        {
+          "name": "8 个和弦块排列整齐且点击/按键均有视觉激活反馈",
+          "pass": false,
+          "evidence": "有 8 个和弦键，点击与数字键均发声。未实现随和弦播放的激活状态。"
+        },
+        {
+          "name": "实时示波器正常绘制波形曲线",
+          "pass": true,
+          "evidence": "实测点击后的音频上下沿有 38 级幅度差，数字键触发后示波器数据也变化。"
+        },
+        {
+          "name": "支持切换波形、拖动滤波滑块与开启/停止自动轮播",
+          "pass": true,
+          "evidence": "切为 sine、把滤波更新到 1600 Hz，并启停自动轮播，控制状态正确变化。"
+        }
+      ],
+      "promptSha256": "a08a28dc5b6ce131e9994a9d79f57be7755c77aa81ba03de92995c54f8117c19",
+      "artifact": "runs/2026-11-28-codex-luna/orig-chord-synth/v1.html",
+      "artifactSha256": "c757fe5f2f49573485965aedb8c6a3ce586b7184e4ccd9dc9be3e7eded666265",
+      "files": [
+        {
+          "artifact": "runs/2026-11-28-codex-luna/orig-chord-synth/v1.html",
+          "sha256": "c757fe5f2f49573485965aedb8c6a3ce586b7184e4ccd9dc9be3e7eded666265"
+        }
+      ],
+      "rawOutput": "首次产物保存在 runs/2026-11-28-codex-luna/orig-chord-synth/v1.html。"
+    },
+    {
+      "id": "codex-luna-orig-ink-fluid-v1",
+      "taskId": "orig-ink-fluid",
+      "executionClass": "codex-luna-subagent-with-tools",
+      "label": "Codex 辅助执行 · GPT-6 Luna",
+      "provider": "OpenAI Codex",
+      "model": "gpt-6-luna",
+      "modelVersion": "Codex 子 Agent 指定的模型标识 gpt-6-luna。",
+      "context": "三组子 Agent 各完成 16 道作品任务。每项使用任务定义中的完整 prompt，馆藏的额外验收清单与既有作品未提供给生成 Agent。",
+      "environment": "macOS 本地工作区生成。主 Agent 用 Chromium、文件解析或源码检查复核，具体方法见逐项证据。",
+      "parameters": "使用子 Agent 默认推理参数，允许本地工具写文件。时间范围为批次准备到该任务提交文件的最后写入时间。",
+      "startedAt": "2026-11-28T11:18:52Z",
+      "endedAt": "2026-11-28T11:23:12Z",
+      "repairs": [],
+      "revision": "v1",
+      "status": "partial",
+      "checks": [
+        {
+          "name": "打开即呈现宣纸纹理与缓慢流动的水墨晕染画面",
+          "pass": false,
+          "evidence": "默认能看见宣纸纹理，连续截图没有清晰可见的水墨流动。"
+        },
+        {
+          "name": "点击或拖动画面能新增墨点并自然向外扩散",
+          "pass": true,
+          "evidence": "实测点击并拖动新增 5 个墨点，画布发生变化，着色器按时间改变扩散边缘。"
+        },
+        {
+          "name": "墨浓滑块与留白重置按钮均即时生效且无 WebGL 报错",
+          "pass": true,
+          "evidence": "滑块设为 0.9 后生效，留白重置使墨点数归零，过程中无页面脚本报错。"
+        }
+      ],
+      "promptSha256": "ae5e8b2ae241798eea43882ed3e817308ab1954e1912ee573bac75f004cea5d2",
+      "artifact": "runs/2026-11-28-codex-luna/orig-ink-fluid/v1.html",
+      "artifactSha256": "a887c362a28076f62830dce9c30e0edfc979be626ec8f06bbd8e0e93a2bca007",
+      "files": [
+        {
+          "artifact": "runs/2026-11-28-codex-luna/orig-ink-fluid/v1.html",
+          "sha256": "a887c362a28076f62830dce9c30e0edfc979be626ec8f06bbd8e0e93a2bca007"
+        }
+      ],
+      "rawOutput": "首次产物保存在 runs/2026-11-28-codex-luna/orig-ink-fluid/v1.html。"
+    },
+    {
+      "id": "codex-luna-orig-solar-almanac-v1",
+      "taskId": "orig-solar-almanac",
+      "executionClass": "codex-luna-subagent-with-tools",
+      "label": "Codex 辅助执行 · GPT-6 Luna",
+      "provider": "OpenAI Codex",
+      "model": "gpt-6-luna",
+      "modelVersion": "Codex 子 Agent 指定的模型标识 gpt-6-luna。",
+      "context": "三组子 Agent 各完成 16 道作品任务。每项使用任务定义中的完整 prompt，馆藏的额外验收清单与既有作品未提供给生成 Agent。",
+      "environment": "macOS 本地工作区生成。主 Agent 用 Chromium、文件解析或源码检查复核，具体方法见逐项证据。",
+      "parameters": "使用子 Agent 默认推理参数，允许本地工具写文件。时间范围为批次准备到该任务提交文件的最后写入时间。",
+      "startedAt": "2026-11-28T11:18:52Z",
+      "endedAt": "2026-11-28T11:26:07Z",
+      "repairs": [],
+      "revision": "v1",
+      "status": "partial",
+      "checks": [
+        {
+          "name": "默认展示完整 24 个节气且黄经按 15° 递增",
+          "pass": true,
+          "evidence": "浏览器默认 24 张卡片，黄经从 0° 开始，每张递增 15°。"
+        },
+        {
+          "name": "四季筛选按钮可准确切换为每季 6 张卡片并联动高亮曲线",
+          "pass": false,
+          "evidence": "春夏秋冬按钮实测各显示 6 张卡，但上方曲线 DOM 在四次切换前后相同。"
+        },
+        {
+          "name": "包含打印按钮与 @media print 多栏排版规则",
+          "pass": false,
+          "evidence": "样式提供打印三栏，页面未提供打印按钮。"
+        }
+      ],
+      "promptSha256": "2e1a3c142fa3dc4f31dd6bd43f66839bd332be67fc943735801b08cdee371a8f",
+      "artifact": "runs/2026-11-28-codex-luna/orig-solar-almanac/v1.html",
+      "artifactSha256": "da8667f3fdd3239bde9e229936784e24413127f79492f2daae75f8e812c7031c",
+      "files": [
+        {
+          "artifact": "runs/2026-11-28-codex-luna/orig-solar-almanac/v1.html",
+          "sha256": "da8667f3fdd3239bde9e229936784e24413127f79492f2daae75f8e812c7031c"
+        }
+      ],
+      "rawOutput": "首次产物保存在 runs/2026-11-28-codex-luna/orig-solar-almanac/v1.html。"
+    },
+    {
+      "id": "codex-luna-orig-aurora-sky-v1",
+      "taskId": "orig-aurora-sky",
+      "executionClass": "codex-luna-subagent-with-tools",
+      "label": "Codex 辅助执行 · GPT-6 Luna",
+      "provider": "OpenAI Codex",
+      "model": "gpt-6-luna",
+      "modelVersion": "Codex 子 Agent 指定的模型标识 gpt-6-luna。",
+      "context": "三组子 Agent 各完成 16 道作品任务。每项使用任务定义中的完整 prompt，馆藏的额外验收清单与既有作品未提供给生成 Agent。",
+      "environment": "macOS 本地工作区生成。主 Agent 用 Chromium、文件解析或源码检查复核，具体方法见逐项证据。",
+      "parameters": "使用子 Agent 默认推理参数，允许本地工具写文件。时间范围为批次准备到该任务提交文件的最后写入时间。",
+      "startedAt": "2026-11-28T11:18:52Z",
+      "endedAt": "2026-11-28T11:20:47Z",
+      "repairs": [],
+      "revision": "v1",
+      "status": "success",
+      "checks": [
+        {
+          "name": "打开即见多层彩色极光在星空与山影上方流动",
+          "pass": true,
+          "evidence": "画面可见星空、山影与多层流动彩带。"
+        },
+        {
+          "name": "底部湖面可见随波纹晃动的极光倒影",
+          "pass": true,
+          "evidence": "湖面有对应的极光颜色，片元着色器以随时间变化的波纹调制反射。"
+        },
+        {
+          "name": "调节强度与流速滑块立即生效且无报错",
+          "pass": true,
+          "evidence": "实测把强度和流速滑块分别设为 1.6 与 1.4，WebGL 画面变化，无页面脚本报错。"
+        }
+      ],
+      "promptSha256": "e308a8ea755392b84e0c24feb260f1557854ec0587a644ceb9a34b06570171cc",
+      "artifact": "runs/2026-11-28-codex-luna/orig-aurora-sky/v1.html",
+      "artifactSha256": "b960c705176f2f7cdee773c9956f341bf248fec7781325af9d52361e20a21274",
+      "files": [
+        {
+          "artifact": "runs/2026-11-28-codex-luna/orig-aurora-sky/v1.html",
+          "sha256": "b960c705176f2f7cdee773c9956f341bf248fec7781325af9d52361e20a21274"
+        }
+      ],
+      "rawOutput": "首次产物保存在 runs/2026-11-28-codex-luna/orig-aurora-sky/v1.html。"
+    },
+    {
+      "id": "codex-luna-orig-glass-orb-v1",
+      "taskId": "orig-glass-orb",
+      "executionClass": "codex-luna-subagent-with-tools",
+      "label": "Codex 辅助执行 · GPT-6 Luna",
+      "provider": "OpenAI Codex",
+      "model": "gpt-6-luna",
+      "modelVersion": "Codex 子 Agent 指定的模型标识 gpt-6-luna。",
+      "context": "三组子 Agent 各完成 16 道作品任务。每项使用任务定义中的完整 prompt，馆藏的额外验收清单与既有作品未提供给生成 Agent。",
+      "environment": "macOS 本地工作区生成。主 Agent 用 Chromium、文件解析或源码检查复核，具体方法见逐项证据。",
+      "parameters": "使用子 Agent 默认推理参数，允许本地工具写文件。时间范围为批次准备到该任务提交文件的最后写入时间。",
+      "startedAt": "2026-11-28T11:18:52Z",
+      "endedAt": "2026-11-28T11:23:12Z",
+      "repairs": [],
+      "revision": "v1",
+      "status": "partial",
+      "checks": [
+        {
+          "name": "中央玻璃球清晰折射出倒置棋盘与天空色散边缘",
+          "pass": false,
+          "evidence": "能看到棋盘样纹理和蓝色边缘，但球体被画布边缘裁切，未呈现清晰的倒置背景和独立 RGB 色散。"
+        },
+        {
+          "name": "拖动画面可围绕玻璃球平滑旋转",
+          "pass": false,
+          "evidence": "拖动更新了角度并改变画面，但镜头未重新瞄准球心，球体会偏出画布。"
+        },
+        {
+          "name": "调节折射率滑块时球内折射变形实时变化",
+          "pass": true,
+          "evidence": "实际把折射率调到 1.65，着色器折射参数和球内图案随之更新。"
+        }
+      ],
+      "promptSha256": "291c2205bacce21017277de3b02725cc40c568f33c63b505c6618872694aa638",
+      "artifact": "runs/2026-11-28-codex-luna/orig-glass-orb/v1.html",
+      "artifactSha256": "d175a15851586aa3705cad9bb870d0d12444bf3c5866579bbfd47b6f60b03d6e",
+      "files": [
+        {
+          "artifact": "runs/2026-11-28-codex-luna/orig-glass-orb/v1.html",
+          "sha256": "d175a15851586aa3705cad9bb870d0d12444bf3c5866579bbfd47b6f60b03d6e"
+        }
+      ],
+      "rawOutput": "首次产物保存在 runs/2026-11-28-codex-luna/orig-glass-orb/v1.html。"
+    },
+    {
+      "id": "codex-luna-orig-fractal-canyon-v1",
+      "taskId": "orig-fractal-canyon",
+      "executionClass": "codex-luna-subagent-with-tools",
+      "label": "Codex 辅助执行 · GPT-6 Luna",
+      "provider": "OpenAI Codex",
+      "model": "gpt-6-luna",
+      "modelVersion": "Codex 子 Agent 指定的模型标识 gpt-6-luna。",
+      "context": "三组子 Agent 各完成 16 道作品任务。每项使用任务定义中的完整 prompt，馆藏的额外验收清单与既有作品未提供给生成 Agent。",
+      "environment": "macOS 本地工作区生成。主 Agent 用 Chromium、文件解析或源码检查复核，具体方法见逐项证据。",
+      "parameters": "使用子 Agent 默认推理参数，允许本地工具写文件。时间范围为批次准备到该任务提交文件的最后写入时间。",
+      "startedAt": "2026-11-28T11:18:52Z",
+      "endedAt": "2026-11-28T11:23:15Z",
+      "repairs": [],
+      "revision": "v1",
+      "status": "failure",
+      "checks": [
+        {
+          "name": "画面呈现具有明暗法线光照的砂岩峡谷立体纵深",
+          "pass": false,
+          "evidence": "Chromium 报 canvas is not defined，画布没有峡谷画面。"
+        },
+        {
+          "name": "镜头默认沿峡谷向前平滑巡航",
+          "pass": false,
+          "evidence": "脚本在开始绘制前中断，没有可见的巡航运动。"
+        },
+        {
+          "name": "点击暂停/继续按钮可即时控制镜头运动",
+          "pass": false,
+          "evidence": "同一异常阻断了按钮事件注册，不能切换巡航。"
+        }
+      ],
+      "promptSha256": "e0e4b86c0419d53048d03ec5252f1fb7b30c7c83a0f6f5f224149c458f069b6b",
+      "artifact": "runs/2026-11-28-codex-luna/orig-fractal-canyon/v1.html",
+      "artifactSha256": "de4038f833a62ee4332587e101b23d25b0ae095719acaefb9b8af8a14b6a2588",
+      "files": [
+        {
+          "artifact": "runs/2026-11-28-codex-luna/orig-fractal-canyon/v1.html",
+          "sha256": "de4038f833a62ee4332587e101b23d25b0ae095719acaefb9b8af8a14b6a2588"
+        }
+      ],
+      "rawOutput": "首次产物保存在 runs/2026-11-28-codex-luna/orig-fractal-canyon/v1.html。"
     }
   ]
 }

@@ -1,0 +1,1 @@
+Create a 3D LEGO-style brick editor in a single HTML file using Three.js. Let me place, remove, rotate and recolor bricks of different sizes on a baseplate with snapping, an orbit camera, and a clean UI.

@@ -1,5 +1,5 @@
 import resultBook from "../data/results.json" with { type: "json" }
-import { kindEntries, kindLabel, runModelKey, runModelShort, runsForTask, taskChecklist, taskList } from "./task-render.js"
+import { kindEntries, kindLabel, modelPillClass, runModelKey, runModelShort, runsForTask, taskChecklist, taskList } from "./task-render.js"
 
 export const RECORD_TEMPLATE = `问笺馆单题记录
 题号：
@@ -33,7 +33,7 @@ function modelCell(runs, key) {
   if (ok && fail) { text = `修复通过 (${revs})`; cls = "pill-ok" }
   else if (ok) { text = `通过 (${revs})`; cls = "pill-ok" }
   else if (partial) { text = `部分验证 (${revs})`; cls = "pill-partial" }
-  return `<span class="pill ${key === "gemini" ? "pill-gemini" : "pill-grok"} ${cls}">${escapeHtml(text)}</span>`
+  return `<span class="pill ${modelPillClass(key)} ${cls}">${escapeHtml(text)}</span>`
 }
 
 export function modelsView() {
@@ -42,15 +42,18 @@ export function modelsView() {
   for (const run of runs) counts[run.status] = (counts[run.status] || 0) + 1
   const grokRuns = runs.filter((r) => runModelKey(r) === "grok")
   const geminiRuns = runs.filter((r) => runModelKey(r) === "gemini")
+  const lunaRuns = runs.filter((r) => runModelKey(r) === "luna")
   const grokTasks = new Set(grokRuns.map((r) => r.taskId))
   const geminiTasks = new Set(geminiRuns.map((r) => r.taskId))
-  const bothCount = taskList.filter((t) => grokTasks.has(t.id) && geminiTasks.has(t.id)).length
+  const lunaTasks = new Set(lunaRuns.map((r) => r.taskId))
+  const compareCount = taskList.filter((t) => new Set(runsForTask(t.id).map(runModelKey)).size >= 2).length
   const geminiOnlyCount = taskList.filter((t) => geminiTasks.has(t.id) && !grokTasks.has(t.id)).length
   const partialTaskCount = taskList.filter((t) => runsForTask(t.id).some((r) => r.status === "partial")).length
 
   const modelCards = [
     {
       key: "gemini",
+      name: "Gemini",
       title: "Gemini（gemini-2.5-pro）",
       provider: "Gemini Agent · 沙盒辅助执行",
       runs: geminiRuns,
@@ -59,31 +62,41 @@ export function modelsView() {
     },
     {
       key: "grok",
+      name: "Grok（Cursor）",
       title: "Grok（grok-4.7-high-fast）",
       provider: "Cursor Cloud Agent · Cursor 辅助执行",
       runs: grokRuns,
       tasks: grokTasks.size,
-      desc: `已完成 ${grokTasks.size}/${taskList.length} 道作品任务实测；其余 ${geminiOnlyCount} 道新加入原创题等待后续用 Grok 补测后形成全馆双模型对照。`,
+      desc: `已完成 ${grokTasks.size}/${taskList.length} 道作品任务实测。`,
+    },
+    {
+      key: "luna",
+      name: "GPT-6 Luna",
+      title: "GPT-6 Luna（gpt-6-luna）",
+      provider: "OpenAI Codex · Luna 子 Agent 辅助执行",
+      runs: lunaRuns,
+      tasks: lunaTasks.size,
+      desc: `已收录 ${lunaTasks.size}/${taskList.length} 道作品任务的首次产物，由主 Agent 按原有验收点独立复核。`,
     },
   ]
 
   const rows = taskList.map((task) => {
     const truns = runsForTask(task.id)
-    const hasGem = truns.some((r) => runModelKey(r) === "gemini")
-    const hasGrok = truns.some((r) => runModelKey(r) === "grok")
+    const keys = new Set(truns.map(runModelKey))
+    const canCompare = keys.size >= 2
     const hasPartial = truns.some((r) => r.status === "partial")
     const tags = [
-      hasGem && hasGrok ? "both" : "",
-      hasGem && !hasGrok ? "gemini-only" : "",
+      canCompare ? "multi" : "",
+      keys.has("gemini") && !keys.has("grok") ? "gemini-only" : "",
+      keys.has("luna") ? "luna" : "",
       hasPartial ? "partial" : "",
     ].filter(Boolean).join(" ")
     const searchBlob = `${task.id} ${task.title} ${kindLabel(task.kind)}`.toLowerCase()
     return `<tr data-mtags="${tags}" data-mkind="${escapeHtml(task.kind)}" data-msearch="${escapeHtml(searchBlob)}">
       <td><a class="matrix-link" href="#/t/${task.id}">${escapeHtml(task.title)}</a><span class="matrix-id">${escapeHtml(task.id)}</span></td>
       <td>${escapeHtml(kindLabel(task.kind))}</td>
-      <td>${modelCell(truns, "gemini")}</td>
-      <td>${modelCell(truns, "grok")}</td>
-      <td>${hasGem && hasGrok ? `<a class="btn btn-ghost btn-sm" href="#/t/${task.id}">并排对比</a>` : `<a class="btn btn-ghost btn-sm" href="#/t/${task.id}">查看产物</a>`}</td>
+      ${modelCards.map(({ key }) => `<td>${modelCell(truns, key)}</td>`).join("")}
+      <td><a class="btn btn-ghost btn-sm" href="#/t/${task.id}">${canCompare ? "并排对比" : "查看产物"}</a></td>
     </tr>`
   }).join("")
 
@@ -96,7 +109,7 @@ export function modelsView() {
       <p><b>${counts.success}</b><span>次通过</span></p>
       <p><b>${counts.partial}</b><span>次部分验证</span></p>
       <p><b>${counts.failure}</b><span>次失败保留</span></p>
-      <p><b>${bothCount}</b><span>道双模型对比</span></p>
+      <p><b>${compareCount}</b><span>道多模型对比</span></p>
     </div>
 
     <div class="model-grid">
@@ -106,7 +119,7 @@ export function modelsView() {
         const failCount = m.runs.filter((r) => r.status === "failure").length
         return `<article class="model-card">
           <div class="model-card-head">
-            <span class="pill ${m.key === "gemini" ? "pill-gemini" : "pill-grok"} pill-ok">${escapeHtml(m.key === "gemini" ? "Gemini" : "Grok")}</span>
+            <span class="pill ${modelPillClass(m.key)} pill-ok">${escapeHtml(m.name)}</span>
             <span class="quiet">${m.tasks} / ${taskList.length} 题 · ${m.runs.length} 次运行</span>
           </div>
           <h2>${escapeHtml(m.title)}</h2>
@@ -134,8 +147,9 @@ export function modelsView() {
       <div class="filter-row filter-row-bottom" style="border-top:0;padding-top:0;">
         <div class="chips" role="toolbar" aria-label="矩阵状态筛选">
           <button type="button" class="chip on" data-matrix-filter="all">全部 <span class="chip-n">${taskList.length}</span></button>
-          <button type="button" class="chip" data-matrix-filter="both">双模型对比 <span class="chip-n">${bothCount}</span></button>
+          <button type="button" class="chip" data-matrix-filter="multi">多模型对比 <span class="chip-n">${compareCount}</span></button>
           <button type="button" class="chip" data-matrix-filter="gemini-only">待补 Grok <span class="chip-n">${geminiOnlyCount}</span></button>
+          <button type="button" class="chip" data-matrix-filter="luna">GPT-6 Luna <span class="chip-n">${lunaTasks.size}</span></button>
           <button type="button" class="chip" data-matrix-filter="partial">含部分验证 <span class="chip-n">${partialTaskCount}</span></button>
         </div>
         <div class="search-tools">
@@ -153,8 +167,7 @@ export function modelsView() {
           <tr>
             <th>任务</th>
             <th>门类</th>
-            <th>Gemini</th>
-            <th>Grok（Cursor）</th>
+            ${modelCards.map(({ name }) => `<th>${escapeHtml(name)}</th>`).join("")}
             <th>操作</th>
           </tr>
         </thead>
@@ -194,7 +207,7 @@ export function methodView() {
     <h2>提示词不要改</h2>
     <p>引用来的题面按原页文字复制。问笺馆原创任务也整段复制。不要把验收清单或别人的答案贴回提示里。</p>
     <h2>多模型辅助执行与记录规范</h2>
-    <p>目前馆内同时收录 <strong>Cursor 辅助执行（Grok）</strong> 与 <strong>Gemini 辅助执行</strong> 两类带工具的真实运行记录。页面会明确标明执行环境、平台模型名、起止时间以及题面与产物的 SHA-256 摘要。未完全验收的运行会如实标为「部分验证」；首次产物单独保存，若后来修复则单列 v2 不覆盖第一版。</p>
+    <p>馆内收录 <strong>Gemini</strong>、<strong>Grok（Cursor）</strong> 与 <strong>GPT-6 Luna（Codex 子 Agent）</strong> 的工具辅助执行。每次运行记录执行环境、平台模型名、起止时间以及题面与产物的 SHA-256 摘要。只通过部分验收点的运行标为「部分验证」，后续修复单列版本。</p>
     <h2>个例不是排名</h2>
     <p>做对一道，不能说明一个模型整体更强；做错一道，也不能给它排座次。同题并排对比是为了让不同模型在交互、物理、审美与代码完整度上的差异一眼可见。</p>
     <h2>这里拒绝做什么</h2>
@@ -219,7 +232,7 @@ export function shell() {
     </button>
     <nav id="site-nav" aria-label="馆内">
       <a href="#/tasks" data-nav="tasks">作品任务</a>
-      <a href="#/tasks?model=both" data-nav="compare">双模型对比</a>
+      <a href="#/tasks?model=multi" data-nav="compare">多模型对比</a>
       <a href="#/models" data-nav="models">模型档案</a>
       <a href="#/warmup" data-nav="warmup">短题热身</a>
       <a href="#/method" data-nav="method">测试方法</a>

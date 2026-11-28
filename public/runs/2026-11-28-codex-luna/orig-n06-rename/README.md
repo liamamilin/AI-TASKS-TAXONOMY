@@ -1,0 +1,1 @@
+打开 index.html 预览。CLI：python3 rename_tool.py plan manifest.json，apply plan.json，undo undo.json。sandbox 使用合成文本字节；plan.json 当前记录修复后计划，初始冲突及拦截记录在 log.json。执行成功应用及撤销后 sandbox 恢复三个原始路径与内容。限制：重命名以同目录文件系统 rename 实施，单一进程内预检后回滚；跨设备原子性不适用。

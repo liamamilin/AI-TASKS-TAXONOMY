@@ -1,0 +1,32 @@
+[
+  {
+    "step": "initial plan",
+    "status": "blocked",
+    "errors": [
+      "target collision: 2026-04-01_cloud.jpg from IMG_01.jpg, IMG_02.jpg",
+      "target exists: 2026-04-01_cloud.jpg"
+    ]
+  },
+  {
+    "step": "apply initial",
+    "status": "blocked",
+    "paths_unchanged": true
+  },
+  {
+    "step": "fixed apply",
+    "status": "applied",
+    "outputs": [
+      "2026-04-01_red.jpg",
+      "2026-04-01_blue.jpg"
+    ]
+  },
+  {
+    "step": "undo",
+    "status": "restored",
+    "paths": [
+      "IMG_01.jpg",
+      "IMG_02.jpg",
+      "2026-04-01_cloud.jpg"
+    ]
+  }
+]

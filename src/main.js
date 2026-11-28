@@ -142,7 +142,7 @@ async function render() {
 }
 
 function markNav() {
-  const isCompare = route.name === "home" && route.params.get("model") === "both"
+  const isCompare = route.name === "home" && ["both", "multi"].includes(route.params.get("model"))
   document.querySelectorAll("#site-nav a").forEach((link) => {
     const nav = link.dataset.nav
     const current = (nav === "compare" && isCompare)
@@ -311,7 +311,7 @@ async function onContentClick(event) {
     document.querySelectorAll("#compare-view .rev-pane:not([hidden]) iframe").forEach((frame) => {
       frame.setAttribute("src", frame.getAttribute("src"))
     })
-    toast("已同步重载双方产物")
+    toast("已同步重载产物")
     return
   }
   const cmpMode = event.target.closest("[data-compare-mode]")

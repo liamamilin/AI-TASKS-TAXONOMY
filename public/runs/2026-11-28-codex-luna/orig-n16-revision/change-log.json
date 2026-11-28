@@ -1,0 +1,32 @@
+[
+  {
+    "field": "人数",
+    "before": 8,
+    "after": 12,
+    "kind": "直接"
+  },
+  {
+    "field": "开始时间",
+    "before": "10:00",
+    "after": "10:30",
+    "kind": "顺延30分钟"
+  },
+  {
+    "field": "制作时长",
+    "before": 40,
+    "after": 50,
+    "kind": "直接"
+  },
+  {
+    "field": "总纸张",
+    "before": 24,
+    "after": 36,
+    "kind": "衍生"
+  },
+  {
+    "field": "需补纸张",
+    "before": 14,
+    "after": 26,
+    "kind": "衍生"
+  }
+]

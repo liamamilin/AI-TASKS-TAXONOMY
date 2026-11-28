@@ -1,0 +1,57 @@
+{
+  "date": "all",
+  "items": [
+    {
+      "item": "月牙饼",
+      "made": 20,
+      "knownSold": 15,
+      "remaining": 5,
+      "remainingRate": {
+        "numerator": 5,
+        "denominator": 20,
+        "percent": 25.0
+      },
+      "missingRows": 1
+    },
+    {
+      "item": "星星酥",
+      "made": 26,
+      "knownSold": 22,
+      "remaining": 4,
+      "remainingRate": {
+        "numerator": 4,
+        "denominator": 26,
+        "percent": 15.384615384615385
+      },
+      "missingRows": 0
+    }
+  ],
+  "totalComputableRemaining": 9,
+  "missingRows": 1,
+  "rows": [
+    {
+      "day": "2026-04-01",
+      "item": "月牙饼",
+      "made": 20,
+      "sold": 15
+    },
+    {
+      "day": "2026-04-01",
+      "item": "星星酥",
+      "made": 10,
+      "sold": 10
+    },
+    {
+      "day": "2026-04-02",
+      "item": "月牙饼",
+      "made": 12,
+      "sold": null
+    },
+    {
+      "day": "2026-04-02",
+      "item": "星星酥",
+      "made": 16,
+      "sold": 12
+    }
+  ]
+}

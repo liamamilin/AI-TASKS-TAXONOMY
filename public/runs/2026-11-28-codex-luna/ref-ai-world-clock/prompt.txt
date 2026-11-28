@@ -1,0 +1,1 @@
+Create HTML/CSS of an analog clock showing 10:10AM. Include numbers (or numerals) if you wish, and have a CSS animated second hand. Make it responsive and use a white background. Return ONLY the HTML/CSS code with no markdown formatting.

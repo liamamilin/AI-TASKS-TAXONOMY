@@ -19,6 +19,8 @@ export function kindLabel(kind) {
 
 export const kindEntries = Object.entries(KINDS)
 
+const MODEL_NAMES = { gemini: "Gemini", grok: "Grok", luna: "GPT-6 Luna" }
+
 function esc(value) {
   return String(value).replace(/[&<>"']/g, (char) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[char]))
 }
@@ -41,14 +43,17 @@ export function runModelKey(run) {
   const blob = `${run.provider || ""} ${run.model || ""} ${run.executionClass || ""}`.toLowerCase()
   if (blob.includes("gemini")) return "gemini"
   if (blob.includes("grok") || blob.includes("cursor")) return "grok"
+  if (run.model === "gpt-6-luna") return "luna"
   return (run.model || run.provider || "other").toLowerCase()
 }
 
 export function runModelShort(run) {
   const key = runModelKey(run)
-  if (key === "gemini") return "Gemini"
-  if (key === "grok") return "Grok"
-  return run.model || run.provider || "模型"
+  return Object.hasOwn(MODEL_NAMES, key) ? MODEL_NAMES[key] : run.model || run.provider || "模型"
+}
+
+export function modelPillClass(key) {
+  return Object.hasOwn(MODEL_NAMES, key) ? `pill-${key}` : ""
 }
 
 export function runsForTask(taskId) {
@@ -65,7 +70,7 @@ function groupRunsByModel(runs) {
   for (const list of map.values()) {
     list.sort((a, b) => String(a.revision || "v1").localeCompare(String(b.revision || "v1")))
   }
-  const order = ["gemini", "grok"]
+  const order = Object.keys(MODEL_NAMES)
   return [...map.entries()].sort(([a], [b]) => {
     const ia = order.indexOf(a)
     const ib = order.indexOf(b)
@@ -85,9 +90,9 @@ export function filterTasks(params) {
       const runs = runsForTask(task.id)
       const keys = new Set(runs.map(runModelKey))
       if (model === "both" && !(keys.has("gemini") && keys.has("grok"))) return false
+      if (model === "multi" && keys.size < 2) return false
       if (model === "gemini-only" && !(keys.has("gemini") && !keys.has("grok"))) return false
-      if (model === "gemini" && !keys.has("gemini")) return false
-      if (model === "grok" && !keys.has("grok")) return false
+      if (Object.hasOwn(MODEL_NAMES, model) && !keys.has(model)) return false
       if (model === "partial" && !runs.some((r) => r.status === "partial")) return false
     }
     if (!word) return true
@@ -138,7 +143,7 @@ function modelPills(task) {
   const runs = runsForTask(task.id)
   if (!runs.length) return `<span class="pill pill-untested">待测</span>`
   return groupRunsByModel(runs).map(([key, list]) => {
-    const label = key === "gemini" ? "Gemini" : key === "grok" ? "Grok" : runModelShort(list[0])
+    const label = runModelShort(list[0])
     const hasOk = list.some((r) => r.status === "success")
     const hasFail = list.some((r) => r.status === "failure")
     const hasPartial = list.some((r) => r.status === "partial")
@@ -147,8 +152,7 @@ function modelPills(task) {
     if (hasOk && hasFail) { state = "修复通过"; statusCls = "pill-ok" }
     else if (hasOk) { state = "通过"; statusCls = "pill-ok" }
     else if (hasPartial) { state = "部分验证"; statusCls = "pill-partial" }
-    const cls = key === "gemini" ? "pill-gemini" : key === "grok" ? "pill-grok" : ""
-    return `<span class="pill ${cls} ${statusCls}">${esc(label)} · ${state}</span>`
+    return `<span class="pill ${modelPillClass(key)} ${statusCls}">${esc(label)} · ${state}</span>`
   }).join("")
 }
 
@@ -156,9 +160,9 @@ function statusText(task) {
   const runs = runsForTask(task.id)
   if (!runs.length) return "待测"
   const groups = groupRunsByModel(runs)
-  const names = groups.map(([k, list]) => (k === "gemini" ? "Gemini" : k === "grok" ? "Grok" : runModelShort(list[0])))
+  const names = groups.map(([, list]) => runModelShort(list[0]))
   const ranks = new Set(runs.map((run) => run.status))
-  if (names.length >= 2) return `${names.join(" × ")} 双模型可对比`
+  if (names.length >= 2) return `${names.join(" × ")} 可对比`
   if (ranks.has("success") && ranks.has("failure")) return `${names[0]} 修复后通过`
   if (ranks.has("success")) return `${names[0]} 通过`
   if (ranks.has("partial")) return `${names[0]} 部分验证`
@@ -182,31 +186,29 @@ export function taskHome(params, featuredId) {
 
   const allRuns = resultBook.runs || []
   const kindCounts = Object.fromEntries(Object.keys(KINDS).map((k) => [k, taskList.filter((t) => t.kind === k).length]))
-  const bothCount = taskList.filter((t) => {
-    const keys = new Set(runsForTask(t.id).map(runModelKey))
-    return keys.has("gemini") && keys.has("grok")
-  }).length
+  const compareCount = taskList.filter((t) => new Set(runsForTask(t.id).map(runModelKey)).size >= 2).length
   const geminiOnlyCount = taskList.filter((t) => {
     const keys = new Set(runsForTask(t.id).map(runModelKey))
     return keys.has("gemini") && !keys.has("grok")
   }).length
   const partialCount = taskList.filter((t) => runsForTask(t.id).some((r) => r.status === "partial")).length
-  const geminiCount = taskList.filter((t) => runsForTask(t.id).some((r) => runModelKey(r) === "gemini")).length
-  const grokCount = taskList.filter((t) => runsForTask(t.id).some((r) => runModelKey(r) === "grok")).length
+  const modelCounts = Object.entries(MODEL_NAMES).map(([id, label]) => ({
+    id, label, count: new Set(allRuns.filter((run) => runModelKey(run) === id).map((run) => run.taskId)).size,
+  }))
 
   return `<section class="hero">
     <div>
       <p class="kicker">让模型交作品 · 多模型实测陈列馆</p>
       <h1>问笺馆</h1>
-      <p class="lede">主馆收录 <strong>${taskList.length} 道</strong>需要交付可运行文件的作品任务，覆盖动画、三维场景、游戏、应用、着色器与数据排版六大门类。全部任务均已完成 <strong>Gemini</strong> 首次实测，其中 <strong>${bothCount} 道</strong>支持与 <strong>Grok（Cursor）</strong> 同屏并排对比。</p>
+      <p class="lede">主馆收录 <strong>${taskList.length} 道</strong>需要交付可运行文件的作品任务，覆盖动画、三维场景、游戏、应用、着色器与数据排版六大门类。其中 <strong>${compareCount} 道</strong>支持并排查看不同模型的产物。</p>
       <div class="actions">
-        <a class="btn btn-primary" href="#/tasks?model=both">双模型对比（${bothCount}）</a>
+        <a class="btn btn-primary" href="#/tasks?model=multi">多模型对比（${compareCount}）</a>
         <a class="btn btn-ghost" href="#/models">模型档案与矩阵</a>
         <a class="btn btn-ghost" href="#/warmup">短题热身</a>
       </div>
       <div class="stats">
         <p><b>${taskList.length}</b><span>道作品任务</span></p>
-        <p><b>${bothCount}</b><span>道双模型对比</span></p>
+        <p><b>${compareCount}</b><span>道多模型对比</span></p>
         <p><b>${allRuns.length}</b><span>次真实运行</span></p>
         <p><b>6</b><span>大产物门类</span></p>
       </div>
@@ -250,10 +252,9 @@ export function taskHome(params, featuredId) {
         <span class="filter-label">评测</span>
         <div class="chips" role="toolbar" aria-label="按模型与评测状态">
           <a class="chip ${model ? "" : "on"}" href="${toggle(params, "model", "")}">全部状态</a>
-          <a class="chip ${model === "both" ? "on" : ""}" href="${toggle(params, "model", "both")}">双模型对比 <span class="chip-n">${bothCount}</span></a>
+          <a class="chip ${model === "multi" ? "on" : ""}" href="${toggle(params, "model", "multi")}">多模型对比 <span class="chip-n">${compareCount}</span></a>
           <a class="chip ${model === "gemini-only" ? "on" : ""}" href="${toggle(params, "model", "gemini-only")}">待补 Grok <span class="chip-n">${geminiOnlyCount}</span></a>
-          <a class="chip ${model === "gemini" ? "on" : ""}" href="${toggle(params, "model", "gemini")}">Gemini <span class="chip-n">${geminiCount}</span></a>
-          <a class="chip ${model === "grok" ? "on" : ""}" href="${toggle(params, "model", "grok")}">Grok <span class="chip-n">${grokCount}</span></a>
+          ${modelCounts.map(({ id, label, count }) => `<a class="chip ${model === id ? "on" : ""}" href="${toggle(params, "model", id)}">${label} <span class="chip-n">${count}</span></a>`).join("")}
           <a class="chip ${model === "partial" ? "on" : ""}" href="${toggle(params, "model", "partial")}">部分验证 <span class="chip-n">${partialCount}</span></a>
         </div>
       </div>
@@ -319,7 +320,7 @@ export function taskDetail(id, params) {
     <p class="hook">${esc(task.summary)}</p>
     <div class="detail-badges">
       <div class="pill-row">${modelPills(task)}</div>
-      ${runs.length ? `<button type="button" class="btn btn-primary btn-sm" data-scroll-to="runs-section">${canCompare ? "直达双模型并排对比 ↓" : `查看实测产物（${runs.length}）↓`}</button>` : ""}
+      ${runs.length ? `<button type="button" class="btn btn-primary btn-sm" data-scroll-to="runs-section">${canCompare ? "直达模型并排对比 ↓" : `查看实测产物（${runs.length}）↓`}</button>` : ""}
     </div>
     ${previewLine(task)}
     <div class="spec-grid">
@@ -352,10 +353,10 @@ export function taskDetail(id, params) {
       <div class="section-head">
         <div>
           <h2>本馆运行与产物</h2>
-          <p class="quiet">${runs.length ? `共收录 ${runs.length} 次真实运行记录（${grouped.length} 个模型，固定左 Gemini / 右 Grok 顺序）。` : "等待首次真实运行。"}</p>
+          <p class="quiet">${runs.length ? `共收录 ${grouped.length} 个模型的 ${runs.length} 次真实运行。` : "等待首次真实运行。"}</p>
         </div>
         ${canCompare ? `<div class="actions">
-          <button type="button" class="btn btn-ghost btn-sm" data-reload-all>同步重载双方</button>
+          <button type="button" class="btn btn-ghost btn-sm" data-reload-all>同步重载产物</button>
           <button type="button" class="btn btn-ghost btn-sm" data-wide-compare>宽幅沉浸对比</button>
           <div class="chips" role="tablist" aria-label="视图模式">
             <button type="button" class="chip on" data-compare-mode="side">并排对比</button>
@@ -390,7 +391,7 @@ function renderCompareView(groupedModels) {
       return `<section class="compare-card" id="${esc(cardId)}">
         <div class="compare-head">
           <div>
-            <span class="pill ${modelKey === "gemini" ? "pill-gemini" : "pill-grok"} pill-ok">${esc(modelKey === "gemini" ? "Gemini" : modelKey === "grok" ? "Grok" : runModelShort(list[0]))}</span>
+            <span class="pill ${modelPillClass(modelKey)} pill-ok">${esc(runModelShort(list[0]))}</span>
             <h3>${esc(list[latestIdx].model || list[latestIdx].label)}</h3>
           </div>
           ${hasMulti ? `<div class="chips" role="tablist" aria-label="切换版本">
@@ -436,6 +437,7 @@ function sourceBlock(task) {
 function renderRun(run, defer = false) {
   const iframeId = `frame-${run.id}`
   const isHtml = run.artifact?.endsWith(".html")
+  const attachments = (run.files || []).filter((file) => file.artifact !== run.artifact)
   const preview = isHtml
     ? `<div class="run-bar">
         <button type="button" class="btn btn-ghost btn-sm" data-reload-iframe="${esc(iframeId)}">重载预览</button>
@@ -448,12 +450,13 @@ function renderRun(run, defer = false) {
   return `<article class="run">
     <div class="run-head">
       <div>
-        <span class="pill ${runModelKey(run) === "gemini" ? "pill-gemini" : "pill-grok"} ${statusPillClass(run.status)}">${esc(runModelShort(run))} · ${esc(statusWord(run.status))} · ${esc(run.revision || "v1")}</span>
+        <span class="pill ${modelPillClass(runModelKey(run))} ${statusPillClass(run.status)}">${esc(runModelShort(run))} · ${esc(statusWord(run.status))} · ${esc(run.revision || "v1")}</span>
         <h3>${esc(run.label || "运行")}（${esc(run.model || "模型未注明")}）</h3>
       </div>
       <span class="quiet">${esc((run.startedAt || "").slice(0, 10))}</span>
     </div>
     ${preview}
+    ${attachments.length ? `<ul class="check-list" aria-label="附带产物">${attachments.map((file) => `<li><a href="${esc(file.artifact)}" target="_blank" rel="noopener">${esc(file.artifact.split("/").at(-1))}</a></li>`).join("")}</ul>` : ""}
     <ul class="check-list">${(run.checks || []).map((item) => `<li class="${item.pass ? "chk-ok" : "chk-fail"}"><strong>${esc(checkWord(item))}</strong>：${esc(item.name)} — ${esc(item.evidence || "")}</li>`).join("")}</ul>
     <details class="run-meta-details">
       <summary>查看完整复现元信息与 SHA-256 校验</summary>
@@ -462,6 +465,7 @@ function renderRun(run, defer = false) {
         <p><strong>时间：</strong>${esc(run.startedAt || "")} 至 ${esc(run.endedAt || "")}</p>
         <p><strong>上下文：</strong>${esc(run.context || "")}</p>
         <p><strong>运行环境：</strong>${esc(run.environment || "")}</p>
+        ${run.parameters ? `<p><strong>运行参数：</strong>${esc(run.parameters)}</p>` : ""}
         <p><strong>题面 SHA-256：</strong><code>${esc(run.promptSha256 || "")}</code></p>
         <p><strong>产物 SHA-256：</strong><code>${esc(run.artifactSha256 || "")}</code></p>
         <p>${(run.repairs || []).length ? `另有后续版本，不替代这一次：${esc(run.repairs.join("、"))}` : "没有后续修复版，首次产物原样保留。"}</p>

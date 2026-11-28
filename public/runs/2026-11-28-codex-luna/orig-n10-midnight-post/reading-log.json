@@ -1,0 +1,25 @@
+{
+  "title": "午夜邮局",
+  "initial": {
+    "stamps": 1
+  },
+  "choices": [
+    {
+      "node": "B",
+      "choice": "先去柜台",
+      "stampsAfter": 1
+    },
+    {
+      "node": "D",
+      "choice": "把邮票留着",
+      "stampsAfter": 1
+    },
+    {
+      "node": "E2",
+      "choice": "寄给明天",
+      "stampsAfter": 0
+    }
+  ],
+  "ending": "E2",
+  "stamps": 0
+}

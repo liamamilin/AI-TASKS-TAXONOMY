@@ -1,0 +1,55 @@
+{
+  "old": "星港📮开门了\n周六 10:00见。\n请带纸船。",
+  "new": "星港📮开门啦\n周日 10:30见。\n请带纸船！",
+  "segments": [
+    {
+      "type": "equal",
+      "text": "星港📮开门"
+    },
+    {
+      "type": "delete",
+      "text": "了"
+    },
+    {
+      "type": "insert",
+      "text": "啦"
+    },
+    {
+      "type": "equal",
+      "text": "\n周"
+    },
+    {
+      "type": "delete",
+      "text": "六"
+    },
+    {
+      "type": "insert",
+      "text": "日"
+    },
+    {
+      "type": "equal",
+      "text": " 10:"
+    },
+    {
+      "type": "delete",
+      "text": "0"
+    },
+    {
+      "type": "insert",
+      "text": "3"
+    },
+    {
+      "type": "equal",
+      "text": "0见。\n请带纸船"
+    },
+    {
+      "type": "delete",
+      "text": "。"
+    },
+    {
+      "type": "insert",
+      "text": "！"
+    }
+  ],
+  "cost": 8
+}
